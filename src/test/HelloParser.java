@@ -103,6 +103,11 @@ public class HelloParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitR(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitR(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final RContext r() throws RecognitionException {
