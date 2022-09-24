@@ -16,13 +16,25 @@ public class HelloBaseListener implements HelloListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterR(HelloParser.RContext ctx) { }
+	@Override public void enterInit(HelloParser.InitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitR(HelloParser.RContext ctx) { }
+	@Override public void exitInit(HelloParser.InitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterValue(HelloParser.ValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitValue(HelloParser.ValueContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

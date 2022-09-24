@@ -7,13 +7,23 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface HelloListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link HelloParser#r}.
+	 * Enter a parse tree produced by {@link HelloParser#init}.
 	 * @param ctx the parse tree
 	 */
-	void enterR(HelloParser.RContext ctx);
+	void enterInit(HelloParser.InitContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link HelloParser#r}.
+	 * Exit a parse tree produced by {@link HelloParser#init}.
 	 * @param ctx the parse tree
 	 */
-	void exitR(HelloParser.RContext ctx);
+	void exitInit(HelloParser.InitContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void enterValue(HelloParser.ValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void exitValue(HelloParser.ValueContext ctx);
 }

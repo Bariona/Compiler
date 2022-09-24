@@ -1,5 +1,10 @@
 grammar Hello;
 
-r  : 'hello' ID;
-ID : [a-z]+ ;
-WS : [ \t\r\n]+ -> skip;
+init : '{' value (',' value)* '}';
+
+value : init
+      | INT
+      ;
+INT : [0-9]+;
+
+WS : [\t\n\r]+ -> skip;
