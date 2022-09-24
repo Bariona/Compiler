@@ -1,5 +1,5 @@
 //ShortToUnicodeString.java
-public class ShortToUnicodeString extends HelloBaseListener{
+public class ShortToUnicodeString extends HelloBaseListener {
     @Override
     public void enterInit(HelloParser.InitContext ctx){
         System.out.print('"');

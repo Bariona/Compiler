@@ -1,6 +1,6 @@
 grammar Hello;
 
-init : '{' value (',' value)* '}';
+init : '{{' value (',' value)* '}';
 
 value : init
       | INT
