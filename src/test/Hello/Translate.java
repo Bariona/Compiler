@@ -22,7 +22,6 @@ public class Translate {
 
 		ParseTreeWalker walker = new ParseTreeWalker();
 
-		// 啊
 		walker.walk(new ShortToUnicodeString(), tree);
 		System.out.println();
 	}
