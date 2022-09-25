@@ -17,3 +17,20 @@
  }
 ```
 
+### Packages
+
+学习一下package(名字要和文件夹**同名**)和import用法方便整理.g4生成的各类文件
+
+### Errors
+
+ Java中凡是继承自Exception但不是继承自`RuntimeException`的类都是非运行时异常。
+
+### Naive Questions
+
+1. main() 一定要public static修饰
+
+   static函数调用的时候不需要实例化, 和public两个的最终目的都是为了方便JVM能够直接调用, 不需要实例化.
+
+2. - [x] 在调用FileInputStream()的时候最好还是用**绝对路径**, 原因是因为相对路径可能定位到的是project的根目录(即工程目录)...
+
+   ~~蹲一个有缘人解决问题~~

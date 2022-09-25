@@ -2,6 +2,11 @@
 
 ---
 
+### Listener VS Visitor
+
+- listener监听器: enter()和exit()都有对应函数, 无需考虑父子节点关系 (入戳和出戳)
+- visitor: 需考虑父子节点关系
+
 ### Regular expression
 
 - 非贪婪匹配: e.g. 	".*?"
@@ -68,4 +73,27 @@ Personally, I think it's only for the convenience of recognizing a Parser  Tree.
   ```
   file : element* EOF; // don't stop early. must match all input
   ```
+
+
+### Error Listener
+
+异常处理, 见英文版*The Definitive ANTLR 4 Reference* P154
+
+### Matching String Literals
+
+```
+String	:	'"' .*? '"';
+```
+
+This is no good, because when you type in a string, say `"abc\""` 
+
+Due to the **Nongreedy Rules**, it will only math `"abc\"` and leave the last double quote  behind.
+
+Thus, we need to use this to tell ANTLR to recognize this special case:
+
+```
+STRING: '"' (ESC|.)*? '"' ;
+fragment
+ESC : '\\"' | '\\\\' ; // 2-char sequences \" and \\
+```
 

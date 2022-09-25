@@ -33,6 +33,7 @@ If  : 'if';
 Else    : 'else';
 Return  : 'return';
 
+StringConst : '"' .*? '"';
 LeftParen   : '(';
 RightParen  : ')';
 LeftBracket : '[';
@@ -70,7 +71,7 @@ NotEqual: '!=';
 Identifier  :   [a-zA-Z][a-zA-Z0-9_]*;
 Decimal : [1-9][0-9]* | '0';
 
-WhiteSpace  : [ \t] -> skip;
+WhiteSpace  : [ \t] -> skip; // skip space & tab
 NewLine     : ('\r\n' | '\n') -> skip;
 BlockComment    : '/*' .*? '*/' -> skip;
 LineComment     : '//' ~[\r\n]* -> skip;
