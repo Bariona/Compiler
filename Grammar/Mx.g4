@@ -26,24 +26,16 @@ def     : varDef ';'                        # VarDefi
         | functionDef                       # FunctDefi
         ;
 
-varDef  : typeName varTerm (',' varTerm)*      # VariableDef
+varDef  : typeName varTerm (',' varTerm)*;
 //        | typeName Identifier ('=' New typeName '['Decimal']' ('[' Decimal? ']')*)?      # ArrayDef
 //        | Identifier '['Decimal']' '=' (Null | (New typeName '['Decimal']'))             # Jagged
-        ;
 varTerm : Identifier ('=' expression)?;
-
-classDef    :   Class Identifier '{' // whether here to use brackets to avoid mismatch?
-        (
-            typeName Identifier
-            |  typeName Identifier (',' Identifier)*
-            |  Identifier'(' ')' '{' (expression | statement)* '}'
-            |  functionDef
-        )*
-        '}' ';'
-        ;
 
 functionDef :  typeName Identifier '(' funcParList? ')' suite;
 funcParList : typeName Identifier | (',' typeName Identifier)*;
+
+classDef    :   Class Identifier '{' (varDef ';' | functionDef)* '}' ';' ;
+
 parameterList   :  expression | (',' expression)*;
 
 systemfuc   : 'print' '(' expression ')'    # PrintStr
