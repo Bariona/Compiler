@@ -4,7 +4,7 @@ program : def* EOF;
 
 suite : '{' statement* '}';
 
-statement : suite                                               # block
+statement : suite                                               # SuiteStmt
     | def                                                       # Definition
     | If '(' expression ')' statement
         (Else statement)?                                       # If_Else
@@ -12,7 +12,7 @@ statement : suite                                               # block
     | Continue ';'                                              # Continue
     | Return expression? ';'                                    # Return
     | While '(' expression ')' statement                        # WhileStmt
-    | For '(' (expression | varDef Semi)? ';' expression? ';' expression? ')' statement    #ForStmt
+    | For '(' (initialExpr = expression | varDef Semi)? ';' (condiExpr = expression)? ';' (stepExpr = expression)? ')' statement    #ForStmt
     | expression ';'                                            # Purexpression
     | systemfuc                                                 # Sysyemfunc
     | ';'                                                       # Emptyexpression
@@ -46,16 +46,17 @@ functionDef :  typeName Identifier '(' funcParList? ')' suite;
 funcParList : typeName Identifier | (',' typeName Identifier)*;
 parameterList   :  expression | (',' expression)*;
 
-systemfuc   : 'print' '(' Identifier ')' ';'       # Print
-    | 'println' '(' Identifier ')' ';'     # Println
-    | 'printInt' '(' Identifier ')' ';'    # PrintInt
-    | 'printlnInt' '(' Identifier ')' ';'  # PrintlnInt
-    | 'getString' '(' ')' ';'              # getString
-    | 'getInt' '(' ')' ';'                 # getInt
-    | 'toString' '(' (Decimal | Identifier) ')' ';'     # toString
+systemfuc   : 'print' '(' expression ')'    # PrintStr
+    | 'println' '(' expression ')'          # PrintlnStr
+    | 'printInt' '(' expression ')'         # PrintInt
+    | 'printlnInt' '(' expression ')'       # PrintlnInt
+    | 'getString' '(' ')'                   # getString
+    | 'getInt' '(' ')'                      # getInt
+    | 'toString' '(' expression ')'         # toString
     ;
 
 expression : primary                                # AtomExpr
+    | systemfuc                                     # SystemFunc
     | expression '.' Identifier                     # MemberExpr
     | expression '[' expression ']'                 # BracketExpr
     | expression '(' parameterList? ')'              # FunctionExpr
