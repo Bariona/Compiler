@@ -14,7 +14,7 @@ statement : suite                                               # SuiteStmt
     | While '(' expression ')' statement                        # WhileStmt
     | For '(' (initialExpr = expression | varDef Semi)? ';' (condiExpr = expression)? ';' (stepExpr = expression)? ')' statement    #ForStmt
     | expression ';'                                            # Purexpression
-    | systemfuc                                                 # Sysyemfunc
+    // | sysfunction                                               # Sysyemfunc
     | ';'                                                       # Emptyexpression
     ;
 
@@ -26,32 +26,34 @@ def     : varDef ';'                        # VarDefi
         | functionDef                       # FunctDefi
         ;
 
-varDef  : typeName varTerm (',' varTerm)*;
-//        | typeName Identifier ('=' New typeName '['Decimal']' ('[' Decimal? ']')*)?      # ArrayDef
-//        | Identifier '['Decimal']' '=' (Null | (New typeName '['Decimal']'))             # Jagged
+varDef  : typeName varTerm (',' varTerm)*; // include array & jagged array
 varTerm : Identifier ('=' expression)?;
 
-functionDef :  typeName Identifier '(' funcParList? ')' suite;
+functionDef :  typeName? Identifier '(' funcParList? ')' suite;
 funcParList : typeName Identifier | (',' typeName Identifier)*;
 
 classDef    :   Class Identifier '{' (varDef ';' | functionDef)* '}' ';' ;
 
-parameterList   :  expression | (',' expression)*;
-
-systemfuc   : 'print' '(' expression ')'    # PrintStr
+sysfunction   : 'print' '(' expression ')'  # PrintStr
     | 'println' '(' expression ')'          # PrintlnStr
     | 'printInt' '(' expression ')'         # PrintInt
     | 'printlnInt' '(' expression ')'       # PrintlnInt
     | 'getString' '(' ')'                   # getString
     | 'getInt' '(' ')'                      # getInt
     | 'toString' '(' expression ')'         # toString
+    | 'length' '(' ')'                      # StrLength
+    | 'substring' '(' expression ',' expression ')' # StrSubstr
+    | 'parseInt' '(' ')'                    # StrtoInt
+    | 'ord' '(' expression ')'              # StrtoASCii
     ;
 
+parameterList   :  expression (',' expression)*;
+
 expression : primary                                # AtomExpr
-    | systemfuc                                     # SystemFunc
-    | expression '.' Identifier                     # MemberExpr
+    | sysfunction                                   # SystemFunc
+    | expression '.' expression                     # MemberExpr
     | expression '[' expression ']'                 # BracketExpr
-    | expression '(' parameterList? ')'              # FunctionExpr
+    | expression '(' parameterList? ')'             # CallFunctionExpr
     | <assoc=right> op = ('++' | '--') expression   # SelfExpr
     | <assoc=right> expression op = ('--' | '++')   # SelfExpr
     | <assoc=right> '!' expression              # UnaryExpr
