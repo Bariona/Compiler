@@ -30,7 +30,7 @@ varDef  : typeName varTerm (',' varTerm)*; // include array & jagged array
 varTerm : Identifier ('=' expression)?;
 
 functionDef :  typeName? Identifier '(' funcParList? ')' suite;
-funcParList : typeName Identifier | (',' typeName Identifier)*;
+funcParList : typeName Identifier (',' typeName Identifier)*;
 
 classDef    :   Class Identifier '{' (varDef ';' | functionDef)* '}' ';' ;
 
