@@ -1,15 +1,15 @@
 package utility;
 
 public class position {
-    private final int row;
-    private final int col;
+    private final int line;
+    private final int column;
 
-    public position(int row, int col) {
-        this.row = row;
-        this.col = col;
+    public position(int line, int column) {
+        this.line = line;
+        this.column = column;
     }
 
     public String toString() {
-        return row + ":" + col;
+        return line + ":" + column;
     }
 }

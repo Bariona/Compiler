@@ -43,7 +43,7 @@ operator ambiguity for `1+2*3` in favor of the multiplication.
 
 Personally, I think it's only for the convenience of recognizing a Parser  Tree...
 
-否则, 只会跟一个数字(如3), 表示它匹配上的是第(如3)几个alternatives.
+否则, Parser Tree的label只会跟一个数字(如3), 表示它匹配上的是第(如3)几个alternatives.
 
 ### EOF and Start Rules
 
