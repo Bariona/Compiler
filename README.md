@@ -1,4 +1,7 @@
 # Compiler
+---
+
+<i class="fa-solid fa-computer-classic"></i>
 
 [课程地址](https://github.com/ACMClassCourses/Compiler-Design-Implementation)
 
@@ -26,3 +29,12 @@ java <filename>
 ## Reference
 
 1. [Yx written by Antlr4](https://github.com/ZYHowell/Yx/tree/1c1a74e8e636cf64d2e6f73975cfb2cf50f69cca)
+2. 虎/龙书
+
+
+
+<head> 
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/all.js"></script> 
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/v4-shims.js"></script> 
+</head> 
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
