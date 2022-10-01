@@ -1,17 +1,18 @@
 package AST;
 
 import Utility.Position;
+import Utility.Type.BaseType;
 
 abstract public class ExprNode extends ASTNode {
+  public BaseType type;
 
-    ExprNode(Position pos) {
-        super(pos);
-    }
+  public ExprNode(Position pos) {
+    super(pos);
+  }
 
-    boolean isAssignable() {
-        return false;
-    }
-
+  boolean isAssignable() {
+    return false;
+  }
 
 
 //    @Override

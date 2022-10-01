@@ -1,21 +1,23 @@
 package AST;
 
 import Utility.Position;
+import Utility.Type.BaseType;
 
 public class varExprNode extends ExprNode {
-    String name;
-    varExprNode(String name, Position pos) {
-        super(pos);
-        this.name = name;
-    }
+  String name;
+  public varExprNode(String name, Position pos, BaseType type) {
+    super(pos);
+    this.name = name;
+    this.type = type;
+  }
 
-    @Override
-    public void accept(ASTvisitor visitor) {
-        visitor.visit(this);
-    }
+  @Override
+  public void accept(ASTvisitor visitor) {
+    visitor.visit(this);
+  }
 
-    @Override
-    boolean isAssignable() {
-        return true;
-    }
+  @Override
+  boolean isAssignable() {
+    return true;
+  }
 }

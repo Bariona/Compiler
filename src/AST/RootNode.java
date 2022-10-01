@@ -2,13 +2,17 @@ package AST;
 
 import Utility.Position;
 
-public class RootNode extends ASTNode {
-    RootNode(Position pos) {
-        super(pos);
-    }
+import java.util.ArrayList;
 
-    @Override
-    public void accept(ASTvisitor visitor) {
-        visitor.visit(this);
-    }
+public class RootNode extends ASTNode {
+  public ArrayList<DefNode> Defs = new ArrayList<>(); // initialize in case of null!
+
+  public RootNode(Position pos) {
+    super(pos);
+  }
+
+  @Override
+  public void accept(ASTvisitor visitor) {
+    visitor.visit(this);
+  }
 }

@@ -1,11 +1,13 @@
 package Utility.Type;
 
+import java.util.HashMap;
+
 public class BaseType {
-    public enum generic {
+    public enum Type {
         VOID, BOOL, INT, STRING, CLASS, NULL, NEW
     }
 
-    public generic type;
-
+    public Type type;
+    public HashMap<String, Type> members = null;
 
 }
