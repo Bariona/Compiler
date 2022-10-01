@@ -12,7 +12,7 @@ statement : suite                                               # SuiteStmt
     | Continue ';'                                              # Continue
     | Return expression? ';'                                    # Return
     | While '(' expression ')' statement                        # WhileStmt
-    | For '(' (initialExpr = expression | varDef Semi)? ';' (condiExpr = expression)? ';' (stepExpr = expression)? ')' statement    #ForStmt
+    | For '(' (initialExpr = expression | varDef Semi)? ';' (condiExpr = expression)? ';' (stepExpr = expression)? ')' statement    # ForStmt
     | expression ';'                                            # Purexpression
     // | sysfunction                                               # Sysyemfunc
     | ';'                                                       # Emptyexpression
@@ -21,9 +21,9 @@ statement : suite                                               # SuiteStmt
 typeName    : (Int | Bool | String | Void | Identifier) bracket*;
 bracket : '[' expression? ']';
 
-def     : varDef ';'                        # VarDefi
-        | classDef                          # ClassDefi
-        | functionDef                       # FunctDefi
+def     : varDef ';'                        # VarDefinition
+        | classDef                          # ClassDefinition
+        | functionDef                       # FunctDefinition
         ;
 
 varDef  : typeName varTerm (',' varTerm)*; // include array & jagged array
@@ -54,17 +54,17 @@ expression : primary                                # AtomExpr
     | expression '.' expression                     # MemberExpr
     | expression '[' expression ']'                 # BracketExpr
     | expression '(' parameterList? ')'             # CallFunctionExpr
-    | <assoc=right> op = ('++' | '--') expression   # SelfExpr
-    | <assoc=right> expression op = ('--' | '++')   # SelfExpr
-    | <assoc=right> '!' expression              # UnaryExpr
-    | <assoc=right> '~' expression              # UnaryExpr
-    | <assoc=right> '-' expression              # UnaryExpr
-    | <assoc=right> New typeName                # Newtype
+    | <assoc=right> op = ('++' | '--') expression   # UnaryExpr
+    | <assoc=right> expression op = ('--' | '++')   # UnaryExpr
+    | <assoc=right> '!' expression                  # UnaryExpr
+    | <assoc=right> '~' expression                  # UnaryExpr
+    | <assoc=right> '-' expression                  # UnaryExpr
+    | <assoc=right> New typeName                    # Newtype
 
-    | expression op = ('*' | '/' | '%') expression      # BinaryExpr
-    | expression op = ('+' | '-') expression            # BinaryExpr
-    | expression op = ('<<' | '>>') expression          # BinaryExpr
-    | expression op = ('<' | '<=' | '>' | '>=') expression   # BinaryExpr
+    | expression op = ('*' | '/' | '%') expression              # BinaryExpr
+    | expression op = ('+' | '-') expression                    # BinaryExpr
+    | expression op = ('<<' | '>>') expression                  # BinaryExpr
+    | expression op = ('<' | '<=' | '>' | '>=') expression      # BinaryExpr
 
     | expression op = ('==' | '!=') expression  # BinaryExpr
     | expression op = '&' expression            # BinaryExpr
@@ -74,7 +74,7 @@ expression : primary                                # AtomExpr
     | expression op = '&&' expression           # BinaryExpr
     | expression op = '||' expression           # BinaryExpr
 
-    | <assoc=right> expression '=' expression   # AsignExpr
+    | <assoc=right> expression '=' expression   # AssignExpr
     ;
 
 primary : '(' expression ')'
