@@ -25,7 +25,33 @@
 
  Java中凡是继承自Exception但不是继承自`RuntimeException`的类都是非运行时异常。
 
-### Naive Questions
+### interface & abstract class
+
+- 除非实现接口的类是abstract class，否则该类要定义interface中所有method.
+
+- 一般流程?: 定义interface→定义abstract class→定义普通类
+
+  - 为什么抽象类不必（是不必，不是不能）定义接口中所有方法?
+
+    ​	抽象类和接口的定义虽然不同，但是其目的是一致的，通过继承抽象类/实现接口来继承抽象类/接口中的抽象方法，并定义其具体实现。
+
+    ​	当抽象类实现接口时，虽然继承了接口所有方法，但是根据实际情况，接口中有些（甚至所有）抽象方法是不必定义的，那么便按需定义。
+
+    ​	当另一个类继承该抽象类时，再去定义这些方法。
+
+  个人理解: interface可以不严谨地理解为Rust里的trait(虽然trait里的method可以实现), 可以实现值传递(向上传递).
+
+### 访问者模式
+
+在Yx的repo中可见的用法, 需自行google一下确定用法.
+
+### 构造函数 constructor
+
+一旦父类实现了构造函数, 那么继承的子类也必须要有constructor, 因为此时默认构造函数已经失效了
+
+最简单解决办法可以直接override父类的constructor, 然后调用super(para1, para2, ...)
+
+### Naïve Questions
 
 1. main() 一定要public static修饰
 

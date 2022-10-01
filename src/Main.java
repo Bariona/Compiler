@@ -2,8 +2,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.*;
 
 import Parser.*;
-import utility.MxErrorListener;
-import utility.Error;
+import Utility.MxErrorListener;
 
 import java.io.*;
 

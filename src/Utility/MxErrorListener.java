@@ -1,7 +1,8 @@
-package utility;
+package Utility;
 
 import org.antlr.v4.runtime.*;
 import java.util.*;
+import Utility.Error.SyntaxError;
 
 public class MxErrorListener extends BaseErrorListener {
     @Override
@@ -17,6 +18,6 @@ public class MxErrorListener extends BaseErrorListener {
         System.err.println("rule stack: " + stk);
         System.err.println("line " + line + ":" + charPositionInLine + " at " + offendingSymbol + " : " + msg);
         // decide which kind of error to throw
-        throw new SyntaxError(msg, new position(line, charPositionInLine));
+        throw new SyntaxError(msg, new Position(line, charPositionInLine));
     }
 }

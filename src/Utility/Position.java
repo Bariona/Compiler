@@ -1,10 +1,10 @@
-package utility;
+package Utility;
 
-public class position {
+public class Position {
     private final int line;
     private final int column;
 
-    public position(int line, int column) {
+    public Position(int line, int column) {
         this.line = line;
         this.column = column;
     }
