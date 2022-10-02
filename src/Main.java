@@ -1,3 +1,5 @@
+import AST.RootNode;
+import Frontend.ASTBuilder;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.*;
 
@@ -10,7 +12,7 @@ public class Main {
   public static void main(String[] args) throws Exception {
     System.out.println("Current directory: " + System.getProperty("user.dir"));
 
-    String filename = "testcases/sema/basic-package/basic-1.mx";
+    String filename = "testcases/data.in";
     InputStream input = new FileInputStream(filename);
 
     try {
@@ -19,10 +21,14 @@ public class Main {
       lexer.addErrorListener(new MxErrorListener());
 
       CommonTokenStream tokens = new CommonTokenStream(lexer);
+
       MxParser parser = new MxParser(tokens); // parser
       parser.removeErrorListeners();
       parser.addErrorListener(new MxErrorListener());
+
       ParseTree tree = parser.program();
+      ASTBuilder ast = new ASTBuilder();
+      RootNode root = (RootNode) ast.visit(tree);
 
       System.out.println("\033[33m🎉  Done successfully.\033[0m");
     } catch (Error e) {

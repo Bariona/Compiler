@@ -6,7 +6,8 @@ import java.util.ArrayList;
 
 public class classDefNode extends DefNode {
   public String name;
-  public ArrayList<DefNode> Defs = new ArrayList<>();
+  public ArrayList<DefNode> varDefs = new ArrayList<>();
+  public ArrayList<DefNode> fucDefs = new ArrayList<>();
 
   public classDefNode(String name, Position pos) {
     super(pos);

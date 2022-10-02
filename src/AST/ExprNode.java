@@ -14,7 +14,6 @@ abstract public class ExprNode extends ASTNode {
     return false;
   }
 
-
 //    @Override
 //    public void accept(ASTvisitor visitor) {
 //        visitor.visit(this);

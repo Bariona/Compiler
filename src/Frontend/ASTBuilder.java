@@ -16,20 +16,37 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     ctx.def().forEach((elem) -> {
       root.Defs.add((DefNode) visit(elem)); // 存在一个向下转型
     });
-
     return root;
   }
 
+//  @Override
+//  public ASTNode visitTypeName(MxParser.TypeNameContext ctx) {
+//    return ;
+//  }
+
   @Override
   public ASTNode visitClassDef(MxParser.ClassDefContext ctx) {
-    classDefNode cnode = new classDefNode(ctx.Identifier().toString(), new Position(ctx));
+    System.out.println(ctx.Identifier().toString());
+    classDefNode cls = new classDefNode(ctx.Identifier().toString(), new Position(ctx));
     ctx.varDef().forEach((var) -> {
-
+      cls.varDefs.add((DefNode) visit(var));
     });
-    return cnode;
+    ctx.functionDef().forEach((fuc) -> {
+      cls.fucDefs.add((DefNode) visit(fuc));
+    });
+    return cls;
   }
 
-//  @Override
+  @Override
+  public ASTNode visitFunctionDef(MxParser.FunctionDefContext ctx) {
+    System.out.println(ctx.Identifier().toString());
+    System.exit(0);
+    fucDefNode fuc = new fucDefNode(ctx.Identifier().toString(), new BaseType(ctx.typeName().toString()), new Position(ctx));
+
+    return fuc;
+  }
+
+  //  @Override
 //  public ASTNode visitVarDefi(MxParser.VarDefiContext ctx) {
 //    varDefNode vnode = new varDefNode(new Position(ctx));
 //    return vnode;

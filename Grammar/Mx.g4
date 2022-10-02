@@ -54,7 +54,7 @@ expression : primary                                # AtomExpr
     // this can be written as Identifier, with 'a.size()' seen as FunctionExpr -> MemberExpr
     | expression '.' Identifier                     # MemberExpr
     | expression '[' expression ']'                 # BracketExpr
-    | expression '(' argumentList? ')'             # FunctionExpr
+    | expression '(' argumentList? ')'              # FunctionExpr
     | expression op = ('--' | '++')                 # UnaryExpr
     | <assoc=right> op = ('++' | '--') expression   # UnaryExpr
     | <assoc=right> op = ('+' | '-') expression     # UnaryExpr
