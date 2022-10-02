@@ -37,7 +37,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
 
   @Override
-  public ASTNode visitAsignExpr(MxParser.AsignExprContext ctx) {
-    return super.visitAsignExpr(ctx);
+  public ASTNode visitAssignExpr(MxParser.AssignExprContext ctx) {
+    return super.visitAssignExpr(ctx);
   }
 }

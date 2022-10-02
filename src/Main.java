@@ -30,6 +30,6 @@ public class Main {
       System.out.println("\033[31m😢 Process terminated with error.\033[0m");
       throw new RuntimeException("Compiling failed.");
     }
-    System.out.println("!");
+//    System.out.println("!");
   }
 }

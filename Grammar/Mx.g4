@@ -5,17 +5,17 @@ program : def* EOF;
 suite : '{' statement* '}';
 
 statement : suite                                               # SuiteStmt
-    | def                                                       # Definition
+    | def                                                       # DefStmt
     | If '(' expression ')' statement
-        (Else statement)?                                       # If_Else
-    | Break ';'                                                 # Break
-    | Continue ';'                                              # Continue
-    | Return expression? ';'                                    # Return
+        (Else statement)?                                       # IfElseStmt
+    | Break ';'                                                 # BreakStmt
+    | Continue ';'                                              # ContinueStmt
+    | Return expression? ';'                                    # ReturnStmt
     | While '(' expression ')' statement                        # WhileStmt
     | For '(' (initialExpr = expression | varDef Semi)? ';' (condiExpr = expression)? ';' (stepExpr = expression)? ')' statement    # ForStmt
-    | expression ';'                                            # Purexpression
-    // | sysfunction                                               # Sysyemfunc
-    | ';'                                                       # Emptyexpression
+    | expression ';'                                            # PurExprStmt
+//    | sysfunction                                               # Sysyemfunc
+    | ';'                                                       # EmptyStmt
     ;
 
 typeName    : (Int | Bool | String | Void | Identifier) bracket*;
@@ -29,36 +29,36 @@ def     : varDef ';'                        # VarDefinition
 varDef  : typeName varTerm (',' varTerm)*; // include array & jagged array
 varTerm : Identifier ('=' expression)?;
 
-functionDef :  typeName? Identifier '(' funcParList? ')' suite;
-funcParList : typeName Identifier (',' typeName Identifier)*;
+functionDef  :  typeName? Identifier '(' parameterList? ')' suite;
+parameterList : typeName Identifier (',' typeName Identifier)*;
 
 classDef    :   Class Identifier '{' (varDef ';' | functionDef)* '}' ';' ;
 
-sysfunction   : 'print' '(' expression ')'  # PrintStr
-    | 'println' '(' expression ')'          # PrintlnStr
-    | 'printInt' '(' expression ')'         # PrintInt
-    | 'printlnInt' '(' expression ')'       # PrintlnInt
-    | 'getString' '(' ')'                   # getString
-    | 'getInt' '(' ')'                      # getInt
-    | 'toString' '(' expression ')'         # toString
-    | 'length' '(' ')'                      # StrLength
-    | 'substring' '(' expression ',' expression ')' # StrSubstr
-    | 'parseInt' '(' ')'                    # StrtoInt
-    | 'ord' '(' expression ')'              # StrtoASCii
-    ;
+//sysfunction   : 'print' '(' expression ')'  # PrintStr
+//    | 'println' '(' expression ')'          # PrintlnStr
+//    | 'printInt' '(' expression ')'         # PrintInt
+//    | 'printlnInt' '(' expression ')'       # PrintlnInt
+//    | 'getString' '(' ')'                   # getString
+//    | 'getInt' '(' ')'                      # getInt
+//    | 'toString' '(' expression ')'         # toString
+//    | 'length' '(' ')'                      # StrLength
+//    | 'substring' '(' expression ',' expression ')' # StrSubstr
+//    | 'parseInt' '(' ')'                    # StrtoInt
+//    | 'ord' '(' expression ')'              # StrtoASCii
+//    ;
 
-parameterList   :  expression (',' expression)*;
+argumentList   :  expression (',' expression)*;
 
 expression : primary                                # AtomExpr
-    | sysfunction                                   # SystemFunc
-    | expression '.' expression                     # MemberExpr
+//    | sysfunction                                   # SystemFunc
+    // this can be written as Identifier, with 'a.size()' seen as FunctionExpr -> MemberExpr
+    | expression '.' Identifier                     # MemberExpr
     | expression '[' expression ']'                 # BracketExpr
-    | expression '(' parameterList? ')'             # CallFunctionExpr
+    | expression '(' argumentList? ')'             # FunctionExpr
+    | expression op = ('--' | '++')                 # UnaryExpr
     | <assoc=right> op = ('++' | '--') expression   # UnaryExpr
-    | <assoc=right> expression op = ('--' | '++')   # UnaryExpr
-    | <assoc=right> '!' expression                  # UnaryExpr
-    | <assoc=right> '~' expression                  # UnaryExpr
-    | <assoc=right> '-' expression                  # UnaryExpr
+    | <assoc=right> op = ('+' | '-') expression     # UnaryExpr
+    | <assoc=right> op = ('!' | '~') expression     # UnaryExpr
     | <assoc=right> New typeName                    # Newtype
 
     | expression op = ('*' | '/' | '%') expression              # BinaryExpr
@@ -75,15 +75,17 @@ expression : primary                                # AtomExpr
     | expression op = '||' expression           # BinaryExpr
 
     | <assoc=right> expression '=' expression   # AssignExpr
+
+    | '[' '&'? ']' ('(' parameterList? ')')? '->' suite '(' argumentList? ')'     # LambdaExpr
     ;
 
 primary : '(' expression ')'
     | This
+    | Null
     | (True | False)
     | Identifier
     | Decimal
     | StringConst
-    | Null
     ;
 
 // ----------- Lexer Part Definitions -------------
@@ -127,6 +129,8 @@ Sub     : '-';
 Mul     : '*';
 Div     : '/';
 Mod     : '%';
+
+Arrow   : '->';
 
 Less    : '<';
 Leq     : '<=';
