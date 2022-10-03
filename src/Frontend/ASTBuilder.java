@@ -4,12 +4,10 @@ import AST.*;
 import Parser.MxBaseVisitor;
 import Parser.MxParser;
 import Utility.Position;
-import Utility.Type.BaseType;
+import Utility.Type.*;
 
 // use ANTLR's visitor mode to generate AST
 public class ASTBuilder extends MxBaseVisitor<ASTNode> {
-  BaseType type;
-
   @Override
   public ASTNode visitProgram(MxParser.ProgramContext ctx) {
     RootNode root = new RootNode(new Position(ctx));
@@ -19,14 +17,35 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     return root;
   }
 
-//  @Override
-//  public ASTNode visitTypeName(MxParser.TypeNameContext ctx) {
-//    return ;
-//  }
+  @Override
+  public ASTNode visitVarDefinition(MxParser.VarDefinitionContext ctx) {
+    return visit(ctx.varDef()); // i.e. visitVarDef (procedure: this.visit -> ctx.accept -> visitVarDef)
+  }
+
+  @Override
+  public ASTNode visitVarTerm(MxParser.VarTermContext ctx) {
+    varSingleDefNode var = new varSingleDefNode(ctx.Identifier().toString(), new Position(ctx));
+//    System.out.println(ctx.expression() == null);
+//    System.exit(0);
+    if(ctx.expression() != null) {
+      var.expr = (ExprNode) visit(ctx.expression());
+    }
+    return var;
+  }
+  @Override
+  public ASTNode visitVarDef(MxParser.VarDefContext ctx) {
+    // a bunch of variables' definitions
+    varDefNode v = new varDefNode(new Position(ctx));
+    for(int i = 0; i < ctx.varTerm().size(); ++i) {
+      varSingleDefNode node = (varSingleDefNode) visitVarTerm(ctx.varTerm(i));
+      node.type = new VarType(ctx.typeName());
+      v.varlist.add(node);
+    }
+    return v;
+  }
 
   @Override
   public ASTNode visitClassDef(MxParser.ClassDefContext ctx) {
-    System.out.println(ctx.Identifier().toString());
     classDefNode cls = new classDefNode(ctx.Identifier().toString(), new Position(ctx));
     ctx.varDef().forEach((var) -> {
       cls.varDefs.add((DefNode) visit(var));
@@ -41,7 +60,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   public ASTNode visitFunctionDef(MxParser.FunctionDefContext ctx) {
     System.out.println(ctx.Identifier().toString());
     System.exit(0);
-    fucDefNode fuc = new fucDefNode(ctx.Identifier().toString(), new BaseType(ctx.typeName().toString()), new Position(ctx));
+    fucDefNode fuc = new fucDefNode(ctx.Identifier().toString(), new BaseType(ctx.typeName()), new Position(ctx));
 
     return fuc;
   }

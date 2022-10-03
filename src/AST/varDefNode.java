@@ -1,16 +1,17 @@
 package AST;
 
 import Utility.Position;
-import Utility.Type.BaseType;
+
+import java.util.ArrayList;
 
 public class varDefNode extends DefNode {
-  BaseType type;
-  String name; // 这里不应该加一个name, 应该是VarTerm (根据g4的规则来)
+//  public BaseType type;
+//  String name; // 这里不应该加一个name, 应该是VarTerm (根据g4的规则来)
+//  ExprNode init;
+  public ArrayList<varSingleDefNode> varlist = new ArrayList<>();
 
-  public varDefNode(BaseType type, String name, Position pos) {
+  public varDefNode(Position pos) {
     super(pos);
-    this.type = type;
-    this.name = name;
   }
 
   @Override
