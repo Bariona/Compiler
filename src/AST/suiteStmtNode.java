@@ -4,12 +4,12 @@ import Utility.Position;
 
 import java.util.ArrayList;
 
-public class RootNode extends ASTNode {
-  public ArrayList<DefNode> Defs;
+public class suiteStmtNode extends StmtNode {
+  public ArrayList<StmtNode> stmts;
 
-  public RootNode(Position pos) {
+  public suiteStmtNode(Position pos) {
     super(pos);
-    Defs = new ArrayList<>(); // initialize in case of null!
+    stmts = new ArrayList<>();
   }
 
   @Override

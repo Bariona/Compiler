@@ -10,11 +10,12 @@ import java.util.ArrayList;
 public class funcDefNode extends DefNode {
   public FuncType type;
   public String name;
-  public ArrayList<Pair<BaseType, String>> parameterList = new ArrayList<>();
+  public ArrayList<Pair<BaseType, String>> parameterList;
 
   public funcDefNode(String name, Position pos) {
     super(pos);
     this.name = name;
+    parameterList = new ArrayList<>();
   }
 
   @Override

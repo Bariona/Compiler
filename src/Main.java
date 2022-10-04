@@ -3,6 +3,7 @@ import Frontend.ASTBuilder;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.*;
+
 import java.io.*;
 
 import Parser.*;
@@ -28,7 +29,7 @@ public class Main {
       parser.addErrorListener(new MxErrorListener());
 
       ParseTree tree = parser.program();
-      ASTBuilder ast = new ASTBuilder();
+      ASTBuilder ast = new ASTBuilder(); // new visitor for AST making
       RootNode root = (RootNode) ast.visit(tree);
 
       System.out.println("\033[33m🎉  Done successfully.\033[0m");

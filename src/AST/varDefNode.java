@@ -7,10 +7,11 @@ import java.util.ArrayList;
 public class varDefNode extends DefNode {
 //  public BaseType type;
 
-  public ArrayList<varSingleDefNode> varlist = new ArrayList<>();
+  public ArrayList<varSingleDefNode> varlist;
 
   public varDefNode(Position pos) {
     super(pos);
+    varlist = new ArrayList<>();
   }
 
   @Override
