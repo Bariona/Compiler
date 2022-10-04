@@ -1,10 +1,13 @@
 package Frontend;
 
-import AST.*;
-import AST.Statement.*;
-import AST.Expression.*;
 import Parser.MxBaseVisitor;
 import Parser.MxParser;
+
+import AST.*;
+import AST.Definition.*;
+import AST.Expression.*;
+import AST.Statement.*;
+
 import Utility.Position;
 import Utility.Type.*;
 import org.antlr.v4.runtime.misc.Pair;

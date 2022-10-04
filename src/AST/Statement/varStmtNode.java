@@ -1,6 +1,7 @@
 package AST.Statement;
 
 import AST.*;
+import AST.Definition.varDefNode;
 import Utility.Position;
 
 public class varStmtNode extends StmtNode {

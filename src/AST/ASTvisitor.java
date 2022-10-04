@@ -1,5 +1,6 @@
 package AST;
 
+import AST.Definition.*;
 import AST.Expression.*;
 import AST.Statement.*;
 

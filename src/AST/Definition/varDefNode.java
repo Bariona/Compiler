@@ -1,5 +1,6 @@
-package AST;
+package AST.Definition;
 
+import AST.*;
 import Utility.Position;
 
 import java.util.ArrayList;
