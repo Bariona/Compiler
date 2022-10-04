@@ -1,12 +1,13 @@
 import AST.RootNode;
 import Frontend.ASTBuilder;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.*;
+import java.io.*;
 
 import Parser.*;
 import Utility.MxErrorListener;
-
-import java.io.*;
+import Utility.Error.Error;
 
 public class Main {
   public static void main(String[] args) throws Exception {

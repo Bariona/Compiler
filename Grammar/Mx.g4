@@ -29,7 +29,7 @@ def     : varDef ';'                        # VarDefinition
 varDef  : typeName varTerm (',' varTerm)*; // include array & jagged array
 varTerm : Identifier ('=' expression)?;
 
-functionDef  :  typeName? Identifier '(' parameterList? ')' suite;
+functionDef   : typeName? Identifier '(' parameterList? ')' suite;
 parameterList : typeName Identifier (',' typeName Identifier)*;
 
 classDef    :   Class Identifier '{' (varDef ';' | functionDef)* '}' ';' ;

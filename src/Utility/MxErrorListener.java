@@ -5,6 +5,7 @@ import java.util.*;
 
 import Utility.Error.SyntaxError;
 
+// Limitation: can only detect  Building-ParserTree-process error AKA. syntax Error
 public class MxErrorListener extends BaseErrorListener {
   @Override
   public void syntaxError(Recognizer<?, ?> recognizer,
@@ -15,8 +16,8 @@ public class MxErrorListener extends BaseErrorListener {
   ) {
     List<String> stk = ((Parser) recognizer).getRuleInvocationStack();
     Collections.reverse(stk);
-    System.err.println("rule stack: " + stk);
     System.err.println("line " + line + ":" + charPositionInLine + " at " + offendingSymbol + " : " + msg);
+    System.err.println("rule stack: " + stk);
     // decide which kind of error to throw
     throw new SyntaxError(msg, new Position(line, charPositionInLine));
   }

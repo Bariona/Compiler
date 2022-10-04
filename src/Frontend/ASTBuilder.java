@@ -5,6 +5,7 @@ import Parser.MxBaseVisitor;
 import Parser.MxParser;
 import Utility.Position;
 import Utility.Type.*;
+import org.antlr.v4.runtime.misc.Pair;
 
 // use ANTLR's visitor mode to generate AST
 public class ASTBuilder extends MxBaseVisitor<ASTNode> {
@@ -18,20 +19,14 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   }
 
   @Override
-  public ASTNode visitVarDefinition(MxParser.VarDefinitionContext ctx) {
-    return visit(ctx.varDef()); // i.e. visitVarDef (procedure: this.visit -> ctx.accept -> visitVarDef)
-  }
-
-  @Override
   public ASTNode visitVarTerm(MxParser.VarTermContext ctx) {
     varSingleDefNode var = new varSingleDefNode(ctx.Identifier().toString(), new Position(ctx));
-//    System.out.println(ctx.expression() == null);
-//    System.exit(0);
     if(ctx.expression() != null) {
       var.expr = (ExprNode) visit(ctx.expression());
-    }
+    } else var.expr = null;
     return var;
   }
+
   @Override
   public ASTNode visitVarDef(MxParser.VarDefContext ctx) {
     // a bunch of variables' definitions
@@ -43,34 +38,45 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     }
     return v;
   }
+  @Override
+  public ASTNode visitVarDefinition(MxParser.VarDefinitionContext ctx) {
+    return visit(ctx.varDef()); // i.e. visitVarDef (procedure: this.visit -> ctx.accept -> visitVarDef)
+  }
+
+  @Override
+  public ASTNode visitFunctionDef(MxParser.FunctionDefContext ctx) {
+    funcDefNode func = new funcDefNode(ctx.Identifier().toString(), new Position(ctx));
+    func.type =  (ctx.typeName() != null) ? new FuncType(ctx.typeName()) : null; // 为了处理构造函数
+    if(ctx.parameterList() != null) {
+      for(int i = 0; i < ctx.parameterList().typeName().size(); ++i) {
+//        VarType para = new VarType(ctx.parameterList().typeName(i));
+        func.parameterList.add(new Pair<>(
+                new VarType(ctx.parameterList().typeName(i)),
+                ctx.parameterList().Identifier().toString()
+        ));
+      }
+    }
+    /* suite part */
+    visit(ctx.suite());
+    return func;
+  }
 
   @Override
   public ASTNode visitClassDef(MxParser.ClassDefContext ctx) {
     classDefNode cls = new classDefNode(ctx.Identifier().toString(), new Position(ctx));
     ctx.varDef().forEach((var) -> {
-      cls.varDefs.add((DefNode) visit(var));
+      cls.varDefs.add((varDefNode) visit(var));
     });
     ctx.functionDef().forEach((fuc) -> {
-      cls.fucDefs.add((DefNode) visit(fuc));
+      cls.funcDefs.add((funcDefNode) visit(fuc));
     });
     return cls;
   }
 
   @Override
-  public ASTNode visitFunctionDef(MxParser.FunctionDefContext ctx) {
-    System.out.println(ctx.Identifier().toString());
-    System.exit(0);
-    fucDefNode fuc = new fucDefNode(ctx.Identifier().toString(), new BaseType(ctx.typeName()), new Position(ctx));
-
-    return fuc;
+  public ASTNode visitBinaryExpr(MxParser.BinaryExprContext ctx) {
+    return super.visitBinaryExpr(ctx);
   }
-
-  //  @Override
-//  public ASTNode visitVarDefi(MxParser.VarDefiContext ctx) {
-//    varDefNode vnode = new varDefNode(new Position(ctx));
-//    return vnode;
-//  }
-
 
   @Override
   public ASTNode visitAssignExpr(MxParser.AssignExprContext ctx) {

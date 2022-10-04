@@ -2,6 +2,8 @@
 
 ---
 
+LexerRule无论写在哪都会被放在ParserRule之后.
+
 ### Listener VS Visitor
 
 - listener监听器: enter()和exit()都有对应函数, 无需考虑父子节点关系 (入戳和出戳)

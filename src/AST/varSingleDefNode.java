@@ -6,7 +6,7 @@ import Utility.Type.VarType;
 public class varSingleDefNode extends DefNode {
   public String name;
   public ExprNode expr;
-  public VarType type; // 改成varType类型的节点
+  public VarType type;
 
   public varSingleDefNode(String name, Position pos) {
     super(pos);

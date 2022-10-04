@@ -1,19 +1,24 @@
 package Utility.Type;
 
 import Parser.MxParser;
+import Utility.Error.SyntaxError;
+import Utility.Position;
 
 import java.util.HashMap;
 
-public class BaseType {
+abstract public class BaseType {
   public enum BultinType {
     VOID, BOOL, INT, STRING, CLASS, NULL, NEW
   }
 
   public BultinType type;
-  HashMap<String, BultinType> members = null;
+//  HashMap<String, BultinType> members = null;
 
   BaseType(BultinType type) {
     this.type = type;
+  }
+  public BaseType(MxParser.TypeNameContext ctx) {
+    this.type = MatchType(ctx);
   }
 
 //  public BaseType(String typename) {
@@ -23,15 +28,15 @@ public class BaseType {
 //  }
 
   public BultinType MatchType(MxParser.TypeNameContext ctx) {
-    if(ctx.Identifier() != null) return BultinType.CLASS;
+    if(ctx.Identifier() != null) return BultinType.CLASS; // need a name
     if(ctx.Bool() != null) return BultinType.BOOL;
     if(ctx.Int() != null) return BultinType.INT;
     if(ctx.String() != null) return BultinType.STRING;
     if(ctx.Void() != null) return BultinType.VOID;
-    throw new IllegalArgumentException();
+    throw new SyntaxError("Not a type.", new Position(ctx));
   }
 
-  public BaseType(MxParser.TypeNameContext ctx) {
-    this.type = MatchType(ctx);
+  public String typename() {
+    return this.type.name();
   }
 }
