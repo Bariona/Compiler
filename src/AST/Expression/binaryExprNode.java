@@ -1,5 +1,6 @@
-package AST;
+package AST.Expression;
 
+import AST.*;
 import Utility.Position;
 import Utility.Type.BaseType;
 

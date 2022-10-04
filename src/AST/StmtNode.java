@@ -3,7 +3,7 @@ package AST;
 import Utility.Position;
 
 abstract public class StmtNode extends ASTNode {
-  StmtNode(Position pos) {
+  public StmtNode(Position pos) {
     super(pos);
   }
 

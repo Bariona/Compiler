@@ -1,5 +1,6 @@
-package AST;
+package AST.Statement;
 
+import AST.*;
 import Utility.Position;
 
 public class forStmtNode extends StmtNode {

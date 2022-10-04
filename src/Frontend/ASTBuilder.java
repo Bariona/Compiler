@@ -1,6 +1,8 @@
 package Frontend;
 
 import AST.*;
+import AST.Statement.*;
+import AST.Expression.*;
 import Parser.MxBaseVisitor;
 import Parser.MxParser;
 import Utility.Position;

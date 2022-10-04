@@ -1,5 +1,8 @@
 package AST;
 
+import AST.Expression.*;
+import AST.Statement.*;
+
 public interface ASTvisitor {
   void visit(RootNode it);
 

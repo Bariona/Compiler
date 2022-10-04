@@ -10,7 +10,7 @@ abstract public class ExprNode extends ASTNode {
     super(pos);
   }
 
-  boolean isAssignable() {
+  public boolean isAssignable() {
     return false;
   }
 

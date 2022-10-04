@@ -1,5 +1,6 @@
-package AST;
+package AST.Expression;
 
+import AST.*;
 import Utility.Position;
 import Utility.Type.BaseType;
 
@@ -17,7 +18,7 @@ public class varExprNode extends ExprNode {
   }
 
   @Override
-  boolean isAssignable() {
+  public boolean isAssignable() {
     return true;
   }
 }
