@@ -12,6 +12,7 @@ public class funcDefNode extends DefNode {
   public FuncType type;
   public String name;
   public ArrayList<Pair<BaseType, String>> parameterList;
+  public StmtNode stmts;
 
   public funcDefNode(String name, Position pos) {
     super(pos);

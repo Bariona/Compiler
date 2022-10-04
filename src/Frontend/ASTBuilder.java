@@ -77,7 +77,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
       }
     }
     /* suite part */
-    visit(ctx.suite());
+    func.stmts = (StmtNode) visit(ctx.suite());
     return func;
   }
 
@@ -94,14 +94,9 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   }
 
   // ------ Statement Part ------
-  @Override
-  public ASTNode visitEmptyStmt(MxParser.EmptyStmtContext ctx) {
-    return null;
-  }
 
   @Override
   public ASTNode visitSuiteStmt(MxParser.SuiteStmtContext ctx) {
-//    System.out.println("@@");
     return visit(ctx.suite());
   }
 
@@ -122,16 +117,20 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   }
 
   @Override
+  public ASTNode visitBreakStmt(MxParser.BreakStmtContext ctx) {
+    return new brkcontNode(true, new Position(ctx));
+  }
+  @Override
+  public ASTNode visitContinueStmt(MxParser.ContinueStmtContext ctx) {
+    return new brkcontNode(false, new Position(ctx));
+  }
+
+  @Override
   public ASTNode visitReturnStmt(MxParser.ReturnStmtContext ctx) {
     ExprNode value = null;
     if(ctx.expression() != null)
       value = (ExprNode) visit(ctx.expression());
     return new returnStmtNode(value, new Position(ctx));
-  }
-
-  @Override
-  public ASTNode visitPurExprStmt(MxParser.PurExprStmtContext ctx) {
-    return new exprStmtNode((ExprNode) visit(ctx.expression()), new Position(ctx));
   }
 
   @Override
@@ -149,6 +148,17 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
             new Position(ctx)
     );
   }
+
+  @Override
+  public ASTNode visitPurExprStmt(MxParser.PurExprStmtContext ctx) {
+    return new exprStmtNode((ExprNode) visit(ctx.expression()), new Position(ctx));
+  }
+
+  @Override
+  public ASTNode visitEmptyStmt(MxParser.EmptyStmtContext ctx) {
+    return null;
+  }
+
 
   // ------ Expression Part -----
   @Override

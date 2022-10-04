@@ -4,6 +4,8 @@
 
 f(int a, A b) {
     int c;
+    break;
+    continue;
     ;
     ;
     {

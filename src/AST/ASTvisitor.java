@@ -20,6 +20,7 @@ public interface ASTvisitor {
   void visit(suiteStmtNode it);
   void visit(varStmtNode it);
   void visit(ifStmtNode it);
+  void visit(brkcontNode it);
   void visit(returnStmtNode it);
   void visit(whileStmtNode it);
   void visit(forStmtNode it);
