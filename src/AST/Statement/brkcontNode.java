@@ -9,6 +9,7 @@ public class brkcontNode extends StmtNode {
 
   public brkcontNode(boolean isbreak, Position pos) {
     super(pos);
+    isBreak = isContinue = false;
     if(isbreak) isBreak = true;
     else isContinue = true;
   }

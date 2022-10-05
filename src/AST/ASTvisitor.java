@@ -14,6 +14,11 @@ public interface ASTvisitor {
 
   void visit(varExprNode it);
   void visit(cmpExprNode it);
+
+  void visit(memberExprNode it);
+  void visit(bracketExprNode it);
+  void visit(funcExprNode it);
+  void visit(unaryExprNode it);
   void visit(binaryExprNode it);
   void visit(assignExprNode it);
 

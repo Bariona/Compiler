@@ -4,7 +4,7 @@ import Utility.Position;
 import Utility.Type.BaseType;
 
 abstract public class ExprNode extends ASTNode {
-  public BaseType type;
+  public BaseType restype;
 
   public ExprNode(Position pos) {
     super(pos);

@@ -18,7 +18,7 @@ public class cmpExprNode extends ExprNode {
     this.lhs = lhs;
     this.rhs = rhs;
     this.opCode = opCode;
-    type = boolType;
+    restype = boolType;
   }
 
   @Override

@@ -9,7 +9,7 @@ public class varExprNode extends ExprNode {
   public varExprNode(String name, Position pos, BaseType type) {
     super(pos);
     this.name = name;
-    this.type = type;
+    this.restype = type;
   }
 
   @Override

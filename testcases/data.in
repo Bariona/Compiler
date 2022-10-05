@@ -1,5 +1,5 @@
 
-    int a;
+    int a = 1 + 2;
     int[] b = new int [];
 
 f(int a, A b) {

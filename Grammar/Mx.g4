@@ -55,7 +55,7 @@ expression : primary                                # AtomExpr
     | expression '.' Identifier                     # MemberExpr
     | expression '[' expression ']'                 # BracketExpr
     | expression '(' argumentList? ')'              # FunctionExpr
-    | expression op = ('--' | '++')                 # UnaryExpr
+    | expression op = ('--' | '++')                 # SelfExpr
     | <assoc=right> op = ('++' | '--') expression   # UnaryExpr
     | <assoc=right> op = ('+' | '-') expression     # UnaryExpr
     | <assoc=right> op = ('!' | '~') expression     # UnaryExpr
