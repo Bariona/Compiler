@@ -175,6 +175,15 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   // visitSelfExpr() { ... }
 
+  @Override
+  public ASTNode visitParenExpr(MxParser.ParenExprContext ctx) {
+    return visit(ctx.expression());
+  }
+
+  @Override
+  public ASTNode visitSelfExpr(MxParser.SelfExprContext ctx) {
+    return new selfExprNode(ctx.op.getText(), (ExprNode) visit(ctx.expression()), new Position(ctx));
+  }
 
   @Override
   public ASTNode visitAtomExpr(MxParser.AtomExprContext ctx) {
