@@ -12,9 +12,11 @@ public interface ASTvisitor {
   void visit(classDefNode it);
   void visit(funcDefNode it);
 
-  void visit(varExprNode it);
-  void visit(cmpExprNode it);
+//  void visit(varExprNode it);
+//  void visit(cmpExprNode it);
 
+  void visit(atomExprNode it);
+  void visit(newExprNode it);
   void visit(memberExprNode it);
   void visit(bracketExprNode it);
   void visit(funcExprNode it);

@@ -12,6 +12,7 @@ public class memberExprNode extends ExprNode {
     super(pos);
     this.member = member;
     this.callExpr = callExpr;
+    // this.restype???
   }
 
   @Override

@@ -12,13 +12,15 @@ public class VarType extends BaseType {
 //    super(typename);
 //  }
 
-  public VarType(MxParser.TypeNameContext ctx) {
+  public VarType(MxParser.TypeNameContext ctx, boolean checkDimValidity) {
     super(ctx);
     this.dimension = ctx.bracket().size();
 //    System.out.println(this.type.name() + " " + this.dimension);
-    for(int i = 0; i < ctx.bracket().size(); ++i) {
-      if(ctx.bracket(i).expression() != null) {
-        throw new SyntaxError("Not Var-array type.", new Position(ctx.bracket(i).expression())); // syntax part
+    if(checkDimValidity) {
+      for(int i = 0; i < ctx.bracket().size(); ++i) {
+        if(ctx.bracket(i).expression() != null) {
+          throw new SyntaxError("Not Var-array type.", new Position(ctx.bracket(i).expression())); // syntax part
+        }
       }
     }
   }

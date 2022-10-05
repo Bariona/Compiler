@@ -27,7 +27,7 @@ public class binaryExprNode extends ExprNode {
       case "^", "|", "&" :
       case "<<", ">>" :
         opType = binaryOpType.Arithmetic;
-        restype = lhs.restype;
+//        restype = lhs.restype;
         break;
       case "<", ">", "<=", ">=" :
         opType = binaryOpType.Compare;

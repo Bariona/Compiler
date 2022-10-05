@@ -53,7 +53,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     varDefNode v = new varDefNode(new Position(ctx));
     for(var vt : ctx.varTerm()) {
       varSingleDefNode node = (varSingleDefNode) visitVarTerm(vt);
-      node.type = new VarType(ctx.typeName());
+      node.type = new VarType(ctx.typeName(), true);
       v.varlist.add(node);
     }
     return v;
@@ -72,7 +72,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
       for(var type : ctx.parameterList().typeName()) {
 //        VarType para = new VarType(ctx.parameterList().typeName(i));
         func.parameterList.add(new Pair<>(
-                new VarType(type),
+                new VarType(type, true),
                 ctx.parameterList().Identifier().toString()
         ));
       }
@@ -177,15 +177,19 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
 
   @Override
-  public ASTNode visitNewtype(MxParser.NewtypeContext ctx) {
-    System.exit(1);
-    return null;
+  public ASTNode visitAtomExpr(MxParser.AtomExprContext ctx) {
+    return new atomExprNode(ctx.primary(), new Position(ctx));
   }
 
   @Override
-  public ASTNode visitAtomExpr(MxParser.AtomExprContext ctx) {
-    System.exit(1);
-    return null;
+  public ASTNode visitNewtype(MxParser.NewtypeContext ctx) {
+    newExprNode node = new newExprNode(new VarType(ctx.typeName(), false), new Position(ctx));
+    for(var dim : ctx.typeName().bracket()) {
+      if(dim.expression() != null) {
+        node.DimensionExpr.add((ExprNode) visit(dim.expression()));
+      } else node.DimensionExpr.add(null);
+    }
+    return node;
   }
 
   @Override
