@@ -263,6 +263,18 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitArgumentList(MxParser.ArgumentListContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code SelfExpr}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterSelfExpr(MxParser.SelfExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code SelfExpr}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitSelfExpr(MxParser.SelfExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code FunctionExpr}
 	 * labeled alternative in {@link MxParser#expression}.
 	 * @param ctx the parse tree
@@ -346,6 +358,18 @@ public interface MxListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAtomExpr(MxParser.AtomExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ParenExpr}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterParenExpr(MxParser.ParenExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ParenExpr}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitParenExpr(MxParser.ParenExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code UnaryExpr}
 	 * labeled alternative in {@link MxParser#expression}.

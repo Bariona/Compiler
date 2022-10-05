@@ -1,5 +1,4 @@
-package Parser;
-// Generated from java-escape by ANTLR 4.11.1
+package Parser;// Generated from java-escape by ANTLR 4.11.1
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
