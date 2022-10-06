@@ -11,6 +11,10 @@ public class atomExprNode extends ExprNode {
   public atomExprNode(MxParser.PrimaryContext atom, Position pos) {
     super(pos);
     this.atom = atom;
+//    if(atom.StringConst() != null) {
+//      System.out.println(atom.StringConst().toString());
+//      System.out.println("abc\n");
+//    }
   }
 
   @Override

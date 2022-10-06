@@ -1,8 +1,9 @@
 
-    int a = 1 + 2;
-    int[] b = new int [];
+    int a = 1 + 2, b = 4;
+    int[] b = new int [5];
+    String c = "abc\n";
 
-f(int a, A b) {
+f(int afu, A b) {
     int c;
     break;
     continue;
@@ -15,3 +16,11 @@ f(int a, A b) {
     }
 }
 
+int main()
+{
+	if(1)
+	{
+
+	}
+	return 0;
+}

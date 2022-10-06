@@ -8,6 +8,7 @@ abstract public class ExprNode extends ASTNode {
 
   public ExprNode(Position pos) {
     super(pos);
+    restype= null;
   }
 
   public boolean isAssignable() {

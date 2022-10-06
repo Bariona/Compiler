@@ -1,6 +1,7 @@
 import AST.RootNode;
 import Frontend.ASTBuilder;
 
+import Frontend.ASTPrinter;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.*;
 
@@ -31,6 +32,9 @@ public class Main {
       ParseTree tree = parser.program();
       ASTBuilder ast = new ASTBuilder(); // new visitor for AST making
       RootNode root = (RootNode) ast.visit(tree);
+
+      ASTPrinter printer = new ASTPrinter(new PrintStream("data.out"));
+      printer.visit(root);
 
       System.out.println("\033[33m🎉  Done successfully.\033[0m");
     } catch (Error e) {

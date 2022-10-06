@@ -32,7 +32,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
         if(tmp != null) node.stmts.add(tmp); // 去掉EmptyExpr
       }
     }
-    System.out.println(node.stmts.size());
+//    System.out.println(node.stmts.size());
     return node;
   }
 
@@ -69,11 +69,11 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     funcDefNode func = new funcDefNode(ctx.Identifier().toString(), new Position(ctx));
     func.type = (ctx.typeName() != null) ? new FuncType(ctx.typeName()) : null; // 为了处理构造函数
     if(ctx.parameterList() != null) {
-      for(var type : ctx.parameterList().typeName()) {
+      for(int i = 0; i < ctx.parameterList().Identifier().size(); ++i) {
 //        VarType para = new VarType(ctx.parameterList().typeName(i));
         func.parameterList.add(new Pair<>(
-                new VarType(type, true),
-                ctx.parameterList().Identifier().toString()
+                new VarType(ctx.parameterList().typeName(i), true),
+                ctx.parameterList().Identifier(i).toString()
         ));
       }
     }
@@ -113,9 +113,10 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   @Override
   public ASTNode visitDefStmt(MxParser.DefStmtContext ctx) {
-    varStmtNode node = new varStmtNode(new Position(ctx));
-    node.Defstmt = (varDefNode) visit(ctx.def()); // 一定是VarDEF吗?
-    return node;
+//    varStmtNode node = new varStmtNode(new Position(ctx));
+//    node.Defstmt = (varDefNode) visit(ctx.def()); // 一定是VarDEF吗?
+//    return node;
+    return visit(ctx.def());
   }
 
   @Override
@@ -239,13 +240,12 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   public ASTNode visitBinaryExpr(MxParser.BinaryExprContext ctx) {
 //    String opt = ctx.op.getText();
 //    System.out.println(op);
-    binaryExprNode node = new binaryExprNode(
+   return new binaryExprNode(
             (ExprNode) visit(ctx.expression(0)),
             (ExprNode) visit(ctx.expression(1)),
             ctx.op.getText(),
             new Position(ctx)
     );
-    return node;
   }
 
   @Override
