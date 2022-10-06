@@ -1,6 +1,8 @@
 - [ ] String Constant 的转义字符处理
-- [ ] 异常处理报错
+- [x] 异常处理报错
 - [ ] System.out.println()对文本框输入code_text的影响
 - [ ] 字符串长度的限制(64个, 255个), 添加负数, 运算范围等等
 - [ ] 数组长度(return等时候)是否会越界
 - [ ] testcode : gitignore
+- [ ] 各个expression的type类型
+- [ ] 去掉exprStmt

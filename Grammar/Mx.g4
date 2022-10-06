@@ -12,7 +12,7 @@ statement : suite                                               # SuiteStmt
     | Continue ';'                                              # ContinueStmt
     | Return expression? ';'                                    # ReturnStmt
     | While '(' expression ')' statement                        # WhileStmt
-    | For '(' (initialExpr = expression | varDef Semi)? ';' (condiExpr = expression)? ';' (stepExpr = expression)? ')' statement    # ForStmt
+    | For '(' (initialExpr = expression | varDef)? ';' (condiExpr = expression)? ';' (stepExpr = expression)? ')' statement    # ForStmt
     | expression ';'                                            # PurExprStmt
 //    | sysfunction                                               # Sysyemfunc
     | ';'                                                       # EmptyStmt

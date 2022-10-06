@@ -3,7 +3,7 @@ package AST;
 import Utility.Position;
 import Utility.Type.BaseType;
 
-abstract public class ExprNode extends ASTNode {
+abstract public class ExprNode extends StmtNode {
   public BaseType restype;
 
   public ExprNode(Position pos) {

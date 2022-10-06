@@ -11,12 +11,11 @@ import java.io.PrintStream;
 public class ASTPrinter implements ASTvisitor {
   final String indent = "  ";
   private PrintStream out;
-  private int IndentCnt, id;
+  private int IndentCnt;
 
   public ASTPrinter(PrintStream out) {
     this.out = out;
     IndentCnt = -1;
-    id = 0;
   }
 
   private void PrintIn(String str) {
@@ -29,10 +28,9 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(RootNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
-    PrintIn("Root Node " + tmp + " position:" + node.pos.toString());
+    PrintIn("Root Node " + " position:" + node.pos.toString());
     node.Defs.forEach(it -> it.accept(this));
 
     --IndentCnt;
@@ -40,10 +38,9 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(varDefNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
-    PrintIn("VariableList " + tmp + " position:" + node.pos.toString());
+    PrintIn("Variable Definitions ↓ " + " position:" + node.pos.toString());
     node.varlist.forEach(it -> it.accept(this));
 
     --IndentCnt;
@@ -57,14 +54,12 @@ public class ASTPrinter implements ASTvisitor {
     if(node.expr != null) {
       node.expr.accept(this);
     }
-
     --IndentCnt;
     out.println();
   }
 
   @Override
   public void visit(classDefNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
     PrintIn(node.name);
@@ -76,25 +71,22 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(funcDefNode node) {
-    int tmp = ++id;
     ++IndentCnt;
+
     PrintIn("Function Definition: " + node.name + " pos: " + node.pos.toString());
-
     String paralist = indent;
-    for(var p : node.parameterList) {
+    for(var p : node.parameterList)
       paralist += p.a.typename() + " " + p.b + ", ";
-    }
     Print(paralist);
-
+    node.stmts.accept(this);
     --IndentCnt;
   }
 
   @Override
   public void visit(atomExprNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
-    PrintIn("AtomExpr Node " + tmp + " pos: " + node.pos);
+    PrintIn("AtomExpr Node " + " pos: " + node.pos);
     Print(indent + node.atom.getText());
 
     --IndentCnt;
@@ -102,11 +94,10 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(newExprNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
-    PrintIn("NewExpr Node " + tmp + " pos: " + node.pos);
-    Print("  Type: " + node.restype.typename() + ", dimension: " + node.DimensionExpr.size());
+    PrintIn("NewExpr Node " + " pos: " + node.pos);
+    Print("  TypeName: " + node.restype.typename() + ", dimension: " + node.DimensionExpr.size());
     node.DimensionExpr.forEach(d -> d.accept(this));
 
     --IndentCnt;
@@ -114,10 +105,9 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(memberExprNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
-    PrintIn("MemberExpr Node " + tmp + " pos: " + node.pos);
+    PrintIn("MemberExpr Node " + " pos: " + node.pos);
     Print("  Type: " + node.restype.typename() + " member: " + node.member);
     node.callExpr.accept(this);
 
@@ -126,10 +116,9 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(bracketExprNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
-    PrintIn("Bracket Node " + tmp + " pos: " + node.pos);
+    PrintIn("Bracket Node " + " pos: " + node.pos);
     node.callExpr.accept(this);
     node.index.accept(this);
 
@@ -138,10 +127,9 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(funcExprNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
-    PrintIn("FunctionCall Node " + tmp + " pos: " + node.pos);
+    PrintIn("FunctionCall Node " + " pos: " + node.pos);
     node.callExpr.accept(this);
     Print("ArgumentList");
     node.argumentList.forEach(it -> it.accept(this));
@@ -151,10 +139,9 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(selfExprNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
-    PrintIn("SelfADD/SUB Node " + tmp + " pos: " + node.pos);
+    PrintIn("SelfADD/SUB Node " + " pos: " + node.pos);
     Print(indent + "opCode: " + node.opCode);
     Print("Expression ↓");
     node.expression.accept(this);
@@ -164,10 +151,9 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(unaryExprNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
-    PrintIn("Unary Node " + tmp + " pos: " + node.pos);
+    PrintIn("Unary Node " + " pos: " + node.pos);
     Print(indent + "opCode: " + node.opCode);
     Print(indent + "Expression ↓");
     node.expression.accept(this);
@@ -177,10 +163,9 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(binaryExprNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
-    PrintIn("Binary Node " + tmp + " pos: " + node.pos);
+    PrintIn("Binary Node " + " pos: " + node.pos);
     Print(indent + "opCode: " + node.opCode + ", OpType: " + node.opType);
     Print(indent + "Expression ↓");
     node.lhs.accept(this);
@@ -191,10 +176,9 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(assignExprNode node) {
-    int tmp = ++id;
     ++IndentCnt;
 
-    PrintIn("Assign Node " + tmp + " pos: " + node.pos);
+    PrintIn("Assign Node " + " pos: " + node.pos);
     Print(indent + "Expression ↓");
     node.lhs.accept(this);
     node.rhs.accept(this);
@@ -204,47 +188,86 @@ public class ASTPrinter implements ASTvisitor {
 
   @Override
   public void visit(suiteStmtNode node) {
-    int tmp = ++id;
     ++IndentCnt;
-
-    PrintIn("Assign Node " + tmp + " pos: " + node.pos);
+    out.println(indent.repeat(IndentCnt) + "===== Suite Part " + " pos: " + node.pos + " =====");
     node.stmts.forEach(it -> it.accept(this));
+    out.println(indent.repeat(IndentCnt) + "====== End ======");
+    --IndentCnt;
+  }
+
+  @Override
+  public void visit(ifStmtNode node) {
+    ++IndentCnt;
+    PrintIn("If-Else Statement " + " pos: " + node.pos);
+    if(node.condition != null) {
+      Print(indent + "Condition Expr:");
+      node.condition.accept(this);
+    }
+    if(node.thenStmt != null) {
+      Print(indent + "If Expr:");
+      node.thenStmt.accept(this);
+    }
+    if(node.elseStmt != null) {
+      Print(indent + "Else Expr:");
+      node.elseStmt.accept(this);
+    }
+    --IndentCnt;
+  }
+
+  @Override
+  public void visit(brkcontNode node) {
+    ++IndentCnt;
+    if(node.isBreak) {
+      out.println(indent.repeat(IndentCnt) + "Break; " + " pos: " + node.pos);
+    } else {
+      out.println(indent.repeat(IndentCnt) + "Continue; " + " pos: " + node.pos);
+    }
+    --IndentCnt;
+  }
+
+  @Override
+  public void visit(returnStmtNode node) {
+    ++IndentCnt;
+    PrintIn("Return " + " pos: " + node.pos);
+    if(node.ret != null)
+      node.ret.accept(this);
+    --IndentCnt;
+  }
+
+  @Override
+  public void visit(whileStmtNode node) {
+    ++IndentCnt;
+    PrintIn("While Statement " + " pos: " + node.pos);
+    node.condition.accept(this);
+    node.stmt.accept(this);
+    --IndentCnt;
+  }
+
+  @Override
+  public void visit(forStmtNode node) {
+    ++IndentCnt;
+    PrintIn("For Statement " + " pos: " + node.pos);
+    if(node.initial != null) {
+      Print(indent + " Initial:");
+      node.initial.accept(this);
+    }
+    if(node.condition != null) {
+      Print(indent + " Condition:");
+      node.condition.accept(this);
+    }
+    if(node.step != null) {
+      Print(indent + " Step Expr:");
+      node.step.accept(this);
+    }
+    node.stmt.accept(this);
     --IndentCnt;
   }
 
 //  @Override
-//  public void visit(varStmtNode it) {
-//
+//  public void visit(exprStmtNode node) {
+//    ++IndentCnt;
+//    node.expr.accept(this);
+//    --IndentCnt;
 //  }
-
-  @Override
-  public void visit(ifStmtNode it) {
-
-  }
-
-  @Override
-  public void visit(brkcontNode it) {
-
-  }
-
-  @Override
-  public void visit(returnStmtNode it) {
-
-  }
-
-  @Override
-  public void visit(whileStmtNode it) {
-
-  }
-
-  @Override
-  public void visit(forStmtNode it) {
-
-  }
-
-  @Override
-  public void visit(exprStmtNode it) {
-
-  }
 
 }

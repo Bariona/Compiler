@@ -4,7 +4,7 @@ import AST.*;
 import Utility.Position;
 
 public class returnStmtNode extends StmtNode {
-  ExprNode ret;
+  public ExprNode ret;
 
   public returnStmtNode(ExprNode ret, Position pos) {
     super(pos);

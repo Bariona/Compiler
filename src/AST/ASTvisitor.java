@@ -31,5 +31,5 @@ public interface ASTvisitor {
   void visit(returnStmtNode it);
   void visit(whileStmtNode it);
   void visit(forStmtNode it);
-  void visit(exprStmtNode it);
+//  void visit(exprStmtNode it);
 }

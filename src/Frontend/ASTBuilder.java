@@ -25,13 +25,15 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   @Override
   public ASTNode visitSuite(MxParser.SuiteContext ctx) {
+    if(ctx.statement().isEmpty())
+      return null;
     suiteStmtNode node = new suiteStmtNode(new Position(ctx));
-    if(!ctx.statement().isEmpty()) {
-      for(var stmt : ctx.statement()) {
-        StmtNode tmp = (StmtNode) visit(stmt);
-        if(tmp != null) node.stmts.add(tmp); // 去掉EmptyExpr
-      }
+
+    for(var stmt : ctx.statement()) {
+       StmtNode tmp = (StmtNode) visit(stmt);
+       if(tmp != null) node.stmts.add(tmp); // 去掉EmptyExpr
     }
+
 //    System.out.println(node.stmts.size());
     return node;
   }
@@ -153,6 +155,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   @Override
   public ASTNode visitForStmt(MxParser.ForStmtContext ctx) {
+
     return new forStmtNode(
             (ExprNode) visit(ctx.initialExpr),
             (ExprNode) visit(ctx.condiExpr),
@@ -164,7 +167,8 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   @Override
   public ASTNode visitPurExprStmt(MxParser.PurExprStmtContext ctx) {
-    return new exprStmtNode((ExprNode) visit(ctx.expression()), new Position(ctx));
+//    return new exprStmtNode((ExprNode) visit(ctx.expression()), new Position(ctx));
+    return visit(ctx.expression());
   }
 
   @Override

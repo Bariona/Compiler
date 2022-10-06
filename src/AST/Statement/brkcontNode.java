@@ -5,7 +5,7 @@ import AST.StmtNode;
 import Utility.Position;
 
 public class brkcontNode extends StmtNode {
-  boolean isBreak, isContinue;
+  public boolean isBreak, isContinue;
 
   public brkcontNode(boolean isbreak, Position pos) {
     super(pos);
