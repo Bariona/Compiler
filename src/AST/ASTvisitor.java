@@ -7,14 +7,13 @@ import AST.Statement.*;
 public interface ASTvisitor {
   void visit(RootNode it);
 
+  // Def
   void visit(varDefNode it);
   void visit(varSingleDefNode it);
   void visit(classDefNode it);
   void visit(funcDefNode it);
 
-  void visit(varExprNode it);
-  void visit(cmpExprNode it);
-
+  // Expr
   void visit(atomExprNode it);
   void visit(newExprNode it);
   void visit(memberExprNode it);
@@ -25,8 +24,8 @@ public interface ASTvisitor {
   void visit(binaryExprNode it);
   void visit(assignExprNode it);
 
+  // Stmt
   void visit(suiteStmtNode it);
-//  void visit(varStmtNode it);
   void visit(ifStmtNode it);
   void visit(brkcontNode it);
   void visit(returnStmtNode it);

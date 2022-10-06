@@ -90,16 +90,6 @@ public class ASTPrinter implements ASTvisitor {
   }
 
   @Override
-  public void visit(varExprNode it) {
-
-  }
-
-  @Override
-  public void visit(cmpExprNode it) {
-
-  }
-
-  @Override
   public void visit(atomExprNode node) {
     int tmp = ++id;
     ++IndentCnt;
