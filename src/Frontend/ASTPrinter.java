@@ -222,10 +222,10 @@ public class ASTPrinter implements ASTvisitor {
     --IndentCnt;
   }
 
-  @Override
-  public void visit(varStmtNode it) {
-
-  }
+//  @Override
+//  public void visit(varStmtNode it) {
+//
+//  }
 
   @Override
   public void visit(ifStmtNode it) {
