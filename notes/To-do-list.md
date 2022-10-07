@@ -5,4 +5,6 @@
 - [ ] 数组长度(return等时候)是否会越界
 - [ ] testcode : gitignore
 - [ ] 各个expression的type类型
-- [ ] 去掉exprStmt
+- [ ] ++a++的判断: a++优先级高, 但是返回的不是引用, 所以这是一个错误用法
+- [x] 去掉exprStmt, varExprNode
+- 怪怪的做法: ASTNode → StmtNode → DefNode, ExprNode 
