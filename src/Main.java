@@ -16,15 +16,14 @@ public class Main {
     System.out.println("Current directory: " + System.getProperty("user.dir"));
 
     String filename = "testcases/data.in";
+    String outputFile = "data.out";
     InputStream input = new FileInputStream(filename);
 
     try {
       MxLexer lexer = new MxLexer(CharStreams.fromStream(input)); // lexer
       lexer.removeErrorListeners();
       lexer.addErrorListener(new MxErrorListener());
-
       CommonTokenStream tokens = new CommonTokenStream(lexer);
-
       MxParser parser = new MxParser(tokens); // parser
       parser.removeErrorListeners();
       parser.addErrorListener(new MxErrorListener());
@@ -33,8 +32,11 @@ public class Main {
       ASTBuilder ast = new ASTBuilder(); // new visitor for AST making
       RootNode root = (RootNode) ast.visit(tree);
 
-      ASTPrinter printer = new ASTPrinter(new PrintStream("data.out"));
+      // for Debug (
+      ASTPrinter printer = new ASTPrinter(new PrintStream(outputFile));
       printer.visit(root);
+
+      // Semantic Part
 
       System.out.println("\033[33m🎉  Done successfully.\033[0m");
     } catch (Error e) {

@@ -20,6 +20,7 @@ abstract public class BaseType {
   }
   public BaseType(MxParser.TypeNameContext ctx) {
     this.type = MatchType(ctx);
+    ClassName = null;
   }
 
 //  public BaseType(String typename) {

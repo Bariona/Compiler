@@ -24,4 +24,14 @@ public class VarType extends BaseType {
       }
     }
   }
+
+  boolean Compare(VarType it) {
+    if(it.type != this.type)
+      return false;
+    if(it.type == BultinType.CLASS && this.ClassName != it.ClassName)
+      return false;
+    if(it.dimension != this.dimension)
+      return false;
+    return true;
+  }
 }

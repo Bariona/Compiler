@@ -1,6 +1,6 @@
-<img alt="jdk, jre, jvm" height="200" src="https://upload-images.jianshu.io/upload_images/4622762-f8effb081e6b935e.png?imageMogr2/auto-orient/strip|imageView2/2/w/658/format/webp" width="200"/>
+<div align=center> <img alt="jdk, jre, jvm" src="https://upload-images.jianshu.io/upload_images/4622762-f8effb081e6b935e.png?imageMogr2/auto-orient/strip|imageView2/2/w/658/format/webp" width="500"/>
 
-<img alt="jdk" height="200" src="https://upload-images.jianshu.io/upload_images/4622762-513a6830fb10ace5.png?imageMogr2/auto-orient/strip|imageView2/2/w/684/format/webp" width="200"/>
+<img alt="jdk" src="https://upload-images.jianshu.io/upload_images/4622762-513a6830fb10ace5.png?imageMogr2/auto-orient/strip|imageView2/2/w/684/format/webp" width="400"/> </div>
 
 查看java bytecode:
 ```
