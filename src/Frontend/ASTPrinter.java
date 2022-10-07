@@ -1,6 +1,6 @@
 package Frontend;
 
-import AST.ASTvisitor;
+import AST.ASTVisitor;
 import AST.Definition.*;
 import AST.Expression.*;
 import AST.Statement.*;
@@ -8,7 +8,7 @@ import AST.RootNode;
 
 import java.io.PrintStream;
 
-public class ASTPrinter implements ASTvisitor {
+public class ASTPrinter implements ASTVisitor {
   final String indent = "  ";
   private PrintStream out;
   private int IndentCnt;
@@ -97,7 +97,7 @@ public class ASTPrinter implements ASTvisitor {
     ++IndentCnt;
 
     PrintIn("NewExpr Node " + " pos: " + node.pos);
-    Print("  TypeName: " + node.restype.typename() + ", dimension: " + node.DimensionExpr.size());
+    Print("  TypeName: " + node.ExprType.typename() + ", dimension: " + node.DimensionExpr.size());
     node.DimensionExpr.forEach(d -> d.accept(this));
 
     --IndentCnt;
@@ -108,7 +108,7 @@ public class ASTPrinter implements ASTvisitor {
     ++IndentCnt;
 
     PrintIn("MemberExpr Node " + " pos: " + node.pos);
-    Print("  Type: " + node.restype.typename() + " member: " + node.member);
+    Print("  Type: " + node.ExprType.typename() + " member: " + node.member);
     node.callExpr.accept(this);
 
     --IndentCnt;

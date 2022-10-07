@@ -1,6 +1,6 @@
 package AST.Statement;
 
-import AST.ASTvisitor;
+import AST.ASTVisitor;
 import AST.StmtNode;
 import Utility.Position;
 
@@ -15,7 +15,7 @@ public class brkcontNode extends StmtNode {
   }
 
   @Override
-  public void accept(ASTvisitor visitor) {
+  public void accept(ASTVisitor visitor) {
     visitor.visit(this);
   }
 }

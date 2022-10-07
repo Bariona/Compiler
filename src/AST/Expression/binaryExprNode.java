@@ -31,11 +31,11 @@ public class binaryExprNode extends ExprNode {
         break;
       case "<", ">", "<=", ">=" :
         opType = binaryOpType.Compare;
-        restype.type = BaseType.BultinType.BOOL;
+        ExprType.type = BaseType.BultinType.BOOL;
         break;
       case "==", "!=" :
         opType = binaryOpType.Equal;
-        restype.type = BaseType.BultinType.BOOL;
+        ExprType.type = BaseType.BultinType.BOOL;
         break;
       default :
         throw new SyntaxError("Miss operator", this.pos);
@@ -62,7 +62,7 @@ public class binaryExprNode extends ExprNode {
   }
 
   @Override
-  public void accept(ASTvisitor visitor) {
+  public void accept(ASTVisitor visitor) {
     visitor.visit(this);
   }
 }

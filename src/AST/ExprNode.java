@@ -4,11 +4,11 @@ import Utility.Position;
 import Utility.Type.BaseType;
 
 abstract public class ExprNode extends StmtNode {
-  public BaseType restype;
+  public BaseType ExprType;
 
   public ExprNode(Position pos) {
     super(pos);
-    restype= null;
+    ExprType = null;
   }
 
   public boolean isAssignable() {

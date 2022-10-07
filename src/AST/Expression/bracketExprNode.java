@@ -1,6 +1,6 @@
 package AST.Expression;
 
-import AST.ASTvisitor;
+import AST.ASTVisitor;
 import AST.ExprNode;
 import Utility.Position;
 
@@ -11,11 +11,11 @@ public class bracketExprNode extends ExprNode {
     super(pos);
     this.callExpr = callExpr;
     this.index = index;
-    this.restype = null; // ??????
+    this.ExprType = null; // ??????
   }
 
   @Override
-  public void accept(ASTvisitor visitor) {
+  public void accept(ASTVisitor visitor) {
     visitor.visit(this);
   }
 }

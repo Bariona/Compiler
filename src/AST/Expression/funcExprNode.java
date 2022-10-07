@@ -1,6 +1,6 @@
 package AST.Expression;
 
-import AST.ASTvisitor;
+import AST.ASTVisitor;
 import AST.ExprNode;
 import Utility.Position;
 
@@ -14,11 +14,11 @@ public class funcExprNode extends ExprNode {
     super(pos);
     this.callExpr = callExpr;
     this.argumentList = new ArrayList<>();
-    this.restype = null; // ???? function
+    this.ExprType = null; // ???? function
   }
 
   @Override
-  public void accept(ASTvisitor visitor) {
+  public void accept(ASTVisitor visitor) {
     visitor.visit(this);
   }
 }

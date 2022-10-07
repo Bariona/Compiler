@@ -4,7 +4,7 @@ import AST.Definition.*;
 import AST.Expression.*;
 import AST.Statement.*;
 
-public interface ASTvisitor {
+public interface ASTVisitor {
   void visit(RootNode it);
 
   // Def

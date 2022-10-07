@@ -12,7 +12,7 @@ public class returnStmtNode extends StmtNode {
   }
 
   @Override
-  public void accept(ASTvisitor visitor) {
+  public void accept(ASTVisitor visitor) {
     visitor.visit(this);
   }
 }

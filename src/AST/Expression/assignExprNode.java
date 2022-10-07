@@ -10,11 +10,11 @@ public class assignExprNode extends ExprNode {
     super(pos);
     this.lhs = lhs;
     this.rhs = rhs;
-    restype = lhs.restype; // expression'res type
+    ExprType = lhs.ExprType; // expression'res type
   }
 
   @Override
-  public void accept(ASTvisitor visitor) {
+  public void accept(ASTVisitor visitor) {
     visitor.visit(this);
   }
 }

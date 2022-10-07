@@ -16,7 +16,7 @@ public class classDefNode extends DefNode {
   }
 
   @Override
-  public void accept(ASTvisitor visitor) {
+  public void accept(ASTVisitor visitor) {
     visitor.visit(this);
   }
 }

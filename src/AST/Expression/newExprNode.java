@@ -1,8 +1,7 @@
 package AST.Expression;
 
-import AST.ASTvisitor;
+import AST.ASTVisitor;
 import AST.ExprNode;
-import Parser.MxParser;
 import Utility.Position;
 import Utility.Type.VarType;
 
@@ -14,11 +13,11 @@ public class newExprNode extends ExprNode {
   public newExprNode(VarType type, Position pos) {
     super(pos);
     DimensionExpr = new ArrayList<>();
-    this.restype = type;
+    this.ExprType = type;
   }
 
   @Override
-  public void accept(ASTvisitor visitor) {
+  public void accept(ASTVisitor visitor) {
     visitor.visit(this);
   }
 }

@@ -1,6 +1,6 @@
 package AST.Expression;
 
-import AST.ASTvisitor;
+import AST.ASTVisitor;
 import AST.ExprNode;
 import Utility.Position;
 
@@ -11,11 +11,11 @@ public class unaryExprNode extends ExprNode {
   public unaryExprNode(String opCode, ExprNode expression, Position pos) {
     super(pos);
     this.opCode = opCode;
-    this.restype = expression.restype; // Is "!" the expression.restype?
+    this.ExprType = expression.ExprType; // Is "!" the expression.restype?
   }
 
   @Override
-  public void accept(ASTvisitor visitor) {
+  public void accept(ASTVisitor visitor) {
     visitor.visit(this);
   }
 }

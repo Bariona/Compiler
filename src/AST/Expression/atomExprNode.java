@@ -1,6 +1,6 @@
 package AST.Expression;
 
-import AST.ASTvisitor;
+import AST.ASTVisitor;
 import AST.ExprNode;
 import Parser.MxParser;
 import Utility.Position;
@@ -18,7 +18,7 @@ public class atomExprNode extends ExprNode {
   }
 
   @Override
-  public void accept(ASTvisitor visitor) {
+  public void accept(ASTVisitor visitor) {
     visitor.visit(this);
   }
 }
