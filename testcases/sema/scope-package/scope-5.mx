@@ -4,7 +4,7 @@ Test Target: Scope
 Author: 16' Jinxiao Chen
 Time: 2019-11-11
 Verdict: Fail
-Comment: utility.Type.BaseType for variable i has changed to string.
+Comment: utility.type.BaseType for variable i has changed to string.
 Origin Package: Semantic Extended
 */
 string i;

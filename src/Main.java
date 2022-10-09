@@ -1,15 +1,15 @@
-import AST.RootNode;
-import Frontend.ASTBuilder;
+import ast.RootNode;
+import frontend.ASTBuilder;
 
-import Frontend.ASTPrinter;
+import frontend.ASTPrinter;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.*;
 
 import java.io.*;
 
-import Parser.*;
-import Utility.MxErrorListener;
-import Utility.Error.Error;
+import parser.*;
+import utility.MxErrorListener;
+import utility.error.Error;
 
 public class Main {
   public static void main(String[] args) throws Exception {
