@@ -10,7 +10,7 @@ public class BreakContinueNode extends StmtNode {
   public BreakContinueNode(boolean isbreak, Position pos) {
     super(pos);
     isBreak = isContinue = false;
-    if(isbreak) isBreak = true;
+    if (isbreak) isBreak = true;
     else isContinue = true;
   }
 

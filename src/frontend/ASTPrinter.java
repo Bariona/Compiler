@@ -51,7 +51,7 @@ public class ASTPrinter implements ASTVisitor {
     ++IndentCnt;
     Print("Name: " + node.name);
     Print("Type: " + node.type.typename() + "[]".repeat(node.type.dimension));
-    if(node.expr != null) {
+    if (node.expr != null) {
       node.expr.accept(this);
     }
     --IndentCnt;
@@ -62,7 +62,7 @@ public class ASTPrinter implements ASTVisitor {
   public void visit(ClassDefNode node) {
     ++IndentCnt;
 
-    PrintIn(node.name);
+    PrintIn("Class Name: " + node.name);
     node.varDefs.forEach(v -> v.accept(this));
     node.funcDefs.forEach(f -> f.accept(this));
 
@@ -75,10 +75,10 @@ public class ASTPrinter implements ASTVisitor {
 
     PrintIn("Function Definition: " + node.name + " pos: " + node.pos.toString());
     String paralist = indent;
-    for(var p : node.parameterList)
+    for (var p : node.parameterList)
       paralist += p.a.typename() + " " + p.b + ", ";
     Print(paralist);
-    node.stmts.accept(this);
+    if (node.stmts != null) node.stmts.accept(this);
     --IndentCnt;
   }
 
@@ -199,15 +199,15 @@ public class ASTPrinter implements ASTVisitor {
   public void visit(IfStmtNode node) {
     ++IndentCnt;
     PrintIn("If-Else Statement " + " pos: " + node.pos);
-    if(node.condition != null) {
+    if (node.condition != null) {
       Print(indent + "Condition Expr:");
       node.condition.accept(this);
     }
-    if(node.thenStmt != null) {
+    if (node.thenStmt != null) {
       Print(indent + "If Expr:");
       node.thenStmt.accept(this);
     }
-    if(node.elseStmt != null) {
+    if (node.elseStmt != null) {
       Print(indent + "Else Expr:");
       node.elseStmt.accept(this);
     }
@@ -217,7 +217,7 @@ public class ASTPrinter implements ASTVisitor {
   @Override
   public void visit(BreakContinueNode node) {
     ++IndentCnt;
-    if(node.isBreak) {
+    if (node.isBreak) {
       out.println(indent.repeat(IndentCnt) + "Break; " + " pos: " + node.pos);
     } else {
       out.println(indent.repeat(IndentCnt) + "Continue; " + " pos: " + node.pos);
@@ -229,7 +229,7 @@ public class ASTPrinter implements ASTVisitor {
   public void visit(ReturnStmtNode node) {
     ++IndentCnt;
     PrintIn("Return " + " pos: " + node.pos);
-    if(node.ret != null)
+    if (node.ret != null)
       node.ret.accept(this);
     --IndentCnt;
   }
@@ -247,15 +247,15 @@ public class ASTPrinter implements ASTVisitor {
   public void visit(ForStmtNode node) {
     ++IndentCnt;
     PrintIn("For Statement " + " pos: " + node.pos);
-    if(node.initial != null) {
+    if (node.initial != null) {
       Print(indent + " Initial:");
       node.initial.accept(this);
     }
-    if(node.condition != null) {
+    if (node.condition != null) {
       Print(indent + " Condition:");
       node.condition.accept(this);
     }
-    if(node.step != null) {
+    if (node.step != null) {
       Print(indent + " Step Expr:");
       node.step.accept(this);
     }

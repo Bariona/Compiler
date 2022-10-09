@@ -1,4 +1,11 @@
+class ABC {
+    ABC(int x) {
 
+    }
+    void f() {
+
+    }
+};
         int a = 1 + c, b = 4;
         int[] b = new int [5];
 
@@ -17,6 +24,15 @@
             }
         }
     }
+
+void f() {
+    void f() {
+        class aaaa {
+
+        };
+    }
+}
+
 
     int main()
     {

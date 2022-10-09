@@ -22,22 +22,22 @@ public class BinaryExprNode extends ExprNode {
   public binaryOpType opType;
 
   void match(String symbol) {
-    switch(symbol) {
-      case "+", "-", "*", "/", "%" :
-      case "^", "|", "&" :
-      case "<<", ">>" :
+    switch (symbol) {
+      case "+", "-", "*", "/", "%":
+      case "^", "|", "&":
+      case "<<", ">>":
         opType = binaryOpType.Arithmetic;
 //        restype = lhs.restype;
         break;
-      case "<", ">", "<=", ">=" :
+      case "<", ">", "<=", ">=":
         opType = binaryOpType.Compare;
         exprType.type = BaseType.BultinType.BOOL;
         break;
-      case "==", "!=" :
+      case "==", "!=":
         opType = binaryOpType.Equal;
         exprType.type = BaseType.BultinType.BOOL;
         break;
-      default :
+      default:
         throw new SyntaxError("Miss operator", this.pos);
 //      case "+": return binaryOpType.Add;
 //      case "-": return binaryOpType.Sub;

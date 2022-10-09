@@ -15,21 +15,21 @@ public class VarType extends BaseType {
     super(ctx);
     this.dimension = ctx.bracket().size();
 //    System.out.println(this.type.name() + " " + this.dimension);
-    if(checkDimValidity) {
-      for(int i = 0; i < ctx.bracket().size(); ++i) {
-        if(ctx.bracket(i).expression() != null) {
+    if (checkDimValidity) {
+      for (int i = 0; i < ctx.bracket().size(); ++i) {
+        if (ctx.bracket(i).expression() != null) {
           throw new SyntaxError("Not Var-array type.", new Position(ctx.bracket(i).expression())); // syntax part
         }
       }
     }
   }
 
-  boolean Compare(VarType it) {
-    if(it.type != this.type)
+  boolean compare(VarType it) {
+    if (it.type != this.type)
       return false;
-    if(it.type == BultinType.CLASS && this.ClassName != it.ClassName)
+    if (it.type == BultinType.CLASS && this.ClassName != it.ClassName)
       return false;
-    if(it.dimension != this.dimension)
+    if (it.dimension != this.dimension)
       return false;
     return true;
   }

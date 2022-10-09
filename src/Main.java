@@ -32,7 +32,7 @@ public class Main {
       ASTBuilder ast = new ASTBuilder(); // new visitor for AST making
       RootNode root = (RootNode) ast.visit(tree);
 
-      // for Debug (
+      // Debug Printer
       ASTPrinter printer = new ASTPrinter(new PrintStream(outputFile));
       printer.visit(root);
 

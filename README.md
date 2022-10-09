@@ -17,6 +17,8 @@
    antlr4 <filename>.g4
    javac *.java
    grun <filename> <rulename> -tokens
+   
+   diff <file1> <file2> -qZB
 ```
 
 java编译:
