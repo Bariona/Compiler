@@ -5,10 +5,8 @@ import ast.RootNode;
 import ast.definition.*;
 import ast.expression.*;
 import ast.statement.*;
-import utility.Position;
 import utility.Scope;
 import utility.type.BaseType;
-import utility.type.VarType;
 
 import java.util.Stack;
 

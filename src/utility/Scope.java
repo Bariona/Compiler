@@ -2,12 +2,14 @@ package utility;
 
 import utility.error.SyntaxError;
 import utility.type.BaseType;
+import utility.type.FuncType;
 import utility.type.VarType;
 
 import java.util.HashMap;
 
 public class Scope {
-  private HashMap<String, BaseType> members;
+  private HashMap<String, VarType> members;
+  private HashMap<String, FuncType> members;
   private Scope outLayer;
 
   public Scope(Scope outLayer) {
@@ -15,7 +17,7 @@ public class Scope {
     members = new HashMap<>();
   }
 
-  public void addItem(String name, BaseType type, Position pos) {
+  public void addItem(String name, VarType type, Position pos) {
     if (type == null)
       throw new SyntaxError("F**K, Forget add type!!", pos);
 
@@ -24,10 +26,10 @@ public class Scope {
     members.put(name, type);
   }
 
-  public BaseType queryType(String name, Position pos) {
+  public VarType queryMemberType(String name, Position pos) {
     if (!members.containsKey(name)) {
       if (outLayer != null) {
-        return outLayer.queryType(name, pos);
+        return outLayer.queryMemberType(name, pos);
       } else throw new SyntaxError("member \"" + name + "\" not defined", pos);
     }
     return members.get(name);

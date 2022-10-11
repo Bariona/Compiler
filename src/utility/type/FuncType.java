@@ -3,14 +3,18 @@ package utility.type;
 import parser.MxParser;
 import utility.error.SyntaxError;
 import utility.Position;
+import java.util.ArrayList;
 
 public class FuncType extends BaseType {
   public int dimension;
+  public ArrayList<BaseType> paraList;
 
   public FuncType(BultinType type, int dimension) {
     super(type);
     this.dimension = dimension;
+    paraList = new ArrayList<>();
   }
+
   public FuncType(MxParser.TypeNameContext ctx) {
     super(ctx);
     this.dimension = ctx.bracket().size();
