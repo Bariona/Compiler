@@ -1,23 +1,26 @@
-package utility;
+package utility.scope;
 
+import utility.Position;
 import utility.error.SyntaxError;
 import utility.type.BaseType;
 import utility.type.FuncType;
-import utility.type.VarType;
 
 import java.util.HashMap;
 
 public class Scope {
-  private HashMap<String, VarType> members;
-  private HashMap<String, FuncType> members;
+  private HashMap<String, BaseType> members;
   private Scope outLayer;
 
+  public Scope() {
+    this.outLayer = null;
+    members = new HashMap<>();
+  }
   public Scope(Scope outLayer) {
     this.outLayer = outLayer;
     members = new HashMap<>();
   }
 
-  public void addItem(String name, VarType type, Position pos) {
+  public void addItem(String name, BaseType type, Position pos) {
     if (type == null)
       throw new SyntaxError("F**K, Forget add type!!", pos);
 
@@ -26,7 +29,7 @@ public class Scope {
     members.put(name, type);
   }
 
-  public VarType queryMemberType(String name, Position pos) {
+  public BaseType queryMemberType(String name, Position pos) {
     if (!members.containsKey(name)) {
       if (outLayer != null) {
         return outLayer.queryMemberType(name, pos);

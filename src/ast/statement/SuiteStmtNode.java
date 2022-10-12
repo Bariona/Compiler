@@ -2,7 +2,7 @@ package ast.statement;
 
 import ast.*;
 import utility.Position;
-import utility.Scope;
+import utility.scope.Scope;
 
 import java.util.ArrayList;
 

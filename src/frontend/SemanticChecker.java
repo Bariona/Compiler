@@ -5,7 +5,7 @@ import ast.RootNode;
 import ast.definition.*;
 import ast.expression.*;
 import ast.statement.*;
-import utility.Scope;
+import utility.scope.Scope;
 import utility.type.BaseType;
 
 import java.util.Stack;

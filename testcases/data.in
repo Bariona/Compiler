@@ -1,4 +1,5 @@
 class ABC {
+    int x, y;
     ABC(int x) {
 
     }

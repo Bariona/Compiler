@@ -12,7 +12,7 @@ import utility.Position;
 import utility.type.*;
 import org.antlr.v4.runtime.misc.Pair;
 
-// use ANTLR's visitor mode to generate AST and Scope
+// use ANTLR's visitor mode to generate AST and Scope (symbol collector)
 
 public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   @Override

@@ -2,7 +2,7 @@ package ast.definition;
 
 import ast.*;
 import utility.Position;
-import utility.Scope;
+import utility.scope.Scope;
 import utility.type.BaseType;
 import utility.type.FuncType;
 import org.antlr.v4.runtime.misc.Pair;

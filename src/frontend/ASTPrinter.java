@@ -29,20 +29,16 @@ public class ASTPrinter implements ASTVisitor {
   @Override
   public void visit(RootNode node) {
     ++IndentCnt;
-
     PrintIn("Root Node " + " position:" + node.pos.toString());
     node.defs.forEach(it -> it.accept(this));
-
     --IndentCnt;
   }
 
   @Override
   public void visit(VarDefNode node) {
     ++IndentCnt;
-
-    PrintIn("Variable Definitions ↓ " + " position:" + node.pos.toString());
+    PrintIn("(VarDefNode) Variable Definitions ↓ " + " position:" + node.pos.toString());
     node.varList.forEach(it -> it.accept(this));
-
     --IndentCnt;
   }
 
@@ -61,128 +57,108 @@ public class ASTPrinter implements ASTVisitor {
   @Override
   public void visit(ClassDefNode node) {
     ++IndentCnt;
-
     PrintIn("Class Name: " + node.name);
     node.varDefs.forEach(v -> v.accept(this));
     node.funcDefs.forEach(f -> f.accept(this));
-
     --IndentCnt;
   }
 
   @Override
   public void visit(FuncDefNode node) {
     ++IndentCnt;
-
     PrintIn("Function Definition: " + node.name + " pos: " + node.pos.toString());
     String paralist = indent;
     for (var p : node.parameterList)
       paralist += p.a.typename() + " " + p.b + ", ";
     Print(paralist);
     if (node.stmts != null) node.stmts.accept(this);
+    else Print(indent + "null body");
     --IndentCnt;
   }
 
   @Override
   public void visit(AtomExprNode node) {
     ++IndentCnt;
-
     PrintIn("AtomExpr Node " + " pos: " + node.pos);
     Print(indent + node.atom.getText());
-
     --IndentCnt;
   }
 
   @Override
   public void visit(NewExprNode node) {
     ++IndentCnt;
-
     PrintIn("NewExpr Node " + " pos: " + node.pos);
     Print("  TypeName: " + node.exprType.typename() + ", dimension: " + node.dimensionExpr.size());
     node.dimensionExpr.forEach(d -> d.accept(this));
-
     --IndentCnt;
   }
 
   @Override
   public void visit(MemberExprNode node) {
     ++IndentCnt;
-
     PrintIn("MemberExpr Node " + " pos: " + node.pos);
     Print("  Type: " + node.exprType.typename() + " member: " + node.member);
     node.callExpr.accept(this);
-
     --IndentCnt;
   }
 
   @Override
   public void visit(BracketExprNode node) {
     ++IndentCnt;
-
     PrintIn("Bracket Node " + " pos: " + node.pos);
     node.callExpr.accept(this);
     node.index.accept(this);
-
     --IndentCnt;
   }
 
   @Override
   public void visit(FuncExprNode node) {
     ++IndentCnt;
-
     PrintIn("FunctionCall Node " + " pos: " + node.pos);
     node.callExpr.accept(this);
     Print("ArgumentList");
     node.argumentList.forEach(it -> it.accept(this));
-
     --IndentCnt;
   }
 
   @Override
   public void visit(SelfExprNode node) {
     ++IndentCnt;
-
     PrintIn("SelfADD/SUB Node " + " pos: " + node.pos);
     Print(indent + "opCode: " + node.opCode);
     Print("Expression ↓");
     node.expression.accept(this);
-
     --IndentCnt;
   }
 
   @Override
   public void visit(UnaryExprNode node) {
     ++IndentCnt;
-
     PrintIn("Unary Node " + " pos: " + node.pos);
     Print(indent + "opCode: " + node.opCode);
     Print(indent + "Expression ↓");
     node.expression.accept(this);
-
     --IndentCnt;
   }
 
   @Override
   public void visit(BinaryExprNode node) {
     ++IndentCnt;
-
     PrintIn("Binary Node " + " pos: " + node.pos);
     Print(indent + "opCode: " + node.opCode + ", OpType: " + node.opType);
     Print(indent + "Expression ↓");
     node.lhs.accept(this);
     node.rhs.accept(this);
-
     --IndentCnt;
   }
 
   @Override
   public void visit(AssignExprNode node) {
     ++IndentCnt;
-
     PrintIn("Assign Node " + " pos: " + node.pos);
     Print(indent + "Expression ↓");
     node.lhs.accept(this);
     node.rhs.accept(this);
-
     --IndentCnt;
   }
 

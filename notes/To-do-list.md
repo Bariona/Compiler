@@ -6,5 +6,7 @@
 - [ ] testcode : gitignore
 - [ ] 各个expression的type类型
 - [ ] ++a++的判断: a++优先级高, 但是返回的不是引用, 所以这是一个错误用法
+- [ ] 10.12: 目前需要重新更新一下FuncDefNode等数据, 加上registery类型(这样能够更加匹配scope类型中的Hash)
 - [x] 去掉exprStmt, varExprNode
 - 怪怪的做法: ASTNode → StmtNode → DefNode, ExprNode 
+
