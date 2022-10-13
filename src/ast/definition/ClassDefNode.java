@@ -1,18 +1,19 @@
 package ast.definition;
 
 import ast.*;
+import ast.info.ClassInfo;
 import utility.Position;
 
 import java.util.ArrayList;
 
 public class ClassDefNode extends DefNode {
-  public String name;
+  public ClassInfo info;
   public ArrayList<VarDefNode> varDefs = new ArrayList<>();
   public ArrayList<FuncDefNode> funcDefs = new ArrayList<>();
 
   public ClassDefNode(String name, Position pos) {
     super(pos);
-    this.name = name;
+    info = new ClassInfo(name, pos);
   }
 
   @Override

@@ -1,18 +1,18 @@
 package ast;
 
 import utility.Position;
-import utility.scope.Scope;
+import utility.scope.RootScope;
 
 import java.util.ArrayList;
 
 public class RootNode extends ASTNode {
   public ArrayList<DefNode> defs;
-  public Scope scope;
+  public RootScope scope;
 
   public RootNode(Position pos) {
     super(pos);
     defs = new ArrayList<>();
-    scope = new Scope();
+    scope = new RootScope();
   }
 
   @Override

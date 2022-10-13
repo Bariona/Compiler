@@ -5,6 +5,7 @@ import ast.definition.*;
 import ast.expression.*;
 import ast.statement.*;
 import ast.RootNode;
+import utility.type.BaseType;
 
 import java.io.PrintStream;
 
@@ -45,8 +46,8 @@ public class ASTPrinter implements ASTVisitor {
   @Override
   public void visit(VarSingleDefNode node) {
     ++IndentCnt;
-    Print("Name: " + node.name);
-    Print("Type: " + node.type.typename() + "[]".repeat(node.type.dimension));
+    Print("Name: " + node.info.name);
+    Print("Type: " + node.info.type.typename() + "[]".repeat(node.info.type.dimension));
     if (node.expr != null) {
       node.expr.accept(this);
     }
@@ -66,13 +67,16 @@ public class ASTPrinter implements ASTVisitor {
   @Override
   public void visit(FuncDefNode node) {
     ++IndentCnt;
-    PrintIn("Function Definition: " + node.name + " pos: " + node.pos.toString());
-    String paralist = indent;
-    for (var p : node.parameterList)
-      paralist += p.a.typename() + " " + p.b + ", ";
+    PrintIn("Function Definition: " + node.info.name + " pos: " + node.pos.toString());
+    String paralist = indent + " parameter List: ";
+    for (var p : node.info.parameterList) {
+      if(p.a.type == BaseType.BultinType.CLASS) {
+        paralist += "CLASS " + p.a.ClassName + " " + p.b + ", ";
+      } else paralist += p.a.typename() + " " + p.b + ", ";
+    }
     Print(paralist);
     if (node.stmts != null) node.stmts.accept(this);
-    else Print(indent + "null body");
+    else Print(indent + "this function's body is null");
     --IndentCnt;
   }
 

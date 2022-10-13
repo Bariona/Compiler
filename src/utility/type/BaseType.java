@@ -10,16 +10,15 @@ abstract public class BaseType {
   }
 
   public BultinType type;
-  String ClassName;
-//  HashMap<String, BultinType> members = null;
+  public String ClassName;
 
   public BaseType(BultinType type) {
     this.type = type;
   }
 
   public BaseType(MxParser.TypeNameContext ctx) {
-    this.type = matchType(ctx);
     ClassName = null;
+    this.type = matchType(ctx);
   }
 
 //  public BaseType(String typename) {
@@ -30,7 +29,9 @@ abstract public class BaseType {
 
   public BultinType matchType(MxParser.TypeNameContext ctx) {
     if (ctx.Identifier() != null) {
+
       ClassName = ctx.Identifier().toString();
+      System.out.println(ClassName);
       return BultinType.CLASS; // need a name
     }
     if (ctx.Bool() != null) return BultinType.BOOL;

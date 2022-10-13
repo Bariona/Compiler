@@ -1,25 +1,19 @@
 package ast.definition;
 
 import ast.*;
+import ast.info.FuncInfo;
 import utility.Position;
 import utility.scope.Scope;
-import utility.type.BaseType;
 import utility.type.FuncType;
-import org.antlr.v4.runtime.misc.Pair;
-
-import java.util.ArrayList;
 
 public class FuncDefNode extends DefNode {
-  public FuncType type;
-  public String name;
-  public ArrayList<Pair<BaseType, String>> parameterList;
+  public FuncInfo info;
   public StmtNode stmts;
   public Scope scope;
 
-  public FuncDefNode(String name, Position pos) {
+  public FuncDefNode(String name, FuncType type, Position pos) {
     super(pos);
-    this.name = name;
-    parameterList = new ArrayList<>();
+    this.info = new FuncInfo(name, type, pos);
   }
 
   @Override

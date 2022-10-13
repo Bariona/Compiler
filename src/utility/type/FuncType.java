@@ -7,12 +7,10 @@ import java.util.ArrayList;
 
 public class FuncType extends BaseType {
   public int dimension;
-  public ArrayList<BaseType> paraList;
 
-  public FuncType(BultinType type, int dimension) {
+  public FuncType(BultinType type) {
     super(type);
-    this.dimension = dimension;
-    paraList = new ArrayList<>();
+    this.dimension = 0;
   }
 
   public FuncType(MxParser.TypeNameContext ctx) {

@@ -10,7 +10,7 @@ class ABC {
         int a = 1 + c, b = 4;
         int[] b = new int [5];
 
-        String c = "abc\n";
+        string c = "abc\n";
 
     f(int afu, A b) {
         1+2;

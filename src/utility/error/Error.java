@@ -3,16 +3,16 @@ package utility.error;
 import utility.Position;
 
 public abstract class Error extends RuntimeException {
-  final String error_type, detail_info;
+  final String errorType, detailInfo;
   final Position pos;
 
   public Error(String error_type, String detail_info, Position pos) {
-    this.error_type = error_type;
-    this.detail_info = detail_info;
+    this.errorType = error_type;
+    this.detailInfo = detail_info;
     this.pos = pos;
   }
 
   public String toString() {
-    return pos.toString() + " : " + error_type + " : " + detail_info;
+    return pos.toString() + " : " + errorType + " : " + detailInfo;
   }
 }
