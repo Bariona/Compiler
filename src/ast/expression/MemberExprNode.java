@@ -2,6 +2,7 @@ package ast.expression;
 
 import ast.ASTVisitor;
 import utility.Position;
+import utility.type.VarType;
 
 public class MemberExprNode extends ExprNode {
   public ExprNode callExpr;
@@ -11,7 +12,11 @@ public class MemberExprNode extends ExprNode {
     super(pos);
     this.member = member;
     this.callExpr = callExpr;
-    // this.restype???
+  }
+
+  @Override
+  public boolean isAssignable() {
+    return exprType instanceof VarType;
   }
 
   @Override

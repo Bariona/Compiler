@@ -1,5 +1,6 @@
 package frontend;
 
+import utility.info.ClassInfo;
 import utility.info.FuncInfo;
 import utility.info.VarInfo;
 import utility.scope.*;
@@ -48,4 +49,8 @@ public class ScopeManager {
     return null;
   }
 
+  public ClassInfo getClassInfo(String className) {
+    RootScope rt = (RootScope) scopeStack.get(0);
+    return rt.queryClassInfo(className);
+  }
 }

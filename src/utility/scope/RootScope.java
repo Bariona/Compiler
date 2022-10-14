@@ -4,7 +4,6 @@ import utility.info.BaseInfo;
 import utility.info.ClassInfo;
 import utility.info.FuncInfo;
 import utility.info.VarInfo;
-import utility.Position;
 import utility.error.NameError;
 
 import java.util.HashMap;

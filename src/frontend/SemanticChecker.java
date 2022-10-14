@@ -9,6 +9,7 @@ import ast.definition.VarSingleDefNode;
 import ast.expression.*;
 import ast.statement.*;
 import utility.error.SemanticError;
+import utility.info.ClassInfo;
 import utility.info.FuncInfo;
 import utility.info.VarInfo;
 import utility.scope.ClassScope;
@@ -24,7 +25,7 @@ public class SemanticChecker implements ASTVisitor {
 
   boolean isBoolType(BaseType it) {
     if (it instanceof FuncType) return false;
-    return it.isSame(new VarType(BaseType.BultinType.BOOL));
+    return it.isSame(new VarType(BaseType.BuiltinType.BOOL));
   }
 
   @Override
@@ -50,6 +51,8 @@ public class SemanticChecker implements ASTVisitor {
       if (!node.info.type.isSame(exprType))
         throw new SemanticError("type not match!", node.pos);
     }
+    assert node.info.type != null;
+    // unsolved: 会不会和Root scope 重命名了?
     scopeManager.curScope().addItem(node.info);
   }
 
@@ -74,17 +77,17 @@ public class SemanticChecker implements ASTVisitor {
   @Override
   public void visit(AtomExprNode node) {
     if (node.atom.StringConst() != null) {
-      node.exprType = new VarType(BaseType.BultinType.STRING);
+      node.exprType = new VarType(BaseType.BuiltinType.STRING);
 
     } else if (node.atom.Decimal() != null) {
-      node.exprType = new VarType(BaseType.BultinType.INT);
+      node.exprType = new VarType(BaseType.BuiltinType.INT);
 
     } else if (node.atom.This() != null) {
       // unsolved: 加一个Class Name, scope manager需要classScope的定义
-      node.exprType = new VarType(BaseType.BultinType.CLASS);
+      node.exprType = new VarType(BaseType.BuiltinType.CLASS);
 
     } else if (node.atom.True() != null || node.atom.False() != null) {
-      node.exprType = new VarType(BaseType.BultinType.BOOL);
+      node.exprType = new VarType(BaseType.BuiltinType.BOOL);
 
     } else if (node.atom.Identifier() != null) {
       String name = node.atom.Identifier().toString();
@@ -108,7 +111,7 @@ public class SemanticChecker implements ASTVisitor {
     for (ExprNode expr : node.dimensionExpr) {
       if (expr == null) continue;
       expr.accept(this);
-      if (expr.exprType.bultinType != BaseType.BultinType.INT)
+      if (expr.exprType.builtinType != BaseType.BuiltinType.INT)
         throw new SemanticError("bracket inside should be Integral", expr.pos);
     }
   }
@@ -116,14 +119,24 @@ public class SemanticChecker implements ASTVisitor {
   @Override
   public void visit(MemberExprNode node) {
     node.callExpr.accept(this);
-    if (node.callExpr.exprType.bultinType != BaseType.BultinType.CLASS)
+    if (node.callExpr.exprType.builtinType == BaseType.BuiltinType.STRING) {
+      // unsolved: String type
+      return ;
+    }
+    if (node.callExpr.exprType.builtinType != BaseType.BuiltinType.CLASS)
       throw new SemanticError("MemberExpr left handside should be class", node.callExpr.pos);
-    VarInfo varInfo = scopeManager.queryVarName(node.member);
-    FuncInfo funcInfo = scopeManager.queryFuncName(node.member);
+    assert node.callExpr.exprType.ClassName != null;
 
-    if(varInfo != null) {
+    ClassInfo classInfo = scopeManager.getClassInfo(node.callExpr.exprType.ClassName);
+
+    if (classInfo == null)
+      assert false;
+    VarInfo varInfo = classInfo.findVarInfo(node.member);
+    FuncInfo funcInfo = classInfo.findFuncInfo(node.member);
+
+    if (varInfo != null) {
       node.exprType = varInfo.type.clone();
-    } else if(funcInfo != null) {
+    } else if (funcInfo != null) {
       node.exprType = funcInfo.type.clone();
     } else {
       throw new SemanticError("no such member has defined", node.pos);
@@ -133,7 +146,7 @@ public class SemanticChecker implements ASTVisitor {
   @Override
   public void visit(BracketExprNode node) { // unsolved: 从底层优化BracketNode? 改成index vector?
     node.index.accept(this);
-    if (node.index.exprType.bultinType != BaseType.BultinType.INT)
+    if (node.index.exprType.builtinType != BaseType.BuiltinType.INT)
       throw new SemanticError("bracket index must be integral", node.index.pos);
     node.callExpr.accept(this);
     node.exprType = node.callExpr.exprType.clone();
@@ -155,12 +168,33 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(SelfExprNode node) {
-
+    assert node.expression != null;
+    node.expression.accept(this);
+    if (!node.expression.exprType.isSame(new VarType(BaseType.BuiltinType.INT)))
+      throw new SemanticError("expect INT", node.pos);
+    // unsolved : iaAssignable
+    if (!node.expression.isAssignable())
+      throw new SemanticError("expect variable", node.pos);
+    node.exprType = node.expression.exprType.clone();
   }
 
   @Override
   public void visit(UnaryExprNode node) {
-
+    assert node.expression != null;
+    node.expression.accept(this);
+    if (node.opCode == "!") {
+      if (!isBoolType(node.expression.exprType))
+        throw new SemanticError("expect BOOL", node.pos);
+    } else if (node.opCode == "++" || node.opCode == "--") {
+      if (!node.expression.exprType.isSame(new VarType(BaseType.BuiltinType.INT)))
+        throw new SemanticError("expect INT", node.pos);
+      if (!node.expression.isAssignable())
+        throw new SemanticError("expect variable", node.pos);
+    } else if (node.opCode == "+" || node.opCode == "-" || node.opCode == "~") {
+      if (!node.expression.exprType.isSame(new VarType(BaseType.BuiltinType.INT)))
+        throw new SemanticError("expect INT", node.pos);
+    }
+    node.exprType = node.expression.exprType.clone();
   }
 
   @Override

@@ -6,13 +6,13 @@ public class FuncType extends BaseType {
   public VarType retType;
   public ArrayList<VarType> paraListType;
 
-  public FuncType(BultinType retType) {
-    super();
+  public FuncType(BuiltinType retType) {
+    super(BuiltinType.FUNC);
     this.retType = new VarType(retType);
   }
 
   public FuncType(VarType retType) {
-    super();
+    super(BuiltinType.FUNC);
     this.retType = (VarType) retType.clone();
   }
 //

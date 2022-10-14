@@ -9,8 +9,7 @@ import utility.info.VarInfo;
 import parser.MxBaseVisitor;
 import parser.MxParser;
 import utility.Position;
-import utility.type.BaseType.BultinType;
-import utility.type.FuncType;
+import utility.type.BaseType.BuiltinType;
 import utility.type.VarType;
 
 // use ANTLR's visitor mode to generate AST and Scope (symbol collector)
@@ -21,26 +20,26 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     RootNode root = new RootNode(new Position(ctx));
     // Builtin Functions
     root.scope.addItem(
-            new FuncInfo("print", new VarType(BultinType.VOID),
-                    new VarInfo("str", new VarType(BultinType.STRING)))
+            new FuncInfo("print", new VarType(BuiltinType.VOID),
+                    new VarInfo("str", new VarType(BuiltinType.STRING)))
     );
     root.scope.addItem(
-            new FuncInfo("println", new VarType(BultinType.VOID),
-                    new VarInfo("str", new VarType(BultinType.STRING)))
+            new FuncInfo("println", new VarType(BuiltinType.VOID),
+                    new VarInfo("str", new VarType(BuiltinType.STRING)))
     );
     root.scope.addItem(
-            new FuncInfo("printInt", new VarType(BultinType.VOID),
-                    new VarInfo("n", new VarType(BultinType.INT)))
+            new FuncInfo("printInt", new VarType(BuiltinType.VOID),
+                    new VarInfo("n", new VarType(BuiltinType.INT)))
     );
     root.scope.addItem(
-            new FuncInfo("printlnInt", new VarType(BultinType.VOID),
-                    new VarInfo("n", new VarType(BultinType.INT)))
+            new FuncInfo("printlnInt", new VarType(BuiltinType.VOID),
+                    new VarInfo("n", new VarType(BuiltinType.INT)))
     );
-    root.scope.addItem(new FuncInfo("getString", new VarType(BultinType.STRING)));
-    root.scope.addItem(new FuncInfo("getInt", new VarType(BultinType.INT)));
+    root.scope.addItem(new FuncInfo("getString", new VarType(BuiltinType.STRING)));
+    root.scope.addItem(new FuncInfo("getInt", new VarType(BuiltinType.INT)));
     root.scope.addItem(
-            new FuncInfo("toString", new VarType(BultinType.STRING),
-                    new VarInfo("n", new VarType(BultinType.INT)))
+            new FuncInfo("toString", new VarType(BuiltinType.STRING),
+                    new VarInfo("n", new VarType(BuiltinType.INT)))
     );
 
     ctx.def().forEach(elem -> {
@@ -131,12 +130,14 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
       varList.varList.forEach(v -> {
         cls.varDefs.add(v);
         cls.scope.addItem(v.info);
+        cls.info.varInfos.add(v.info);
       });
     });
     ctx.functionDef().forEach((fuc) -> {
       FuncDefNode f = (FuncDefNode) visit(fuc);
       cls.funcDefs.add(f);
       cls.scope.addItem(f.info);
+      cls.info.funcInfos.add(f.info);
     });
     return cls;
   }

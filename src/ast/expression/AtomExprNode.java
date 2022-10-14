@@ -3,7 +3,6 @@ package ast.expression;
 import ast.ASTVisitor;
 import parser.MxParser;
 import utility.Position;
-import utility.type.BaseType;
 
 public class AtomExprNode extends ExprNode {
   public MxParser.PrimaryContext atom;
@@ -15,6 +14,11 @@ public class AtomExprNode extends ExprNode {
 //      System.out.println(atom.StringConst().toString());
 //      System.out.println("abc\n");
 //    }
+  }
+
+  @Override
+  public boolean isAssignable() {
+    return atom.Identifier() != null;
   }
 
   @Override

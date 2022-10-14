@@ -13,7 +13,6 @@ public class FuncExprNode extends ExprNode {
     super(pos);
     this.callExpr = callExpr;
     this.argumentList = new ArrayList<>();
-    this.exprType = null; // ???? function
   }
 
   @Override

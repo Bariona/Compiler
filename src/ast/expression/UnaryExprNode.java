@@ -10,7 +10,11 @@ public class UnaryExprNode extends ExprNode {
   public UnaryExprNode(String opCode, ExprNode expression, Position pos) {
     super(pos);
     this.opCode = opCode;
-    this.exprType = expression.exprType; // Is "!" the expression.restype?
+  }
+
+  @Override
+  public boolean isAssignable() {
+    return opCode == "++" || opCode == "--";
   }
 
   @Override

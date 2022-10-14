@@ -10,7 +10,6 @@ public class SelfExprNode extends ExprNode {
   public SelfExprNode(String opCode, ExprNode expression, Position pos) {
     super(pos);
     this.opCode = opCode;
-    this.exprType = expression.exprType; // Is "!" the expression.restype?
   }
 
   @Override

@@ -7,7 +7,7 @@ import utility.error.SyntaxError;
 public class VarType extends BaseType {
   public int dimension;
 
-  public VarType(BultinType type) {
+  public VarType(BuiltinType type) {
     super(type);
     dimension = 0;
   }
@@ -26,7 +26,7 @@ public class VarType extends BaseType {
 
   @Override
   public BaseType clone() {
-    VarType type = new VarType(this.bultinType);
+    VarType type = new VarType(this.builtinType);
     type.ClassName = this.ClassName;
     type.dimension = this.dimension;
     return type;
@@ -36,7 +36,9 @@ public class VarType extends BaseType {
   public boolean isSame(BaseType _it) {
     if (!(_it instanceof VarType)) return false;
     VarType it = (VarType) _it;
-    if (it.bultinType != this.bultinType)
+    if (it.builtinType != this.builtinType)
+      return false;
+    if (it.builtinType == BuiltinType.CLASS && it.ClassName != this.ClassName)
       return false;
     // unsolved: class name
     if (it.dimension != this.dimension)
