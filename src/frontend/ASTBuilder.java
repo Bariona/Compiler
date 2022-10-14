@@ -21,25 +21,25 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     RootNode root = new RootNode(new Position(ctx));
     // Builtin Functions
     root.scope.addItem(
-            new FuncInfo("print", new FuncType(BultinType.VOID),
+            new FuncInfo("print", new VarType(BultinType.VOID),
                     new VarInfo("str", new VarType(BultinType.STRING)))
     );
     root.scope.addItem(
-            new FuncInfo("println", new FuncType(BultinType.VOID),
+            new FuncInfo("println", new VarType(BultinType.VOID),
                     new VarInfo("str", new VarType(BultinType.STRING)))
     );
     root.scope.addItem(
-            new FuncInfo("printInt", new FuncType(BultinType.VOID),
+            new FuncInfo("printInt", new VarType(BultinType.VOID),
                     new VarInfo("n", new VarType(BultinType.INT)))
     );
     root.scope.addItem(
-            new FuncInfo("printlnInt", new FuncType(BultinType.VOID),
+            new FuncInfo("printlnInt", new VarType(BultinType.VOID),
                     new VarInfo("n", new VarType(BultinType.INT)))
     );
-    root.scope.addItem(new FuncInfo("getString", new FuncType(BultinType.STRING)));
-    root.scope.addItem(new FuncInfo("getInt", new FuncType(BultinType.INT)));
+    root.scope.addItem(new FuncInfo("getString", new VarType(BultinType.STRING)));
+    root.scope.addItem(new FuncInfo("getInt", new VarType(BultinType.INT)));
     root.scope.addItem(
-            new FuncInfo("toString", new FuncType(BultinType.STRING),
+            new FuncInfo("toString", new VarType(BultinType.STRING),
                     new VarInfo("n", new VarType(BultinType.INT)))
     );
 
@@ -102,11 +102,11 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   @Override
   public ASTNode visitFunctionDef(MxParser.FunctionDefContext ctx) {
-    FuncType type = (ctx.typeName() != null) ? new FuncType(ctx.typeName()) : null;
+    VarType type = (ctx.typeName() != null) ? new VarType(ctx.typeName(), true) : null;
     FuncDefNode func = new FuncDefNode(ctx.Identifier().toString(), type, new Position(ctx));
     if (ctx.parameterList() != null) {
       for (int i = 0; i < ctx.parameterList().Identifier().size(); ++i) {
-        func.info.parameterList.add(new VarInfo(
+        func.info.paraListInfo.add(new VarInfo(
                 ctx.parameterList().Identifier(i).toString(),
                 new VarType(ctx.parameterList().typeName(i), true),
                 new Position(ctx.parameterList().typeName(i))

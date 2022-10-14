@@ -12,6 +12,7 @@ abstract public class BaseType {
   public BultinType bultinType;
   public String ClassName;
 
+  public BaseType() {}
   public BaseType(BultinType type) {
     this.bultinType = type;
   }

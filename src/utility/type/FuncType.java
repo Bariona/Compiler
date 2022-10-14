@@ -1,37 +1,40 @@
 package utility.type;
 
-import parser.MxParser;
-import utility.Position;
-import utility.error.SyntaxError;
+import java.util.ArrayList;
 
 public class FuncType extends BaseType {
-  public int dimension;
+  public VarType retType;
+  public ArrayList<VarType> paraListType;
 
-  public FuncType(BultinType type) {
-    super(type);
-    this.dimension = 0;
+  public FuncType(BultinType retType) {
+    super();
+    this.retType = new VarType(retType);
   }
 
-  public FuncType(MxParser.TypeNameContext ctx) {
-    super(ctx);
-    this.dimension = ctx.bracket().size();
-    for (int i = 0; i < ctx.bracket().size(); ++i) {
-      if (ctx.bracket(i).expression() != null) {
-        throw new SyntaxError("Not Var-array type.", new Position(ctx.bracket(i).expression())); // syntax part
-      }
-    }
+  public FuncType(VarType retType) {
+    super();
+    this.retType = (VarType) retType.clone();
   }
+//
+//  public FuncType(MxParser.TypeNameContext ctx) {
+//    super(ctx);
+//    this.retType = new VarType(ctx);
+//    for (int i = 0; i < ctx.bracket().size(); ++i) {
+//      if (ctx.bracket(i).expression() != null) {
+//        throw new SyntaxError("Not Var-array type.", new Position(ctx.bracket(i).expression())); // syntax part
+//      }
+//    }
+//  }
 
   @Override
   public BaseType clone() {
-    VarType type = new VarType(this.bultinType);
-    type.ClassName = this.ClassName;
-    type.dimension = this.dimension;
+    FuncType type = new FuncType(this.retType);
+    this.paraListType.forEach(para -> type.paraListType.add((VarType) para.clone()));
     return type;
   }
 
   @Override
-  boolean isSame(BaseType it) {
+  public boolean isSame(BaseType it) {
     return false;
   }
 }

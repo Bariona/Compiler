@@ -69,7 +69,7 @@ public class ASTPrinter implements ASTVisitor {
     ++IndentCnt;
     PrintIn("Function Definition: " + node.info.name + " pos: " + node.pos.toString());
     String paralist = indent + " parameter List: ";
-    for (var p : node.info.parameterList) {
+    for (var p : node.info.paraListInfo) {
       if (p.type.bultinType == BaseType.BultinType.CLASS) {
         paralist += "CLASS " + p.type.ClassName + " " + p.name + ", ";
       } else paralist += p.type.typename() + " " + p.name + ", ";

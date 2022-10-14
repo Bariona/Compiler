@@ -24,7 +24,7 @@ public class SemanticChecker implements ASTVisitor {
 
   boolean isBoolType(BaseType it) {
     if (it instanceof FuncType) return false;
-    return ((VarType) it).isSame(new VarType(BaseType.BultinType.BOOL));
+    return it.isSame(new VarType(BaseType.BultinType.BOOL));
   }
 
   @Override
@@ -47,7 +47,7 @@ public class SemanticChecker implements ASTVisitor {
       BaseType exprType = node.expr.exprType;
       if (!(exprType instanceof VarType))
         throw new SemanticError("type is not a variable type!", node.pos);
-      if (!node.info.type.isSame((VarType) exprType))
+      if (!node.info.type.isSame(exprType))
         throw new SemanticError("type not match!", node.pos);
     }
     scopeManager.curScope().addItem(node.info);
@@ -66,7 +66,7 @@ public class SemanticChecker implements ASTVisitor {
   @Override
   public void visit(FuncDefNode node) {
     scopeManager.pushScope(new FuncScope(node.info));
-    node.info.parameterList.forEach(para -> scopeManager.curScope().addItem(para));
+    node.info.paraListInfo.forEach(para -> scopeManager.curScope().addItem(para));
     node.stmts.accept(this);
     scopeManager.popScope();
   }
@@ -208,7 +208,7 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(ReturnStmtNode node) {
-     FuncScope funcScope = (FuncScope) scopeManager.getFuncScope();
+     FuncScope funcScope = scopeManager.getFuncScope();
      if (funcScope == null)
       throw new SemanticError("Return should be in a function", node.pos);
      node.ret.accept(this);
