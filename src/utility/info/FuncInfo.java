@@ -1,8 +1,9 @@
-package ast.info;
+package utility.info;
+
+import utility.Position;
+import utility.type.FuncType;
 
 import java.util.ArrayList;
-import utility.Position;
-import utility.type.*;
 
 public class FuncInfo extends BaseInfo {
   public FuncType type;
@@ -19,7 +20,7 @@ public class FuncInfo extends BaseInfo {
     this.name = name;
     this.type = type;
     parameterList = new ArrayList<>();
-    for (VarInfo arg: args)
+    for (VarInfo arg : args)
       parameterList.add(arg);
   }
 }

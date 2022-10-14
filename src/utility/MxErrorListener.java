@@ -1,10 +1,13 @@
 package utility;
 
-import org.antlr.v4.runtime.*;
-
-import java.util.*;
-
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
 import utility.error.SyntaxError;
+
+import java.util.Collections;
+import java.util.List;
 
 // Limitation: can only detect  Building-ParserTree-process error AKA. syntax Error
 public class MxErrorListener extends BaseErrorListener {

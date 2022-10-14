@@ -1,9 +1,8 @@
 package utility.type;
 
 import parser.MxParser;
-import utility.error.SyntaxError;
 import utility.Position;
-import java.util.ArrayList;
+import utility.error.SyntaxError;
 
 public class FuncType extends BaseType {
   public int dimension;
@@ -21,5 +20,18 @@ public class FuncType extends BaseType {
         throw new SyntaxError("Not Var-array type.", new Position(ctx.bracket(i).expression())); // syntax part
       }
     }
+  }
+
+  @Override
+  public BaseType clone() {
+    VarType type = new VarType(this.bultinType);
+    type.ClassName = this.ClassName;
+    type.dimension = this.dimension;
+    return type;
+  }
+
+  @Override
+  boolean isSame(BaseType it) {
+    return false;
   }
 }

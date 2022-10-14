@@ -5,7 +5,7 @@ import utility.Position;
 abstract public class ASTNode {
   public Position pos;
 
-  ASTNode(Position pos) {
+  public ASTNode(Position pos) {
     this.pos = pos;
   }
 

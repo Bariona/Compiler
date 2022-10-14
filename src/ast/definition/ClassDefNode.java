@@ -1,15 +1,17 @@
 package ast.definition;
 
-import ast.*;
-import ast.info.ClassInfo;
+import ast.ASTVisitor;
+import utility.info.ClassInfo;
 import utility.Position;
+import utility.scope.ClassScope;
 
 import java.util.ArrayList;
 
 public class ClassDefNode extends DefNode {
   public ClassInfo info;
-  public ArrayList<VarDefNode> varDefs = new ArrayList<>();
+  public ArrayList<VarSingleDefNode> varDefs = new ArrayList<>();
   public ArrayList<FuncDefNode> funcDefs = new ArrayList<>();
+  public ClassScope scope;
 
   public ClassDefNode(String name, Position pos) {
     super(pos);

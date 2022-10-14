@@ -50,7 +50,7 @@ classDef    :   Class Identifier '{' (varDef ';' | functionDef)* '}' ';' ;
 argumentList   :  expression (',' expression)*;
 
 expression : primary                                # AtomExpr
-    | '(' expression ')'                            # ParenExpr
+    | '(' expression ')'                            # ParentExpr
 //    | sysfunction                                   # SystemFunc
     // this can be written as Identifier, with 'a.size()' seen as FunctionExpr -> MemberExpr
     | expression '.' Identifier                     # MemberExpr
@@ -60,7 +60,7 @@ expression : primary                                # AtomExpr
     | <assoc=right> op = ('++' | '--') expression   # UnaryExpr
     | <assoc=right> op = ('+' | '-') expression     # UnaryExpr
     | <assoc=right> op = ('!' | '~') expression     # UnaryExpr
-    | <assoc=right> New typeName                    # Newtype
+    | <assoc=right> New typeName                    # NewType
 
     | expression op = ('*' | '/' | '%') expression              # BinaryExpr
     | expression op = ('+' | '-') expression                    # BinaryExpr

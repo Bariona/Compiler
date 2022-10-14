@@ -8,7 +8,7 @@ class ABC {
     }
 };
         int a = 1 + c, b = 4;
-        int[] b = new int [5];
+        int[] bb = new int [5];
 
         string c = "abc\n";
 
@@ -26,7 +26,7 @@ class ABC {
         }
     }
 
-void f() {
+void ff() {
     void f() {
         class aaaa {
 

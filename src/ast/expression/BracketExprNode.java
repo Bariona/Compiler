@@ -1,7 +1,6 @@
 package ast.expression;
 
 import ast.ASTVisitor;
-import ast.ExprNode;
 import utility.Position;
 
 public class BracketExprNode extends ExprNode {
@@ -11,7 +10,6 @@ public class BracketExprNode extends ExprNode {
     super(pos);
     this.callExpr = callExpr;
     this.index = index;
-    this.exprType = null; // ??????
   }
 
   @Override

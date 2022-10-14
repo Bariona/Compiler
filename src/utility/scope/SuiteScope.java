@@ -1,0 +1,39 @@
+package utility.scope;
+
+import utility.info.*;
+import utility.error.NameError;
+
+public class SuiteScope extends BaseScope {
+
+  @Override
+  public void addItem(BaseInfo info) {
+    String name = info.name;
+    if (info == null)
+      throw new NameError("Ooooops, Forget add type!!", info.pos);
+
+    if (info instanceof VarInfo) {
+      if (varInfoTable.containsKey(name))
+        throw new NameError("member \"" + name + "\" redefined", info.pos);
+      varInfoTable.put(name, (VarInfo) info);
+    } else {
+      throw new NameError("not a member type!", info.pos);
+    }
+  }
+
+  @Override
+  public VarInfo queryVarInfo(String name) {
+    if (varInfoTable.containsKey(name))
+      return varInfoTable.get(name);
+    return null;
+  }
+
+  @Override
+  public FuncInfo queryFuncInfo(String name) {
+    return null;
+  }
+
+  @Override
+  public ClassInfo queryClassInfo(String name) {
+    return null;
+  }
+}

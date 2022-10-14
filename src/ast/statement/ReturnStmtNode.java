@@ -1,6 +1,7 @@
 package ast.statement;
 
-import ast.*;
+import ast.ASTVisitor;
+import ast.expression.ExprNode;
 import utility.Position;
 
 public class ReturnStmtNode extends StmtNode {

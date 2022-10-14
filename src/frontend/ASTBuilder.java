@@ -1,17 +1,17 @@
 package frontend;
 
-import parser.MxBaseVisitor;
-import parser.MxParser;
-
 import ast.*;
-import ast.info.*;
 import ast.definition.*;
 import ast.expression.*;
 import ast.statement.*;
-
+import utility.info.FuncInfo;
+import utility.info.VarInfo;
+import parser.MxBaseVisitor;
+import parser.MxParser;
 import utility.Position;
-import utility.type.*;
 import utility.type.BaseType.BultinType;
+import utility.type.FuncType;
+import utility.type.VarType;
 
 // use ANTLR's visitor mode to generate AST and Scope (symbol collector)
 
@@ -19,6 +19,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   @Override
   public ASTNode visitProgram(MxParser.ProgramContext ctx) {
     RootNode root = new RootNode(new Position(ctx));
+    // Builtin Functions
     root.scope.addItem(
             new FuncInfo("print", new FuncType(BultinType.VOID),
                     new VarInfo("str", new VarType(BultinType.STRING)))
@@ -42,9 +43,20 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
                     new VarInfo("n", new VarType(BultinType.INT)))
     );
 
-    ctx.def().forEach((elem) -> {
-      root.defs.add((DefNode) visit(elem)); // 存在一个向下转型
+    ctx.def().forEach(elem -> {
+      root.defs.add((DefNode) visit(elem));
     });
+
+    for (DefNode d : root.defs) {
+      if (d instanceof FuncDefNode) {
+        root.scope.addItem(((FuncDefNode) d).info);
+      } else if (d instanceof ClassDefNode) {
+        root.scope.addItem(((ClassDefNode) d).info);
+      } else if (d instanceof VarDefNode) {
+        for (VarSingleDefNode v : ((VarDefNode) d).varList)
+          root.scope.addItem(v.info);
+      }
+    }
     return root;
   }
 
@@ -53,7 +65,6 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     if (ctx.statement().isEmpty())
       return null;
     SuiteStmtNode node = new SuiteStmtNode(new Position(ctx));
-
     for (var stmt : ctx.statement()) {
       StmtNode tmp = (StmtNode) visit(stmt);
       if (tmp != null) node.stmts.add(tmp); // if是为了去掉EmptyExpr
@@ -116,10 +127,16 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   public ASTNode visitClassDef(MxParser.ClassDefContext ctx) {
     ClassDefNode cls = new ClassDefNode(ctx.Identifier().toString(), new Position(ctx));
     ctx.varDef().forEach((var) -> {
-      cls.varDefs.add((VarDefNode) visit(var));
+      VarDefNode varList = (VarDefNode) visit(var);
+      varList.varList.forEach(v -> {
+        cls.varDefs.add(v);
+        cls.scope.addItem(v.info);
+      });
     });
     ctx.functionDef().forEach((fuc) -> {
-      cls.funcDefs.add((FuncDefNode) visit(fuc));
+      FuncDefNode f = (FuncDefNode) visit(fuc);
+      cls.funcDefs.add(f);
+      cls.scope.addItem(f.info);
     });
     return cls;
   }

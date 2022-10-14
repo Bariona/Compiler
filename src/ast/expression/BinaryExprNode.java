@@ -1,8 +1,8 @@
 package ast.expression;
 
-import ast.*;
-import utility.error.SyntaxError;
+import ast.ASTVisitor;
 import utility.Position;
+import utility.error.SyntaxError;
 import utility.type.BaseType;
 
 public class BinaryExprNode extends ExprNode {
@@ -31,11 +31,11 @@ public class BinaryExprNode extends ExprNode {
         break;
       case "<", ">", "<=", ">=":
         opType = binaryOpType.Compare;
-        exprType.type = BaseType.BultinType.BOOL;
+        exprType.bultinType = BaseType.BultinType.BOOL;
         break;
       case "==", "!=":
         opType = binaryOpType.Equal;
-        exprType.type = BaseType.BultinType.BOOL;
+        exprType.bultinType = BaseType.BultinType.BOOL;
         break;
       default:
         throw new SyntaxError("Miss operator", this.pos);

@@ -1,4 +1,4 @@
-package ast.info;
+package utility.info;
 
 import utility.Position;
 import utility.type.VarType;

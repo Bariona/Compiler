@@ -1,14 +1,13 @@
 package ast.statement;
 
-import ast.*;
+import ast.ASTVisitor;
 import utility.Position;
-import utility.scope.Scope;
+import utility.scope.BaseScope;
 
 import java.util.ArrayList;
 
 public class SuiteStmtNode extends StmtNode {
   public ArrayList<StmtNode> stmts;
-  public Scope scope;
 
   public SuiteStmtNode(Position pos) {
     super(pos);

@@ -1,9 +1,9 @@
 package ast.expression;
 
 import ast.ASTVisitor;
-import ast.ExprNode;
 import parser.MxParser;
 import utility.Position;
+import utility.type.BaseType;
 
 public class AtomExprNode extends ExprNode {
   public MxParser.PrimaryContext atom;

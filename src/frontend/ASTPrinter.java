@@ -1,17 +1,17 @@
 package frontend;
 
 import ast.ASTVisitor;
+import ast.RootNode;
 import ast.definition.*;
 import ast.expression.*;
 import ast.statement.*;
-import ast.RootNode;
 import utility.type.BaseType;
 
 import java.io.PrintStream;
 
 public class ASTPrinter implements ASTVisitor {
   final String indent = "  ";
-  private PrintStream out;
+  private final PrintStream out;
   private int IndentCnt;
 
   public ASTPrinter(PrintStream out) {
@@ -58,7 +58,7 @@ public class ASTPrinter implements ASTVisitor {
   @Override
   public void visit(ClassDefNode node) {
     ++IndentCnt;
-    PrintIn("Class Name: " + node.name);
+    PrintIn("Class Name: " + node.info.name);
     node.varDefs.forEach(v -> v.accept(this));
     node.funcDefs.forEach(f -> f.accept(this));
     --IndentCnt;
@@ -70,9 +70,9 @@ public class ASTPrinter implements ASTVisitor {
     PrintIn("Function Definition: " + node.info.name + " pos: " + node.pos.toString());
     String paralist = indent + " parameter List: ";
     for (var p : node.info.parameterList) {
-      if(p.a.type == BaseType.BultinType.CLASS) {
-        paralist += "CLASS " + p.a.ClassName + " " + p.b + ", ";
-      } else paralist += p.a.typename() + " " + p.b + ", ";
+      if (p.type.bultinType == BaseType.BultinType.CLASS) {
+        paralist += "CLASS " + p.type.ClassName + " " + p.name + ", ";
+      } else paralist += p.type.typename() + " " + p.name + ", ";
     }
     Print(paralist);
     if (node.stmts != null) node.stmts.accept(this);
@@ -242,12 +242,5 @@ public class ASTPrinter implements ASTVisitor {
     node.stmt.accept(this);
     --IndentCnt;
   }
-
-//  @Override
-//  public void visit(exprStmtNode node) {
-//    ++IndentCnt;
-//    node.expr.accept(this);
-//    --IndentCnt;
-//  }
 
 }

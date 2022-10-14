@@ -1,6 +1,6 @@
 package ast.expression;
 
-import ast.*;
+import ast.ASTVisitor;
 import utility.Position;
 
 public class AssignExprNode extends ExprNode {

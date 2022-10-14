@@ -1,33 +1,29 @@
 package utility.type;
 
 import parser.MxParser;
-import utility.error.SyntaxError;
 import utility.Position;
+import utility.error.SyntaxError;
 
 abstract public class BaseType {
   public enum BultinType {
     VOID, BOOL, INT, STRING, CLASS, NULL, NEW
   }
 
-  public BultinType type;
+  public BultinType bultinType;
   public String ClassName;
 
   public BaseType(BultinType type) {
-    this.type = type;
+    this.bultinType = type;
   }
 
   public BaseType(MxParser.TypeNameContext ctx) {
     ClassName = null;
-    this.type = matchType(ctx);
+    this.bultinType = matchType(ctx);
   }
 
-//  public BaseType(String typename) {
-//    System.out.println(typename);
-//    System.out.println(typename.getClass().toString());
-//    this.type = BultinType.valueOf(typename);
-//  }
+  abstract public BaseType clone();
 
-  public BultinType matchType(MxParser.TypeNameContext ctx) {
+  BultinType matchType(MxParser.TypeNameContext ctx) {
     if (ctx.Identifier() != null) {
 
       ClassName = ctx.Identifier().toString();
@@ -41,7 +37,9 @@ abstract public class BaseType {
     throw new SyntaxError("Not a type.", new Position(ctx));
   }
 
+  abstract public boolean isSame(BaseType it);
+
   public String typename() {
-    return this.type.name();
+    return this.bultinType.name();
   }
 }

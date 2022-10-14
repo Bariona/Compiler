@@ -1,6 +1,6 @@
 package ast.definition;
 
-import ast.*;
+import ast.ASTVisitor;
 import utility.Position;
 
 import java.util.ArrayList;

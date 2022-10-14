@@ -1,7 +1,6 @@
 package ast.statement;
 
 import ast.ASTVisitor;
-import ast.StmtNode;
 import utility.Position;
 
 public class BreakContinueNode extends StmtNode {

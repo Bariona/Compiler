@@ -1,5 +1,6 @@
 package ast;
 
+import ast.definition.DefNode;
 import utility.Position;
 import utility.scope.RootScope;
 

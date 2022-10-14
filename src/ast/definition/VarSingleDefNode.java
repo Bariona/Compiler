@@ -1,9 +1,9 @@
 package ast.definition;
 
-import ast.*;
-import ast.info.VarInfo;
+import ast.ASTVisitor;
+import ast.expression.ExprNode;
+import utility.info.VarInfo;
 import utility.Position;
-import utility.type.VarType;
 
 public class VarSingleDefNode extends DefNode {
   public VarInfo info;
@@ -11,7 +11,7 @@ public class VarSingleDefNode extends DefNode {
 
   public VarSingleDefNode(String name, Position pos) {
     super(pos);
-    this.info = new VarInfo(name, pos);
+    this.info = new VarInfo(name, null, pos);
   }
 
   @Override
