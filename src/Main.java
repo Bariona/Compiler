@@ -1,6 +1,7 @@
 import ast.RootNode;
 import frontend.ASTBuilder;
 import frontend.ASTPrinter;
+import frontend.SemanticChecker;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -39,6 +40,8 @@ public class Main {
       printer.visit(root);
 
       // Semantic Part
+      SemanticChecker checker = new SemanticChecker();
+      checker.visit(root);
 
       System.out.println("\033[33m🎉  Done successfully.\033[0m");
     } catch (Error e) {

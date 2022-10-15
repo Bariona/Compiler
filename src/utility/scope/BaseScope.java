@@ -20,4 +20,5 @@ abstract public class BaseScope {
 
   abstract public ClassInfo queryClassInfo(String name);
 
+  abstract public void print();
 }

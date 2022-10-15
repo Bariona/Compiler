@@ -15,6 +15,7 @@ public class ClassDefNode extends DefNode {
 
   public ClassDefNode(String name, Position pos) {
     super(pos);
+    scope = new ClassScope(name);
     info = new ClassInfo(name, pos);
   }
 

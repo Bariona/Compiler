@@ -25,10 +25,8 @@ abstract public class BaseType {
 
   BuiltinType matchType(MxParser.TypeNameContext ctx) {
     if (ctx.Identifier() != null) {
-
       ClassName = ctx.Identifier().toString();
-      System.out.println(ClassName);
-      return BuiltinType.CLASS; // need a name
+      return BuiltinType.CLASS;
     }
     if (ctx.Bool() != null) return BuiltinType.BOOL;
     if (ctx.Int() != null) return BuiltinType.INT;

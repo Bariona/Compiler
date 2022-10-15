@@ -101,7 +101,14 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   @Override
   public ASTNode visitFunctionDef(MxParser.FunctionDefContext ctx) {
-    VarType type = (ctx.typeName() != null) ? new VarType(ctx.typeName(), true) : null;
+    VarType type;
+    if(ctx.typeName() != null) {
+      type = new VarType(ctx.typeName(), true);
+    } else {
+      type = new VarType(BuiltinType.CLASS);
+      type.ClassName = ctx.Identifier().toString();
+    }
+
     FuncDefNode func = new FuncDefNode(ctx.Identifier().toString(), type, new Position(ctx));
     if (ctx.parameterList() != null) {
       for (int i = 0; i < ctx.parameterList().Identifier().size(); ++i) {

@@ -12,14 +12,14 @@ public class FuncInfo extends BaseInfo {
 
   public FuncInfo(String name, VarType type, Position pos) {
     super(name, pos);
-    this.type.retType = type;
+    this.type = new FuncType(type);
     paraListInfo = new ArrayList<>();
   }
 
   public FuncInfo(String name, VarType type, VarInfo... args) {
     super(name);
     this.name = name;
-    this.type.retType = type;
+    this.type = new FuncType(type);
     paraListInfo = new ArrayList<>();
     for (VarInfo arg : args) {
       paraListInfo.add(arg);

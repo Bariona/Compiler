@@ -2,22 +2,13 @@ package frontend;
 
 import ast.ASTVisitor;
 import ast.RootNode;
-import ast.definition.ClassDefNode;
-import ast.definition.FuncDefNode;
-import ast.definition.VarDefNode;
-import ast.definition.VarSingleDefNode;
+import ast.definition.*;
 import ast.expression.*;
 import ast.statement.*;
 import utility.error.SemanticError;
-import utility.info.ClassInfo;
-import utility.info.FuncInfo;
-import utility.info.VarInfo;
-import utility.scope.ClassScope;
-import utility.scope.FuncScope;
-import utility.scope.SuiteScope;
-import utility.type.BaseType;
-import utility.type.FuncType;
-import utility.type.VarType;
+import utility.info.*;
+import utility.scope.*;
+import utility.type.*;
 
 
 public class SemanticChecker implements ASTVisitor {
@@ -28,9 +19,15 @@ public class SemanticChecker implements ASTVisitor {
     return it.isSame(new VarType(BaseType.BuiltinType.BOOL));
   }
 
+  boolean isIntType(BaseType it) {
+    if (it instanceof FuncType) return false;
+    return it.isSame(new VarType(BaseType.BuiltinType.INT));
+  }
+
   @Override
   public void visit(RootNode node) {
     scopeManager.pushScope(node.scope);
+    node.scope.print();
     node.defs.forEach(it -> it.accept(this));
     scopeManager.popScope();
   }
@@ -43,7 +40,7 @@ public class SemanticChecker implements ASTVisitor {
   @Override
   public void visit(VarSingleDefNode node) {
     if (node.expr != null) {
-    // unsolved: 空的expr怎么办?
+      // unsolved: 空的expr怎么办?
       node.expr.accept(this);
       BaseType exprType = node.expr.exprType;
       if (!(exprType instanceof VarType))
@@ -85,6 +82,7 @@ public class SemanticChecker implements ASTVisitor {
     } else if (node.atom.This() != null) {
       // unsolved: 加一个Class Name, scope manager需要classScope的定义
       node.exprType = new VarType(BaseType.BuiltinType.CLASS);
+      node.exprType.ClassName = scopeManager.getClassName();
 
     } else if (node.atom.True() != null || node.atom.False() != null) {
       node.exprType = new VarType(BaseType.BuiltinType.BOOL);
@@ -121,7 +119,7 @@ public class SemanticChecker implements ASTVisitor {
     node.callExpr.accept(this);
     if (node.callExpr.exprType.builtinType == BaseType.BuiltinType.STRING) {
       // unsolved: String type
-      return ;
+      return;
     }
     if (node.callExpr.exprType.builtinType != BaseType.BuiltinType.CLASS)
       throw new SemanticError("MemberExpr left handside should be class", node.callExpr.pos);
@@ -129,8 +127,7 @@ public class SemanticChecker implements ASTVisitor {
 
     ClassInfo classInfo = scopeManager.getClassInfo(node.callExpr.exprType.ClassName);
 
-    if (classInfo == null)
-      assert false;
+    assert classInfo != null;
     VarInfo varInfo = classInfo.findVarInfo(node.member);
     FuncInfo funcInfo = classInfo.findFuncInfo(node.member);
 
@@ -170,7 +167,7 @@ public class SemanticChecker implements ASTVisitor {
   public void visit(SelfExprNode node) {
     assert node.expression != null;
     node.expression.accept(this);
-    if (!node.expression.exprType.isSame(new VarType(BaseType.BuiltinType.INT)))
+    if (!isIntType(node.expression.exprType))
       throw new SemanticError("expect INT", node.pos);
     // unsolved : iaAssignable
     if (!node.expression.isAssignable())
@@ -182,16 +179,16 @@ public class SemanticChecker implements ASTVisitor {
   public void visit(UnaryExprNode node) {
     assert node.expression != null;
     node.expression.accept(this);
-    if (node.opCode == "!") {
+    if (node.opCode.equals("!")) {
       if (!isBoolType(node.expression.exprType))
         throw new SemanticError("expect BOOL", node.pos);
-    } else if (node.opCode == "++" || node.opCode == "--") {
-      if (!node.expression.exprType.isSame(new VarType(BaseType.BuiltinType.INT)))
+    } else if (node.opCode.equals("++") || node.opCode.equals("--")) {
+      if (!isIntType(node.expression.exprType))
         throw new SemanticError("expect INT", node.pos);
       if (!node.expression.isAssignable())
         throw new SemanticError("expect variable", node.pos);
-    } else if (node.opCode == "+" || node.opCode == "-" || node.opCode == "~") {
-      if (!node.expression.exprType.isSame(new VarType(BaseType.BuiltinType.INT)))
+    } else if (node.opCode.equals("+") || node.opCode.equals("-") || node.opCode.equals("~")) {
+      if (!isIntType(node.expression.exprType))
         throw new SemanticError("expect INT", node.pos);
     }
     node.exprType = node.expression.exprType.clone();
@@ -199,11 +196,29 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(BinaryExprNode node) {
-
+    assert node.lhs != null && node.rhs != null;
+    node.lhs.accept(this);
+    node.rhs.accept(this);
+    boolean flag = false;
+    if (node.opType == BinaryExprNode.binaryOpType.Compare) {
+      if (!isBoolType(node.lhs.exprType) || !isBoolType(node.rhs.exprType))
+        flag = true;
+    } else {
+      if (!isIntType(node.lhs.exprType) || !isIntType(node.rhs.exprType))
+        flag = true;
+    }
+    if (flag) throw new SemanticError("type not correct", node.pos);
   }
 
   @Override
   public void visit(AssignExprNode node) {
+    assert node.lhs != null && node.rhs != null;
+    node.lhs.accept(this);
+    node.rhs.accept(this);
+    if (!node.lhs.isAssignable())
+      throw new SemanticError("expect Left value", node.lhs.pos);
+    if (!node.lhs.exprType.isSame(node.rhs.exprType))
+      throw new SemanticError("expect Same type", node.pos);
 
   }
 
@@ -242,12 +257,13 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(ReturnStmtNode node) {
-     FuncScope funcScope = scopeManager.getFuncScope();
-     if (funcScope == null)
+    FuncScope funcScope = scopeManager.getFuncScope();
+    if (funcScope == null)
       throw new SemanticError("Return should be in a function", node.pos);
-     node.ret.accept(this);
-     if (!node.ret.exprType.isSame(funcScope.info.type))
-       throw new SemanticError("Return type not match", node.ret.pos);
+    node.ret.accept(this);
+    if (!node.ret.exprType.isSame(funcScope.info.type))
+      throw new SemanticError("Return type not match", node.ret.pos);
+    // unsolved: int main()'s return
   }
 
   @Override

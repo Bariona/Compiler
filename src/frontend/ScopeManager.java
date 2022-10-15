@@ -9,16 +9,28 @@ import java.util.Stack;
 
 public class ScopeManager {
   public int forLoopCnt;
+  ClassScope curClassScope;
   Stack<BaseScope> scopeStack;
 
   public ScopeManager() {
     forLoopCnt = 0;
+    curClassScope = null;
     scopeStack = new Stack<>();
   }
 
   public BaseScope curScope() { return scopeStack.peek(); }
-  public void pushScope(BaseScope cur) { scopeStack.push(cur); }
-  public void popScope() { scopeStack.pop(); }
+  public void pushScope(BaseScope cur) {
+    scopeStack.push(cur);
+    if (cur instanceof ClassScope) {
+      assert curClassScope == null;
+      curClassScope = (ClassScope) cur;
+    }
+  }
+  public void popScope() {
+    if (curScope() instanceof ClassScope)
+      curClassScope = null;
+    scopeStack.pop();
+  }
 
   public boolean isInForLoop() { return forLoopCnt > 0; }
 
@@ -53,4 +65,9 @@ public class ScopeManager {
     RootScope rt = (RootScope) scopeStack.get(0);
     return rt.queryClassInfo(className);
   }
+
+  public String getClassName() {
+    return curClassScope.name;
+  }
+
 }

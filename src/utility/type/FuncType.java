@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class FuncType extends BaseType {
   public VarType retType;
-  public ArrayList<VarType> paraListType;
+  public ArrayList<VarType> paraListType = new ArrayList<>();
 
   public FuncType(BuiltinType retType) {
     super(BuiltinType.FUNC);
