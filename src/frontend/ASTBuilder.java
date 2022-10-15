@@ -61,8 +61,6 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   @Override
   public ASTNode visitSuite(MxParser.SuiteContext ctx) {
-    if (ctx.statement().isEmpty())
-      return null;
     SuiteStmtNode node = new SuiteStmtNode(new Position(ctx));
     for (var stmt : ctx.statement()) {
       StmtNode tmp = (StmtNode) visit(stmt);
@@ -204,9 +202,9 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   @Override
   public ASTNode visitForStmt(MxParser.ForStmtContext ctx) {
     return new ForStmtNode(
-            (ExprNode) visit(ctx.initialExpr),
-            (ExprNode) visit(ctx.condiExpr),
-            (ExprNode) visit(ctx.stepExpr),
+            ctx.initialExpr == null ? null : (ExprNode) visit(ctx.initialExpr),
+            ctx.condiExpr == null ? null : (ExprNode) visit(ctx.condiExpr),
+            ctx.stepExpr == null ? null : (ExprNode) visit(ctx.stepExpr),
             (StmtNode) visit(ctx.statement()),
             new Position(ctx)
     );

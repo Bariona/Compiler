@@ -40,7 +40,7 @@ public class SuiteScope extends BaseScope {
   @Override
   public void print() {
     System.out.println("==== Suite Scope ====");
-    System.out.print("Variable Table: ");
-    varInfoTable.forEach((str, info) -> System.out.print(str + " ")); System.out.println();
+    System.out.print("  Variable Table: ");
+    varInfoTable.forEach((str, info) -> System.out.print(" " + str)); System.out.println();
   }
 }

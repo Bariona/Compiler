@@ -12,7 +12,7 @@ public class FuncScope extends SuiteScope {
   @Override
   public void print() {
     System.out.println("==== Function Scope ====");
-    System.out.print("Variable Table: ");
-    varInfoTable.forEach((str, info) -> System.out.print(str + " ")); System.out.println();
+    System.out.print("  Variable Table: ");
+    varInfoTable.forEach((str, info) -> System.out.print(" " + str)); System.out.println();
   }
 }

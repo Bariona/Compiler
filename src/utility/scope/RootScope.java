@@ -65,11 +65,11 @@ public class RootScope extends BaseScope {
   @Override
   public void print() {
     System.out.println("==== ROOT Scope ====");
-    System.out.print("Variable Table: ");
-    varInfoTable.forEach((str, info) -> System.out.print(str + " ")); System.out.println();
-    System.out.print("Function Table: ");
-    funcInfoTable.forEach((str, info) -> System.out.print(str + " ")); System.out.println();
-    System.out.print("Class Table: ");
-    classInfoTable.forEach((str, info) -> System.out.print(str + " ")); System.out.println();
+    System.out.print("  Variable Table: ");
+    varInfoTable.forEach((str, info) -> System.out.print(" " + str)); System.out.println();
+    System.out.print("  Function Table: ");
+    funcInfoTable.forEach((str, info) -> System.out.print(" " + str)); System.out.println();
+    System.out.print("  Class Table: ");
+    classInfoTable.forEach((str, info) -> System.out.print(" " + str)); System.out.println();
   }
 }

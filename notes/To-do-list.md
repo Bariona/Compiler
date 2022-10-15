@@ -1,5 +1,5 @@
 - [ ] String Constant 的转义字符处理
-- [ ] 浅拷贝/深拷贝
+- [x] 浅拷贝/深拷贝 : 程序鲁棒性
 - [x] 异常处理报错
 - [ ] System.out.println()对文本框输入code_text的影响
 - [ ] 字符串长度的限制(64个, 255个), 添加负数, 运算范围等等
@@ -11,4 +11,13 @@
   - [ ] 改一下String 当做Class来处理?
 - [x] 去掉exprStmt, varExprNode
 - 怪怪的做法: ASTNode → StmtNode → DefNode, ExprNode 
+
+
+
+
+Semantic Hack Data:
+
+```java
+int x = A.B.f(1,2);
+```
 

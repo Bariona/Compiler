@@ -1,5 +1,6 @@
 package frontend;
 
+import utility.info.BaseInfo;
 import utility.info.ClassInfo;
 import utility.info.FuncInfo;
 import utility.info.VarInfo;
@@ -16,6 +17,17 @@ public class ScopeManager {
     forLoopCnt = 0;
     curClassScope = null;
     scopeStack = new Stack<>();
+  }
+
+  public void print() {
+    for (BaseScope scope : scopeStack)
+      scope.print();
+  }
+
+  public void addItem(BaseInfo info) {
+    if (scopeStack.peek() instanceof ClassScope || scopeStack.peek() instanceof RootScope)
+      return ;
+    scopeStack.peek().addItem(info);
   }
 
   public BaseScope curScope() { return scopeStack.peek(); }

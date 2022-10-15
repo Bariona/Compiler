@@ -7,7 +7,7 @@ class ABC {
 
     }
 };
-        int a = 1 + c, b = 4;
+        int a = 1 + 2, b = 4;
         int[] bb = new int [5];
 
         string c = "abc\n";
@@ -15,11 +15,11 @@ class ABC {
     f(int afu, A b) {
         1+2;
         int c;
-        break;
-        continue;
         ;
         ;
-        {
+        for(; ;) {
+            break;
+            continue;
             {
 
             }
@@ -27,17 +27,15 @@ class ABC {
     }
 
 void ff() {
-    void f() {
-        class aaaa {
+    {
 
-        };
     }
 }
 
 
     int main()
     {
-        if(1)
+        if(true)
         {
 
         }

@@ -28,6 +28,7 @@ javac <filename>.java
 支持中文: javac -encoding UTF-8 <filename>.java
 java <filename>
 ```
+`assert` 开区需要IDEA在run configuration中的VM option 加上`-ea`
 
 ## Reference
 

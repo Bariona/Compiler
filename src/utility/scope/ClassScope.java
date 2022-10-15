@@ -52,10 +52,10 @@ public class ClassScope extends BaseScope {
   @Override
   public void print() {
     System.out.println("==== Class Scope ====");
-    System.out.print("Variable Table: ");
-    varInfoTable.forEach((str, info) -> System.out.print(str + " ")); System.out.println();
-    System.out.print("Function Table: ");
-    funcInfoTable.forEach((str, info) -> System.out.print(str + " ")); System.out.println();
+    System.out.print("  Variable Table: ");
+    varInfoTable.forEach((str, info) -> System.out.print(" " + str)); System.out.println();
+    System.out.print("  Function Table: ");
+    funcInfoTable.forEach((str, info) -> System.out.print(" " + str)); System.out.println();
   }
 
   @Override

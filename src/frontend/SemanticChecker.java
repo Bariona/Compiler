@@ -43,6 +43,8 @@ public class SemanticChecker implements ASTVisitor {
       // unsolved: 空的expr怎么办?
       node.expr.accept(this);
       BaseType exprType = node.expr.exprType;
+      assert exprType != null;
+
       if (!(exprType instanceof VarType))
         throw new SemanticError("type is not a variable type!", node.pos);
       if (!node.info.type.isSame(exprType))
@@ -50,11 +52,13 @@ public class SemanticChecker implements ASTVisitor {
     }
     assert node.info.type != null;
     // unsolved: 会不会和Root scope 重命名了?
-    scopeManager.curScope().addItem(node.info);
+    scopeManager.addItem(node.info);
   }
 
   @Override
   public void visit(ClassDefNode node) {
+    if (!(scopeManager.curScope() instanceof RootScope))
+      throw new SemanticError("Class should not be defined here", node.pos);
     scopeManager.pushScope(node.scope);
     // unsolved : 要实现forward reference, 在scope里提前additem
     node.varDefs.forEach(var -> var.accept(this));
@@ -65,9 +69,12 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(FuncDefNode node) {
+    if (!(scopeManager.curScope() instanceof RootScope) && !(scopeManager.curScope() instanceof ClassScope))
+      throw new SemanticError("Function should not be defined here", node.pos);
     scopeManager.pushScope(new FuncScope(node.info));
-    node.info.paraListInfo.forEach(para -> scopeManager.curScope().addItem(para));
-    node.stmts.accept(this);
+    node.info.paraListInfo.forEach(para -> scopeManager.addItem(para));
+    if (node.stmts != null)
+      node.stmts.accept(this);
     scopeManager.popScope();
   }
 
@@ -96,7 +103,7 @@ public class SemanticChecker implements ASTVisitor {
         node.exprType = varInfo.type.clone();
       } else if (funcInfo != null) {
         node.exprType = funcInfo.type.clone();
-      } else throw new SemanticError("AtomExpr error", node.pos);
+      } else throw new SemanticError("Atom not defined", node.pos);
 
     } else {
       // null 类型
@@ -106,6 +113,7 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(NewExprNode node) {
+    assert node.exprType != null;
     for (ExprNode expr : node.dimensionExpr) {
       if (expr == null) continue;
       expr.accept(this);
@@ -159,8 +167,17 @@ public class SemanticChecker implements ASTVisitor {
     node.callExpr.accept(this);
     if (node.callExpr.exprType instanceof VarType)
       throw new SemanticError("not a function", node.callExpr.pos);
-    node.argumentList.forEach(arg -> arg.accept(this));
-
+    FuncType ret = (FuncType) node.callExpr.exprType;
+    if (node.argumentList.size() != ret.paraListType.size())
+      throw new SemanticError("Function parameter's number not correct", node.pos);
+    for (int i = 0; i < node.argumentList.size(); ++i) {
+      ExprNode cur = node.argumentList.get(i);
+      cur.accept(this);
+      if (!cur.exprType.isSame(ret.paraListType.get(i)))
+        throw new SemanticError("Function parameter's type not correct", node.pos);
+    }
+//    node.argumentList.forEach(arg -> arg.accept(this));
+    node.exprType = node.callExpr.exprType.clone();
   }
 
   @Override
@@ -201,11 +218,14 @@ public class SemanticChecker implements ASTVisitor {
     node.rhs.accept(this);
     boolean flag = false;
     if (node.opType == BinaryExprNode.binaryOpType.Compare) {
-      if (!isBoolType(node.lhs.exprType) || !isBoolType(node.rhs.exprType))
+      if (!isBoolType(node.lhs.exprType) || !isBoolType(node.rhs.exprType)) {
         flag = true;
+      } else node.exprType = new VarType(BaseType.BuiltinType.BOOL);
     } else {
-      if (!isIntType(node.lhs.exprType) || !isIntType(node.rhs.exprType))
+      if (!isIntType(node.lhs.exprType) || !isIntType(node.rhs.exprType)) {
         flag = true;
+      } else node.exprType = new VarType(BaseType.BuiltinType.INT);
+      // unsolved: String 的拼接
     }
     if (flag) throw new SemanticError("type not correct", node.pos);
   }
@@ -219,7 +239,7 @@ public class SemanticChecker implements ASTVisitor {
       throw new SemanticError("expect Left value", node.lhs.pos);
     if (!node.lhs.exprType.isSame(node.rhs.exprType))
       throw new SemanticError("expect Same type", node.pos);
-
+    node.exprType = node.lhs.exprType.clone();
   }
 
   @Override
@@ -261,7 +281,7 @@ public class SemanticChecker implements ASTVisitor {
     if (funcScope == null)
       throw new SemanticError("Return should be in a function", node.pos);
     node.ret.accept(this);
-    if (!node.ret.exprType.isSame(funcScope.info.type))
+    if (!node.ret.exprType.isSame(funcScope.info.type.retType))
       throw new SemanticError("Return type not match", node.ret.pos);
     // unsolved: int main()'s return
   }
@@ -277,11 +297,13 @@ public class SemanticChecker implements ASTVisitor {
   @Override
   public void visit(ForStmtNode node) {
     ++scopeManager.forLoopCnt;
-    node.initial.accept(this);
-    node.condition.accept(this);
-    if (!isBoolType(node.condition.exprType))
-      throw new SemanticError("condition expr should be bool type", node.condition.pos);
-    node.step.accept(this);
+    if (node.initial != null) node.initial.accept(this);
+    if (node.condition != null) {
+      node.condition.accept(this);
+      if (!isBoolType(node.condition.exprType))
+        throw new SemanticError("condition expr should be bool type", node.condition.pos);
+    }
+    if (node.step != null) node.step.accept(this);
 
     scopeManager.pushScope(new SuiteScope());
     node.stmt.accept(this);
