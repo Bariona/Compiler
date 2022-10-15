@@ -9,9 +9,9 @@ import java.util.ArrayList;
 
 public class ClassDefNode extends DefNode {
   public ClassInfo info;
+  public ClassScope scope;
   public ArrayList<VarSingleDefNode> varDefs = new ArrayList<>();
   public ArrayList<FuncDefNode> funcDefs = new ArrayList<>();
-  public ClassScope scope;
 
   public ClassDefNode(String name, Position pos) {
     super(pos);

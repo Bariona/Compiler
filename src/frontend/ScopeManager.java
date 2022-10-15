@@ -74,8 +74,8 @@ public class ScopeManager {
   }
 
   public ClassInfo getClassInfo(String className) {
-    RootScope rt = (RootScope) scopeStack.get(0);
-    return rt.queryClassInfo(className);
+    RootScope rootScope = (RootScope) scopeStack.get(0);
+    return rootScope.queryClassInfo(className);
   }
 
   public String getClassName() {

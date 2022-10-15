@@ -1,7 +1,6 @@
 package utility.scope;
 
 import utility.info.*;
-import utility.Position;
 
 import java.util.HashMap;
 

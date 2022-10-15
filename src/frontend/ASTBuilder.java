@@ -51,6 +51,10 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
         root.scope.addItem(((FuncDefNode) d).info);
       } else if (d instanceof ClassDefNode) {
         root.scope.addItem(((ClassDefNode) d).info);
+
+        var f= root.scope.queryClassInfo("A").findFuncInfo("ff");
+//        System.out.println(f);
+//        System.out.println(f.funcType.paraListType.size());
       } else if (d instanceof VarDefNode) {
         for (VarSingleDefNode v : ((VarDefNode) d).varList)
           root.scope.addItem(v.info);
@@ -110,11 +114,14 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     FuncDefNode func = new FuncDefNode(ctx.Identifier().toString(), type, new Position(ctx));
     if (ctx.parameterList() != null) {
       for (int i = 0; i < ctx.parameterList().Identifier().size(); ++i) {
+        VarType argType = new VarType(ctx.parameterList().typeName(i), true);
         func.info.paraListInfo.add(new VarInfo(
                 ctx.parameterList().Identifier(i).toString(),
-                new VarType(ctx.parameterList().typeName(i), true),
+                (VarType) argType.clone(),
                 new Position(ctx.parameterList().typeName(i))
         ));
+        // ↓ must be added...
+        func.info.funcType.paraListType.add((VarType) argType.clone());
       }
     }
     /* suite part */

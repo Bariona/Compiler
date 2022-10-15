@@ -21,8 +21,6 @@ public class RootScope extends BaseScope {
   @Override
   public void addItem(BaseInfo info) {
     String name = info.name;
-    if (info == null)
-      throw new NameError("Oooops, Forget add type!!", info.pos);
 
     if (info instanceof VarInfo) {
       if (varInfoTable.containsKey(name))

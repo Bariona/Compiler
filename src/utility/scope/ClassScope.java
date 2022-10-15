@@ -1,7 +1,6 @@
 package utility.scope;
 
 import utility.info.*;
-import utility.Position;
 import utility.error.NameError;
 
 import java.util.HashMap;
@@ -19,8 +18,6 @@ public class ClassScope extends BaseScope {
   @Override
   public void addItem(BaseInfo info) {
     String name = info.name;
-    if (info == null)
-      throw new NameError("Ooooops, Forget add type!!", info.pos);
 
     if (info instanceof VarInfo) {
       if (varInfoTable.containsKey(name))

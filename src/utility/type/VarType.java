@@ -2,6 +2,7 @@ package utility.type;
 
 import parser.MxParser;
 import utility.Position;
+import utility.error.SemanticError;
 import utility.error.SyntaxError;
 
 public class VarType extends BaseType {
@@ -34,15 +35,12 @@ public class VarType extends BaseType {
 
   @Override
   public boolean isSame(BaseType _it) {
-    if (!(_it instanceof VarType)) return false;
-    VarType it = (VarType) _it;
+    if (!(_it instanceof VarType it)) return false;
     if (it.builtinType != this.builtinType)
       return false;
-    if (it.builtinType == BuiltinType.CLASS && it.ClassName != this.ClassName)
+    if (it.builtinType == BuiltinType.CLASS && !it.ClassName.equals(this.ClassName))
       return false;
     // unsolved: class name
-    if (it.dimension != this.dimension)
-      return false;
-    return true;
+    return it.dimension == this.dimension;
   }
 }

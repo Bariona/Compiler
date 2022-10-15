@@ -9,12 +9,13 @@ public class UnaryExprNode extends ExprNode {
 
   public UnaryExprNode(String opCode, ExprNode expression, Position pos) {
     super(pos);
+    this.expression = expression;
     this.opCode = opCode;
   }
 
   @Override
   public boolean isAssignable() {
-    return opCode == "++" || opCode == "--";
+    return opCode.equals("++") || opCode.equals("--");
   }
 
   @Override

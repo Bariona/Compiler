@@ -7,14 +7,7 @@ import utility.type.BaseType;
 
 public class BinaryExprNode extends ExprNode {
   public enum binaryOpType {
-    Arithmetic, Compare, Equal
-//    Mul, Div, Mod,
-//    Add, Sub,
-//    LeftShift, RightShift,
-//    And, Xor, Or,
-//    LogicAnd, LogicOr,
-//    Equal, Neq,
-//    Greater, Less, Geq, Leq
+    Arithmetic, Compare, Equal, Logic
   }
 
   public ExprNode lhs, rhs;
@@ -37,7 +30,11 @@ public class BinaryExprNode extends ExprNode {
         opType = binaryOpType.Equal;
 //        exprType.builtinType = BaseType.BuiltinType.BOOL;
         break;
+      case "&&", "||":
+        opType = binaryOpType.Logic;
+        break;
       default:
+        System.out.println(symbol);
         throw new SyntaxError("Miss operator", this.pos);
 //      case "+": return binaryOpType.Add;
 //      case "-": return binaryOpType.Sub;

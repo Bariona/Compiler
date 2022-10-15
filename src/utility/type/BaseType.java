@@ -6,7 +6,7 @@ import utility.error.SyntaxError;
 
 abstract public class BaseType {
   public enum BuiltinType {
-    VOID, BOOL, INT, STRING, CLASS, FUNC
+    VOID, BOOL, NULL, INT, STRING, CLASS, FUNC
   }
 
   public BuiltinType builtinType;
@@ -41,6 +41,11 @@ abstract public class BaseType {
     return this.builtinType.name();
   }
 
+  static public boolean isVoidType(BaseType it) {
+    if (it instanceof FuncType) return false;
+    return it.isSame(new VarType(BuiltinType.VOID));
+  }
+
   static public boolean isBoolType(BaseType it) {
     if (it instanceof FuncType) return false;
     return it.isSame(new VarType(BuiltinType.BOOL));
@@ -51,8 +56,23 @@ abstract public class BaseType {
     return it.isSame(new VarType(BuiltinType.INT));
   }
 
+  static public boolean isArray(BaseType it) {
+    if (it instanceof FuncType) return false;
+    return ((VarType) it).dimension > 0;
+  }
+
   static public boolean isStringType(BaseType it) {
     if (it instanceof FuncType) return false;
     return it.isSame(new VarType(BuiltinType.STRING));
+  }
+
+  static public boolean isClassType(BaseType it) {
+    if (it instanceof FuncType) return false;
+    return it.builtinType == BuiltinType.CLASS;
+  }
+
+  static public boolean isNullType(BaseType it) {
+    if (it instanceof FuncType) return false;
+    return it.builtinType == BuiltinType.NULL;
   }
 }

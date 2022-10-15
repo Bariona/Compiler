@@ -17,7 +17,7 @@ public class ClassInfo extends BaseInfo {
 
   public VarInfo findVarInfo(String varName) {
     for (VarInfo info : varInfos) {
-      if (info.name == varName)
+      if (info.name.equals(varName))
         return info;
     }
     return null;
@@ -25,7 +25,7 @@ public class ClassInfo extends BaseInfo {
 
   public FuncInfo findFuncInfo(String funcName) {
     for (FuncInfo info : funcInfos) {
-      if (info.name == funcName)
+      if (info.name.equals(funcName))
         return info;
     }
     return null;

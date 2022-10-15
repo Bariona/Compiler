@@ -9,6 +9,7 @@ public class SelfExprNode extends ExprNode {
 
   public SelfExprNode(String opCode, ExprNode expression, Position pos) {
     super(pos);
+    this.expression = expression;
     this.opCode = opCode;
   }
 

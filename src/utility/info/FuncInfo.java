@@ -7,23 +7,23 @@ import utility.type.VarType;
 import java.util.ArrayList;
 
 public class FuncInfo extends BaseInfo {
-  public FuncType type;
+  public FuncType funcType;
   public ArrayList<VarInfo> paraListInfo;
 
   public FuncInfo(String name, VarType type, Position pos) {
     super(name, pos);
-    this.type = new FuncType(type);
+    this.funcType = new FuncType(type);
     paraListInfo = new ArrayList<>();
   }
 
   public FuncInfo(String name, VarType type, VarInfo... args) {
     super(name);
     this.name = name;
-    this.type = new FuncType(type);
+    this.funcType = new FuncType(type);
     paraListInfo = new ArrayList<>();
     for (VarInfo arg : args) {
       paraListInfo.add(arg);
-      this.type.paraListType.add(arg.type);
+      this.funcType.paraListType.add(arg.type);
     }
   }
 }
