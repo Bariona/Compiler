@@ -40,4 +40,19 @@ abstract public class BaseType {
   public String typename() {
     return this.builtinType.name();
   }
+
+  static public boolean isBoolType(BaseType it) {
+    if (it instanceof FuncType) return false;
+    return it.isSame(new VarType(BuiltinType.BOOL));
+  }
+
+  static public boolean isIntType(BaseType it) {
+    if (it instanceof FuncType) return false;
+    return it.isSame(new VarType(BuiltinType.INT));
+  }
+
+  static public boolean isStringType(BaseType it) {
+    if (it instanceof FuncType) return false;
+    return it.isSame(new VarType(BuiltinType.STRING));
+  }
 }

@@ -101,7 +101,7 @@ public class ASTPrinter implements ASTVisitor {
   public void visit(MemberExprNode node) {
     ++IndentCnt;
     PrintIn("MemberExpr Node " + " pos: " + node.pos);
-    Print("  Type: " + node.exprType.typename() + " member: " + node.member);
+    Print("  member: " + node.member);
     node.callExpr.accept(this);
     --IndentCnt;
   }
@@ -131,7 +131,8 @@ public class ASTPrinter implements ASTVisitor {
     PrintIn("SelfADD/SUB Node " + " pos: " + node.pos);
     Print(indent + "opCode: " + node.opCode);
     Print("Expression ↓");
-    node.expression.accept(this);
+    if (node.expression != null)
+      node.expression.accept(this);
     --IndentCnt;
   }
 
@@ -141,7 +142,8 @@ public class ASTPrinter implements ASTVisitor {
     PrintIn("Unary Node " + " pos: " + node.pos);
     Print(indent + "opCode: " + node.opCode);
     Print(indent + "Expression ↓");
-    node.expression.accept(this);
+    if (node.expression != null)
+      node.expression.accept(this);
     --IndentCnt;
   }
 
