@@ -1,76 +1,16 @@
 /*
 Test Package: Sema_Local_Preview
-Test Target: Bool compares
+Test Target: Break and Continue
 Author: Pikachu
-Time: 2019-10-14
+Time: 2019-10-20
+Verdict: Success
+Origin Package: Semantic Pretest
 */
 
-void f(int x, int y, int z){
-  bool a, b;
-
-  if (a == b)     {} // accepted
-  if (a != b)     {} // accepted
-
-  if (!a > 0)     {} // expected error: Binary operator '>' request for the same type
-  if (!a > 1)     {} // expected error: Binary operator '>' request for the same type
-  if (!a > 2)     {} // expected error: Binary operator '>' request for the same type
-  if (!a > y)     {} // expected error: Binary operator '>' request for the same type
-  if (!a > b)     {} // expected error: Binary operator '>' cannot be applied to bool and bool
-  if (!a > -1)    {} // expected error: Binary operator '>' request for the same type
-
-  if (!a < 0)     {} // expected error: Binary operator '<' request for the same type
-  if (!a < 1)     {} // expected error: Binary operator '<' request for the same type
-  if (!a < y)     {} // expected error: Binary operator '<' request for the same type
-  if (!a < b)     {} // expected error: Binary operator '>' cannot be applied to bool and bool
-
-  if ((a||b) > 0) {} // expected error: Binary operator '>' request for the same type
-  if ((a||b) > 1) {} // expected error: Binary operator '>' request for the same type
-
-
-  if ((a&&b) > 0) {} // expected error: Binary operator '>' request for the same type
-  if ((a&&b) > 1) {} // expected error: Binary operator '>' request for the same type
-
-  if ((a<y) == z) {} // expected error: Binary operator '<' request for the same type
-  // if (x>y<z)      {} // no warning
-  if ((a<y) > z)  {} // expected error: Binary operator '<' request for the same type
-  if((x<y)==(z<y)){} // no warning
-  if((x<y)!=(z<y)){} // no warning
-  if((z==x)<(y==z)){}  // expected error: Binary operator '<' request for the same type
-
-  if (0 > !a)     {} // expected error: Binary operator request for the same type
-  if (1 > !a)     {} // expected error: Binary operator request for the same type
-  if (2 > !a)     {} // expected error: Binary operator request for the same type
-  if (y > !a)     {} // expected error: Binary operator request for the same type
-  if (-1 > !a)    {} // expected error: Binary operator request for the same type
-
-  if (0 < !a)     {} // expected error: Binary operator request for the same type
-  if (1 < !a)     {} // expected error: Binary operator request for the same type
-  if (2 < !a)     {} // expected error: Binary operator request for the same type
-  if (y < !a)     {} // expected error: Binary operator request for the same type
-  if (-1 < !a)    {} // expected error: Binary operator request for the same type
-
-  if (0 > (a||b)) {} // expected error: Binary operator request for the same type
-  if (1 > (a||b)) {} // expected error: Binary operator request for the same type
-  if (4 > (a||b)) {} // expected error: Binary operator request for the same type
-
-  if (0 > (a&&b)) {} // expected error: Binary operator request for the same type
-  if (1 > (a&&b)) {} // expected error: Binary operator request for the same type
-  if (4 > (a&&b)) {} // expected error: Binary operator request for the same type
-
-  if (0 > (a<y))  {} // expected error: Binary operator request for the same type
-  if (1 > (a<y))  {} // expected error: Binary operator request for the same type
-  if (4 > (a<y))  {} // expected error: Binary operator request for the same type
-  if (z > (a<y))  {} // expected error: Binary operator request for the same type
-  if (-1 > (a<y)) {} // expected error: Binary operator request for the same type
-  if((y==z)<(z==x)){} // accepted
-
-  if(((z==x)<(-1==z))!=(x<y)){} // expected error: Binary operator request for the same type
-  if(((z==x)<(z==-1))!=(x<y)){} // expected error: Binary operator request for the same type
-  if(((z==x)<-1)!=(x<y)){} // expected error: Binary operator request for the same type
-  if(((z==x)< 2)!=(x<y)){} // expected error: Binary operator request for the same type
-  if(((z==x)<(z>2))!=(x<y)){} // expected error: Binary operator request for the same type
-}
-
-int main(){
-  f(1,2,3);
+int main() {
+    while (1 > 0) {
+        break;
+        continue;
+    }
+    return 0;
 }

@@ -8,7 +8,6 @@ import ast.statement.*;
 import utility.Position;
 import utility.StringDealer;
 import utility.error.SemanticError;
-import utility.error.SyntaxError;
 import utility.info.*;
 import utility.scope.*;
 import utility.type.*;
@@ -194,12 +193,8 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(SelfExprNode node) {
-    assert node.expression != null;
     node.expression.accept(this);
-    if (!BaseType.isIntType(node.expression.exprType))
-      throw new SemanticError("expect INT", node.pos);
-    if (!node.expression.isAssignable())
-      throw new SemanticError("expect left value", node.pos);
+    TypeChecker.selfCheck(node);
     node.exprType = node.expression.exprType.clone();
   }
 
@@ -242,10 +237,7 @@ public class SemanticChecker implements ASTVisitor {
   @Override
   public void visit(IfStmtNode node) {
     node.condition.accept(this);
-    if (node.condition.exprType instanceof FuncType)
-      throw new SemanticError("condition res type error", node.condition.pos);
-    VarType condi = (VarType) node.condition.exprType;
-    if (!BaseType.isBoolType(condi))
+    if (!BaseType.isBoolType(node.condition.exprType))
       throw new SemanticError("condition res type error", node.condition.pos);
 
     if (node.thenStmt != null) {
@@ -315,4 +307,14 @@ public class SemanticChecker implements ASTVisitor {
     }
     --scopeManager.forLoopCnt;
   }
+
+  @Override
+  public void visit(LambdaExprNode node) {
+    scopeManager.pushScope(new SuiteScope());
+    node.info.paraListInfo.forEach(info -> scopeManager.addItem(info));
+    node.suite.accept(this);
+    
+    scopeManager.popScope();
+  }
+
 }

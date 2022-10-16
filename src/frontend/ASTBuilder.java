@@ -311,6 +311,22 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   @Override
   public ASTNode visitLambdaExpr(MxParser.LambdaExprContext ctx) {
-    return super.visitLambdaExpr(ctx);
+    LambdaExprNode node = new LambdaExprNode((SuiteStmtNode) visit(ctx.suite()), new Position(ctx));
+
+    if (ctx.parameterList() != null) {
+      for (int i = 0; i < ctx.parameterList().typeName().size(); ++i) {
+        VarInfo varinfo = new VarInfo(
+                ctx.parameterList().Identifier(i).toString(),
+                new VarType(ctx.parameterList().typeName(i), true),
+                new Position(ctx.parameterList().typeName(i))
+        );
+        node.info.paraListInfo.add(varinfo);
+      }
+    }
+
+    if (ctx.argumentList() != null)
+      ctx.argumentList().expression().forEach(exp -> node.argumentList.add((ExprNode) visit(exp)));
+
+    return node;
   }
 }

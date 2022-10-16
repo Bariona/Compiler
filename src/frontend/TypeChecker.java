@@ -2,12 +2,20 @@ package frontend;
 
 import ast.expression.BinaryExprNode;
 import ast.expression.BinaryExprNode.binaryOpType;
+import ast.expression.SelfExprNode;
 import ast.expression.UnaryExprNode;
 import utility.error.SemanticError;
 import utility.error.SyntaxError;
 import utility.type.BaseType;
 
 public class TypeChecker {
+  static public void selfCheck(SelfExprNode node) {
+    if (!BaseType.isIntType(node.expression.exprType))
+      throw new SemanticError("expect INT", node.pos);
+    if (!node.expression.isAssignable())
+      throw new SemanticError("expect left value", node.pos);
+  }
+
   static public void unaryCheck(UnaryExprNode node) {
     switch (node.opCode) {
       case "!":

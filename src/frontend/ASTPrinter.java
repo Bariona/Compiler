@@ -243,4 +243,16 @@ public class ASTPrinter implements ASTVisitor {
     --IndentCnt;
   }
 
+  @Override
+  public void visit(LambdaExprNode node) {
+    ++IndentCnt;
+    Print(node.info.name);
+    Print(indent + "argumentList ↓:");
+    for (var arg : node.argumentList)
+      arg.accept(this);
+    if (node.suite != null)
+      node.suite.accept(this);
+    --IndentCnt;
+  }
+
 }

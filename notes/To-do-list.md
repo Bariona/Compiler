@@ -11,7 +11,7 @@
   - [x] 改一下String 当做Class来处理?
   - [x] 函数名/变量名 重名情况
   - [ ] 多个构造函数的情况 :broken_heart:
-  - [ ] emptyStmt 合并到 pureStmt
+  - [ ] LambdaExpr (function scope + return type detect)
 - [x] 去掉exprStmt, varExprNode
 - 怪怪的做法: ASTNode → StmtNode → DefNode, ExprNode 
 
