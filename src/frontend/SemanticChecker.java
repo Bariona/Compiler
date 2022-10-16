@@ -5,6 +5,7 @@ import ast.RootNode;
 import ast.definition.*;
 import ast.expression.*;
 import ast.statement.*;
+import utility.Position;
 import utility.StringDealer;
 import utility.error.SemanticError;
 import utility.error.SyntaxError;
@@ -16,17 +17,23 @@ import utility.type.*;
 public class SemanticChecker implements ASTVisitor {
   private final ScopeManager scopeManager = new ScopeManager();
 
+  private void checkAssign(VarType lhs, VarType rhs, Position pos) {
+    if (BaseType.isNullType(rhs)) {
+      if (BaseType.isPrimitiveType(lhs)) {
+        throw new SemanticError("null cannot be assigned to primitive type variable", pos);
+      }
+    } else {
+      if (!lhs.isSame(rhs))
+        throw new SemanticError("Assign expression expects same type", pos);
+      if (BaseType.isClassType(lhs) && scopeManager.getClassInfo(rhs.ClassName) == null)
+        throw new SemanticError(lhs.ClassName + " type is not defined! ", pos);
+    }
+  }
+
   @Override
   public void visit(RootNode node) {
     scopeManager.pushScope(node.scope);
     node.scope.print();
-    {
-      FuncInfo ret = scopeManager.queryFuncName("main");
-      if (ret == null)
-        throw new SemanticError("No main() function", node.pos);
-      if (!BaseType.isIntType(ret.funcType.retType))
-        throw new SemanticError("main() function should be \"int main\"", node.pos);
-    }
     node.defs.forEach(it -> it.accept(this));
     scopeManager.popScope();
   }
@@ -40,19 +47,9 @@ public class SemanticChecker implements ASTVisitor {
   public void visit(VarSingleDefNode node) {
     if (node.expr != null) {
       node.expr.accept(this);
-      BaseType exprType = node.expr.exprType;
-      assert exprType != null;
-
-      if (!(exprType instanceof VarType))
-        throw new SemanticError("type is not a variable type!", node.pos);
-      if (!node.info.type.isSame(exprType)) {
-        System.out.println("right handside: " + exprType.typename() + " " + exprType.ClassName);
-        System.out.println("left handside " + node.info.type.typename() + " " + node.info.type.ClassName);
-        throw new SemanticError("Variable Defintion: type not match!", node.pos);
-      }
-      // check class type being defined
-      if (BaseType.isClassType(node.info.type) && scopeManager.getClassInfo(node.info.type.ClassName) == null)
-        throw new SemanticError(node.info.type.ClassName + " type is not defined!", node.pos);
+      assert node.expr.exprType instanceof VarType;
+      VarType exprType = (VarType) node.expr.exprType;
+      checkAssign(node.info.type, exprType, node.pos);
     }
     VarType t = node.info.type;
     assert t != null;
@@ -102,12 +99,11 @@ public class SemanticChecker implements ASTVisitor {
 
     } else if (node.atom.Identifier() != null) {
       String name = node.atom.Identifier().toString();
-      VarInfo varInfo = scopeManager.queryVarName(name);
-      FuncInfo funcInfo = scopeManager.queryFuncName(name);
+      BaseInfo info = scopeManager.queryName(name);
 
-      if (varInfo != null) {
+      if (info instanceof VarInfo varInfo) {
         node.exprType = varInfo.type.clone();
-      } else if (funcInfo != null) {
+      } else if (info instanceof FuncInfo funcInfo) {
         node.exprType = funcInfo.funcType.clone();
       } else throw new SemanticError("Atom not defined", node.pos);
 
@@ -187,9 +183,6 @@ public class SemanticChecker implements ASTVisitor {
     node.callExpr.accept(this);
     if (!(node.callExpr.exprType instanceof FuncType callExp))
       throw new SemanticError("not a function", node.callExpr.pos);
-    //    System.out.println("ret: " + call.retType.typename());
-//    call.paraListType.forEach(e -> System.out.print(e.typename()));
-//    System.out.println("\n=====\n");
     if (node.argumentList.size() != callExp.paraListType.size()) {
       System.out.printf("given para num: %d, required para num: %d\n", node.argumentList.size(), callExp.paraListType.size());
       throw new SemanticError("Function parameter's number not correct", node.pos);
@@ -197,13 +190,10 @@ public class SemanticChecker implements ASTVisitor {
     for (int i = 0; i < node.argumentList.size(); ++i) {
       ExprNode cur = node.argumentList.get(i);
       cur.accept(this);
-//      System.out.println(cur.exprType.typename() + " " + call.paraListType.get(i).typename());
       if (!cur.exprType.isSame(callExp.paraListType.get(i)))
         throw new SemanticError("Function parameter's type not correct", node.pos);
     }
-//    node.argumentList.forEach(arg -> arg.accept(this));
     node.exprType = callExp.retType.clone();
-//    System.out.println("funcret " + node.pos.toString() + " " + node.exprType.typename());
   }
 
   @Override
@@ -214,7 +204,7 @@ public class SemanticChecker implements ASTVisitor {
       throw new SemanticError("expect INT", node.pos);
     // unsolved : iaAssignable
     if (!node.expression.isAssignable())
-      throw new SemanticError("expect variable", node.pos);
+      throw new SemanticError("expect left value", node.pos);
     node.exprType = node.expression.exprType.clone();
   }
 
@@ -284,8 +274,7 @@ public class SemanticChecker implements ASTVisitor {
     node.rhs.accept(this);
     if (!node.lhs.isAssignable())
       throw new SemanticError("Assign expression expects Left value", node.lhs.pos);
-    if (!BaseType.isNullType(node.rhs.exprType) && !node.lhs.exprType.isSame(node.rhs.exprType))
-      throw new SemanticError("Assign expression expects same type", node.pos);
+    checkAssign((VarType) node.lhs.exprType, (VarType) node.rhs.exprType, node.pos);
     node.exprType = node.lhs.exprType.clone();
   }
 
@@ -305,14 +294,15 @@ public class SemanticChecker implements ASTVisitor {
     if (!BaseType.isBoolType(condi))
       throw new SemanticError("condition res type error", node.condition.pos);
 
-    // unsolved: 好像不需要push scope
-//    scopeManager.pushScope(new SuiteScope());
-    node.thenStmt.accept(this);
-//    scopeManager.popScope();
+    if (node.thenStmt != null) {
+      scopeManager.pushScope(new SuiteScope());
+      node.thenStmt.accept(this);
+      scopeManager.popScope();
+    }
     if (node.elseStmt != null) {
-//      scopeManager.pushScope(new SuiteScope());
+      scopeManager.pushScope(new SuiteScope());
       node.elseStmt.accept(this);
-//      scopeManager.popScope();
+      scopeManager.popScope();
     }
   }
 
@@ -328,7 +318,7 @@ public class SemanticChecker implements ASTVisitor {
     if (funcScope == null)
       throw new SemanticError("Return should be in a function", node.pos);
     if (node.ret == null) {
-      if (!BaseType.isVoidType(funcScope.info.funcType.retType))
+      if (!funcScope.info.isConstructor && !BaseType.isVoidType(funcScope.info.funcType.retType))
         throw new SemanticError("Return should not be empty", node.pos);
       return ;
     }
@@ -344,7 +334,11 @@ public class SemanticChecker implements ASTVisitor {
     node.condition.accept(this);
     if (!BaseType.isBoolType(node.condition.exprType))
       throw new SemanticError("condition expr should be bool type", node.condition.pos);
-    node.stmt.accept(this);
+    if (node.stmt != null) {
+      scopeManager.pushScope(new SuiteScope());
+      node.stmt.accept(this);
+      scopeManager.popScope();
+    }
     --scopeManager.forLoopCnt;
   }
 
@@ -359,9 +353,11 @@ public class SemanticChecker implements ASTVisitor {
     }
     if (node.step != null) node.step.accept(this);
 
-    scopeManager.pushScope(new SuiteScope());
-    node.stmt.accept(this);
-    scopeManager.popScope();
+    if (node.stmt != null) {
+      scopeManager.pushScope(new SuiteScope());
+      node.stmt.accept(this);
+      scopeManager.popScope();
+    }
     --scopeManager.forLoopCnt;
   }
 }

@@ -219,7 +219,7 @@ public class ASTPrinter implements ASTVisitor {
     ++IndentCnt;
     PrintIn("While Statement " + " pos: " + node.pos);
     node.condition.accept(this);
-    node.stmt.accept(this);
+    if(node.stmt != null) node.stmt.accept(this);
     --IndentCnt;
   }
 
@@ -239,7 +239,7 @@ public class ASTPrinter implements ASTVisitor {
       Print(indent + " Step Expr:");
       node.step.accept(this);
     }
-    node.stmt.accept(this);
+    if (node.stmt != null) node.stmt.accept(this);
     --IndentCnt;
   }
 

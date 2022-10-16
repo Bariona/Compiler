@@ -7,6 +7,7 @@ import utility.type.VarType;
 import java.util.ArrayList;
 
 public class FuncInfo extends BaseInfo {
+  public boolean isConstructor = false;
   public FuncType funcType;
   public ArrayList<VarInfo> paraListInfo;
 
@@ -18,7 +19,6 @@ public class FuncInfo extends BaseInfo {
 
   public FuncInfo(String name, VarType type, VarInfo... args) {
     super(name);
-    this.name = name;
     this.funcType = new FuncType(type);
     paraListInfo = new ArrayList<>();
     for (VarInfo arg : args) {

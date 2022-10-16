@@ -14,7 +14,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-public class Main {
+public class Compiler {
   public static void main(String[] args) throws Exception {
     System.out.println("Current directory: " + System.getProperty("user.dir"));
 

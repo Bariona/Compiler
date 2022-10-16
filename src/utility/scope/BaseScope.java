@@ -13,6 +13,8 @@ abstract public class BaseScope {
 
   abstract public void addItem(BaseInfo info);
 
+  abstract boolean containKey(String name);
+
   abstract public VarInfo queryVarInfo(String name);
 
   abstract public FuncInfo queryFuncInfo(String name);

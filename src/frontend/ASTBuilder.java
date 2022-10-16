@@ -4,11 +4,13 @@ import ast.*;
 import ast.definition.*;
 import ast.expression.*;
 import ast.statement.*;
+import utility.error.SemanticError;
 import utility.info.FuncInfo;
 import utility.info.VarInfo;
 import parser.MxBaseVisitor;
 import parser.MxParser;
 import utility.Position;
+import utility.type.BaseType;
 import utility.type.BaseType.BuiltinType;
 import utility.type.VarType;
 
@@ -51,15 +53,16 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
         root.scope.addItem(((FuncDefNode) d).info);
       } else if (d instanceof ClassDefNode) {
         root.scope.addItem(((ClassDefNode) d).info);
-
-        var f= root.scope.queryClassInfo("A").findFuncInfo("ff");
-//        System.out.println(f);
-//        System.out.println(f.funcType.paraListType.size());
-      } else if (d instanceof VarDefNode) {
-        for (VarSingleDefNode v : ((VarDefNode) d).varList)
-          root.scope.addItem(v.info);
       }
     }
+    {
+      FuncInfo ret = root.scope.queryFuncInfo("main");
+      if (ret == null)
+        throw new SemanticError("No main() function", ret.pos);
+      if (!BaseType.isIntType(ret.funcType.retType))
+        throw new SemanticError("main() function should be \"int main\"", ret.pos);
+    }
+
     return root;
   }
 
@@ -110,8 +113,9 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
       type = new VarType(BuiltinType.CLASS);
       type.ClassName = ctx.Identifier().toString();
     }
-
     FuncDefNode func = new FuncDefNode(ctx.Identifier().toString(), type, new Position(ctx));
+    if(ctx.typeName() == null)
+      func.info.isConstructor = true; // it's a constructor
     if (ctx.parameterList() != null) {
       for (int i = 0; i < ctx.parameterList().Identifier().size(); ++i) {
         VarType argType = new VarType(ctx.parameterList().typeName(i), true);
@@ -168,9 +172,6 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   @Override
   public ASTNode visitDefStmt(MxParser.DefStmtContext ctx) {
-//    varStmtNode node = new varStmtNode(new Position(ctx));
-//    node.Defstmt = (varDefNode) visit(ctx.def()); // 一定是VarDEF吗?
-//    return node;
     return visit(ctx.def());
   }
 

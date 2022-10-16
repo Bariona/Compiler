@@ -10,12 +10,17 @@ public class SuiteScope extends BaseScope {
     String name = info.name;
 
     if (info instanceof VarInfo) {
-      if (varInfoTable.containsKey(name))
+      if (containKey(name))
         throw new NameError("member \"" + name + "\" redefined", info.pos);
       varInfoTable.put(name, (VarInfo) info);
     } else {
       throw new NameError("not a member type!", info.pos);
     }
+  }
+
+  @Override
+  boolean containKey(String name) {
+    return varInfoTable.containsKey(name);
   }
 
   @Override

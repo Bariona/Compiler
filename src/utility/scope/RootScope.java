@@ -21,22 +21,20 @@ public class RootScope extends BaseScope {
   @Override
   public void addItem(BaseInfo info) {
     String name = info.name;
-
+    if (containKey(name))
+      throw new NameError("member \"" + name + "\" redefined", info.pos);
     if (info instanceof VarInfo) {
-      if (varInfoTable.containsKey(name))
-        throw new NameError("member \"" + name + "\" redefined", info.pos);
       varInfoTable.put(name, (VarInfo) info);
     } else if (info instanceof ClassInfo) {
-      if (classInfoTable.containsKey(name))
-        throw new NameError("member \"" + name + "\" redefined", info.pos);
       classInfoTable.put(name, (ClassInfo) info);
     } else if (info instanceof FuncInfo) {
-      if (funcInfoTable.containsKey(name))
-        throw new NameError("member \"" + name + "\" redefined", info.pos);
       funcInfoTable.put(name, (FuncInfo) info);
-    } else {
-      throw new NameError("not a member type!", info.pos);
-    }
+    } else throw new NameError("not a member type!", info.pos);
+  }
+
+  @Override
+  boolean containKey(String name) {
+    return varInfoTable.containsKey(name) || classInfoTable.containsKey(name) || funcInfoTable.containsKey(name);
   }
 
   @Override

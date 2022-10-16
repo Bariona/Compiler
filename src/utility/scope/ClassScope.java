@@ -1,5 +1,6 @@
 package utility.scope;
 
+import utility.error.SemanticError;
 import utility.info.*;
 import utility.error.NameError;
 
@@ -18,18 +19,24 @@ public class ClassScope extends BaseScope {
   @Override
   public void addItem(BaseInfo info) {
     String name = info.name;
+    if (containKey(name))
+      throw new NameError("member \"" + name + "\" redefined", info.pos);
+    if (info instanceof VarInfo vinfo) {
+      varInfoTable.put(name, vinfo);
+      if (info.name.equals(this.name))
+        throw new SemanticError("variable duplicate with class name " + this.name, vinfo.pos);
+    } else if (info instanceof FuncInfo finfo) {
+      funcInfoTable.put(name, finfo);
+      if (finfo.name.equals(this.name) && !finfo.isConstructor)
+        throw new SemanticError("function duplicate with class name " + this.name, finfo.pos);
+      if (!finfo.name.equals(this.name) && finfo.isConstructor)
+        throw new SemanticError("function constructor should have the same class name " + this.name, finfo.pos);
+    } else throw new NameError("not a member type!", info.pos);
+  }
 
-    if (info instanceof VarInfo) {
-      if (varInfoTable.containsKey(name))
-        throw new NameError("member \"" + name + "\" redefined", info.pos);
-      varInfoTable.put(name, (VarInfo) info);
-    } else if (info instanceof FuncInfo) {
-      if (funcInfoTable.containsKey(name))
-        throw new NameError("member \"" + name + "\" redefined", info.pos);
-      funcInfoTable.put(name, (FuncInfo) info);
-    } else {
-      throw new NameError("not a member type!", info.pos);
-    }
+  @Override
+  boolean containKey(String name) {
+    return funcInfoTable.containsKey(name) || varInfoTable.containsKey(name);
   }
 
   @Override

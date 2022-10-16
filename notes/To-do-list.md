@@ -8,7 +8,9 @@
 - [ ] 各个expression的type类型
 - [ ] ++a++的判断: a++优先级高, 但是返回的不是引用, 所以这是一个错误用法
 - [x] 10.12: 目前需要重新更新一下FuncDefNode等数据, 加上registery类型(这样能够更加匹配scope类型中的Hash)
-  - [ ] 改一下String 当做Class来处理?
+  - [x] 改一下String 当做Class来处理?
+  - [x] 函数名/变量名 重名情况
+  - [ ] 多个构造函数的情况 :broken_heart:
 - [x] 去掉exprStmt, varExprNode
 - 怪怪的做法: ASTNode → StmtNode → DefNode, ExprNode 
 
@@ -19,5 +21,8 @@ Semantic Hack Data:
 
 ```java
 int x = A.B.f(1,2);
+int [][][] a = new [1][][1]
+
+function-2.mx
 ```
 

@@ -1,5 +1,6 @@
 package frontend;
 
+import utility.error.SemanticError;
 import utility.info.BaseInfo;
 import utility.info.ClassInfo;
 import utility.info.FuncInfo;
@@ -25,8 +26,9 @@ public class ScopeManager {
   }
 
   public void addItem(BaseInfo info) {
-    if (scopeStack.peek() instanceof ClassScope || scopeStack.peek() instanceof RootScope)
-      return ;
+    if (scopeStack.peek() instanceof ClassScope) return ;
+    if (getClassInfo(info.name) != null)
+      throw new SemanticError("name duplicated with class " + info.name, info.pos);
     scopeStack.peek().addItem(info);
   }
 
@@ -46,21 +48,15 @@ public class ScopeManager {
 
   public boolean isInForLoop() { return forLoopCnt > 0; }
 
-  public VarInfo queryVarName(String name) {
-    for (int i = scopeStack.size() - 1; i >= 0; --i) {
-      VarInfo ret = scopeStack.get(i).queryVarInfo(name);
-      if (ret != null) return ret;
-    }
-    return null;
-  }
-
-  public FuncInfo queryFuncName(String name) {
+  public BaseInfo queryName(String name) {
     for (int i = scopeStack.size() - 1; i >= 0; --i) {
       BaseScope cur = scopeStack.get(i);
       if (cur instanceof ClassScope || cur instanceof RootScope) {
         FuncInfo ret = cur.queryFuncInfo(name);
         if (ret != null) return ret;
       }
+      VarInfo ret = cur.queryVarInfo(name);
+      if (ret != null) return ret;
     }
     return null;
   }

@@ -75,4 +75,9 @@ abstract public class BaseType {
     if (it instanceof FuncType) return false;
     return it.builtinType == BuiltinType.NULL;
   }
+
+  static public boolean isPrimitiveType(BaseType it) {
+    if (it instanceof FuncType) return false;
+    return ((VarType) it).dimension == 0 && it.builtinType != BuiltinType.CLASS;
+  }
 }
