@@ -157,12 +157,8 @@ public class SemanticChecker implements ASTVisitor {
 
     if (node.callExpr.exprType.builtinType != BaseType.BuiltinType.CLASS)
       throw new SemanticError("MemberExpr left handside should be class", node.callExpr.pos);
-    assert node.callExpr.exprType.ClassName != null;
 
     ClassInfo classInfo = scopeManager.getClassInfo(node.callExpr.exprType.ClassName);
-
-    assert classInfo != null;
-//    System.out.println(classInfo.name + " " + node.member);
     VarInfo varInfo = classInfo.findVarInfo(node.member);
     FuncInfo funcInfo = classInfo.findFuncInfo(node.member);
 
@@ -202,7 +198,6 @@ public class SemanticChecker implements ASTVisitor {
     node.expression.accept(this);
     if (!BaseType.isIntType(node.expression.exprType))
       throw new SemanticError("expect INT", node.pos);
-    // unsolved : iaAssignable
     if (!node.expression.isAssignable())
       throw new SemanticError("expect left value", node.pos);
     node.exprType = node.expression.exprType.clone();
@@ -210,33 +205,13 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(UnaryExprNode node) {
-//    System.out.println(node.pos.toString() + " " + node.opCode);
-    assert node.expression != null;
     node.expression.accept(this);
-    switch (node.opCode) {
-      case "!":
-        if (!BaseType.isBoolType(node.expression.exprType))
-          throw new SemanticError("expect BOOL", node.pos);
-        break;
-      case "++", "--":
-        if (!BaseType.isIntType(node.expression.exprType))
-          throw new SemanticError("expect INT", node.pos);
-        if (!node.expression.isAssignable())
-          throw new SemanticError("expect variable", node.pos);
-        break;
-      case "+", "-", "~":
-        if (!BaseType.isIntType(node.expression.exprType))
-          throw new SemanticError("expect INT", node.pos);
-        break;
-      default:
-        throw new SyntaxError("Unary undifined character", node.pos);
-    }
+    TypeChecker.unaryCheck(node);
     node.exprType = node.expression.exprType.clone();
   }
 
   @Override
   public void visit(AssignExprNode node) {
-    assert node.lhs != null && node.rhs != null;
     node.lhs.accept(this);
     node.rhs.accept(this);
     if (!node.lhs.isAssignable())
@@ -247,35 +222,14 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(BinaryExprNode node) {
-    assert node.lhs != null && node.rhs != null;
     node.lhs.accept(this);
     node.rhs.accept(this);
 
-    if (!node.lhs.exprType.isSame(node.rhs.exprType))
-      throw new SemanticError("left/right ExprType not match", node.pos);
-    boolean flag = false;
-    if (BaseType.isStringType(node.lhs.exprType)) {
-      // String Type
-      if (node.opCode.equals("+")) { // string connect
-        node.exprType = new VarType(BaseType.BuiltinType.STRING);
-      } else if (node.opType != BinaryExprNode.binaryOpType.Arithmetic) {
-        node.exprType = new VarType(BaseType.BuiltinType.BOOL);
-      } else flag = true;
-    } else {
-      // Other Type
-      if (node.opType == BinaryExprNode.binaryOpType.Arithmetic) {
-        if (!BaseType.isIntType(node.lhs.exprType)) { // arithmatic
-          flag = true;
-        } else node.exprType = new VarType(BaseType.BuiltinType.INT);
-      } else if (node.opType == BinaryExprNode.binaryOpType.Logic) {
-        if (!BaseType.isBoolType(node.lhs.exprType)) {
-          flag = true;
-        } else node.exprType = new VarType(BaseType.BuiltinType.BOOL);
-      } else { // compare & equal
-        node.exprType = new VarType(BaseType.BuiltinType.BOOL);
-      }
-    }
-    if (flag) throw new SemanticError("type not correct", node.pos);
+    TypeChecker.binaryCheck(node);
+
+    if (node.opType == BinaryExprNode.binaryOpType.Equal || node.opType == BinaryExprNode.binaryOpType.Compare) {
+      node.exprType = new VarType(BaseType.BuiltinType.BOOL);
+    } else node.exprType = node.lhs.exprType.clone();
   }
 
   @Override
