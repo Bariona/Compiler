@@ -9,8 +9,4 @@ abstract public class StmtNode extends ASTNode {
     super(pos);
   }
 
-//    @Override
-//    public void accept(ASTvisitor visitor) {
-//        visitor.visit(this);
-//    }
 }

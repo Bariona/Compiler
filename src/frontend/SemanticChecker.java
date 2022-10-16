@@ -235,6 +235,17 @@ public class SemanticChecker implements ASTVisitor {
   }
 
   @Override
+  public void visit(AssignExprNode node) {
+    assert node.lhs != null && node.rhs != null;
+    node.lhs.accept(this);
+    node.rhs.accept(this);
+    if (!node.lhs.isAssignable())
+      throw new SemanticError("Assign expression expects Left value", node.lhs.pos);
+    checkAssign((VarType) node.lhs.exprType, (VarType) node.rhs.exprType, node.pos);
+    node.exprType = node.lhs.exprType.clone();
+  }
+
+  @Override
   public void visit(BinaryExprNode node) {
     assert node.lhs != null && node.rhs != null;
     node.lhs.accept(this);
@@ -268,17 +279,6 @@ public class SemanticChecker implements ASTVisitor {
   }
 
   @Override
-  public void visit(AssignExprNode node) {
-    assert node.lhs != null && node.rhs != null;
-    node.lhs.accept(this);
-    node.rhs.accept(this);
-    if (!node.lhs.isAssignable())
-      throw new SemanticError("Assign expression expects Left value", node.lhs.pos);
-    checkAssign((VarType) node.lhs.exprType, (VarType) node.rhs.exprType, node.pos);
-    node.exprType = node.lhs.exprType.clone();
-  }
-
-  @Override
   public void visit(SuiteStmtNode node) {
     scopeManager.pushScope(new SuiteScope());
     node.stmts.forEach(stmt -> stmt.accept(this));
@@ -299,6 +299,7 @@ public class SemanticChecker implements ASTVisitor {
       node.thenStmt.accept(this);
       scopeManager.popScope();
     }
+
     if (node.elseStmt != null) {
       scopeManager.pushScope(new SuiteScope());
       node.elseStmt.accept(this);
@@ -335,7 +336,7 @@ public class SemanticChecker implements ASTVisitor {
     if (!BaseType.isBoolType(node.condition.exprType))
       throw new SemanticError("condition expr should be bool type", node.condition.pos);
     if (node.stmt != null) {
-      scopeManager.pushScope(new SuiteScope());
+      scopeManager.pushScope(new LoopScope());
       node.stmt.accept(this);
       scopeManager.popScope();
     }
@@ -354,7 +355,7 @@ public class SemanticChecker implements ASTVisitor {
     if (node.step != null) node.step.accept(this);
 
     if (node.stmt != null) {
-      scopeManager.pushScope(new SuiteScope());
+      scopeManager.pushScope(new LoopScope());
       node.stmt.accept(this);
       scopeManager.popScope();
     }
