@@ -20,8 +20,8 @@ public class Compiler {
 
     String filename = "testcases/data.in";
     String outputFile = "data.out";
-    InputStream input = new FileInputStream(filename);
-//    InputStream input = System.in;
+//    InputStream input = new FileInputStream(filename);
+    InputStream input = System.in;
 
     try {
       MxLexer lexer = new MxLexer(CharStreams.fromStream(input)); // lexer
