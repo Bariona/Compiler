@@ -4,7 +4,7 @@ Test Target: Basic
 Author: 11' Hang Wu
 Time: 2019-11-11
 Verdict: Fail
-Comment: Variable utility.type.BaseType error.
+Comment: Variable Type error.
 Origin Package: Semantic Pretest
 */
 int main() {

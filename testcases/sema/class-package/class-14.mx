@@ -4,7 +4,7 @@ Test Target: Classes
 Author: 16' Zihao Xu
 Time: 2019-11-11
 Verdict: Fail
-Comment: Constructor utility.type.BaseType Error.
+Comment: Constructor Type Error.
 Origin Package: Semantic Extended
 */
 int a;

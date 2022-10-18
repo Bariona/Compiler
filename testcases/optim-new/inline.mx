@@ -11,7 +11,9 @@ Output:
 
 === end ===
 ExitCode: 0
-InstLimit: 99999
+RunTimeLimit: 114514
+OutputLengthLimit: 10000
+CompileTimeLimit: 15
 */
 
 int unsigned_shl(int x, int k) {

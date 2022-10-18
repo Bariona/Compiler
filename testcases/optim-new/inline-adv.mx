@@ -11,7 +11,9 @@ Output:
 
 === end ===
 ExitCode: 0
-InstLimit: 99999
+RunTimeLimit: 99999
+OutputLengthLimit: 10000
+CompileTimeLimit: 15
 */
 
 int w = 0;
@@ -135,8 +137,8 @@ int wP() {
         N = N + isp;
         i = i + isp;
     }
-    // N = 4
-    if ((N + wpppp()) % 2 == 0) return add524288(N) - 524288 - 4;
+    // N = 6
+    if ((N + wpppp()) % 2 == 0) return add524288(N) - 524288 - 6;
     block(); block();
     block(); block();
     return bblock();
@@ -147,5 +149,5 @@ int sanity_check() {
 }
 
 int main() {
-    return sanity_check() - 3;
+    return sanity_check() - 1;
 }

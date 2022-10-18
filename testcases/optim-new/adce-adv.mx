@@ -11,7 +11,9 @@ Output:
 
 === end ===
 ExitCode: 0
-InstLimit: 2000000
+RunTimeLimit: 2000000
+OutputLengthLimit: 10000
+CompileTimeLimit: 15
 */
 
 int rng_seed = 19260817;

@@ -94,12 +94,21 @@ public class SemanticChecker implements ASTVisitor {
   @Override
   public void visit(NewExprNode node) {
     assert node.exprType != null;
+    boolean flag = true, tag = false;
     for (ExprNode expr : node.dimensionExpr) {
-      if (expr == null) continue;
+      if (expr == null) {
+        flag = false;
+        continue;
+      }
+      tag = true;
+      if (!flag)
+        throw new SemanticError("order of the dimension error", expr.pos);
       expr.accept(this);
       if (!BaseType.isIntType(expr.exprType))
         throw new SemanticError("bracket inside should be Integral", expr.pos);
     }
+    if (!tag && !flag)
+      throw new SemanticError("dimension should not be empty", node.pos);
   }
 
   @Override
@@ -152,11 +161,11 @@ public class SemanticChecker implements ASTVisitor {
   @Override
   public void visit(LambdaExprNode node) {
     scopeManager.pushScope(new FuncScope(node.info));
+    scopeManager.lambdaReturn.push(new VarType(BaseType.BuiltinType.NULL));
     node.info.paraListInfo.forEach(scopeManager::addItem);
 
-    scopeManager.lambdaReturn = null;
     node.suite.accept(this);
-    node.exprType = scopeManager.lambdaReturn.clone();
+    node.exprType = scopeManager.lambdaReturn.peek().clone();
 
     scopeManager.popScope();
     for (int i = 0; i < node.argumentList.size(); ++i) {
@@ -166,6 +175,14 @@ public class SemanticChecker implements ASTVisitor {
       if (!node.info.paraListInfo.get(i).type.isSame(cur.exprType))
         throw new SemanticError("Lambda parameter's type not correct", node.pos);
     }
+    VarType ret;
+    if (BaseType.isNullType(scopeManager.lambdaReturn.peek())) {
+      ret = new VarType(BaseType.BuiltinType.VOID);
+    } else ret = (VarType) scopeManager.lambdaReturn.peek().clone();
+//    System.out.println(node.exprType.typename() + " " + node.pos);
+    node.exprType = ret;
+    scopeManager.lambdaReturn.pop();
+//    scopeManager.popScope();
   }
 
   @Override
@@ -268,18 +285,20 @@ public class SemanticChecker implements ASTVisitor {
         ret = new VarType(BaseType.BuiltinType.VOID);
       } else ret = (VarType) node.ret.exprType.clone();
 
-      if (scopeManager.lambdaReturn == null)  {
-        scopeManager.lambdaReturn = ret;
-      } else if (!scopeManager.lambdaReturn.isSame(ret))
+      if (BaseType.isNullType(scopeManager.lambdaReturn.peek())) {
+        scopeManager.lambdaReturn.pop();
+        scopeManager.lambdaReturn.push(ret);
+      } else if (!scopeManager.lambdaReturn.peek().isSame(ret))
         throw new SemanticError("lambda return type not same", node.pos);
       return ;
     }
-
 
     if (node.ret == null) { // case "return;":
       if (!funcScope.info.isConstructor && !BaseType.isVoidType(funcScope.info.funcType.retType))
         throw new SemanticError("Return should not be empty", node.pos);
       return ;
+    } else if (funcScope.info.isConstructor) {
+      throw new SemanticError("cannot return any value in a constructor", node.pos);
     }
 
     if (!funcScope.info.funcType.retType.isSame(node.ret.exprType))
@@ -296,6 +315,7 @@ public class SemanticChecker implements ASTVisitor {
       node.stmt.accept(this);
       scopeManager.popScope();
     }
+
   }
 
   @Override

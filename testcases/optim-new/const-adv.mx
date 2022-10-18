@@ -11,7 +11,9 @@ Output:
 
 === end ===
 ExitCode: 0
-InstLimit: 300000
+RunTimeLimit: 300000
+OutputLengthLimit: 10000
+CompileTimeLimit: 15
 */
 
 

@@ -25,9 +25,9 @@ int main(){
                     return d + 10;
                 }(a);
             }
-        }(sum);
+        }(sum++++);
         return q;
-    }(10086);
+    }(10086)++;
     d++;
     return d;
 }

@@ -12,7 +12,7 @@ import java.util.Stack;
 
 public class ScopeManager {
   private int loopCnt;
-  public VarType lambdaReturn;
+  public Stack<VarType> lambdaReturn;
   private ClassScope curClassScope;
   private Stack<BaseScope> scopeStack;
 
@@ -20,6 +20,7 @@ public class ScopeManager {
     loopCnt = 0;
     curClassScope = null;
     scopeStack = new Stack<>();
+    lambdaReturn = new Stack<>();
   }
 
   public void print() {

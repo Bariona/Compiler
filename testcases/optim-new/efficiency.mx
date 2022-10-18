@@ -25,7 +25,9 @@ Output:
 1338
 === end ===
 ExitCode: 0
-InstLimit: 2500000
+RunTimeLimit: 2500000
+OutputLengthLimit: 10000
+CompileTimeLimit: 30
 */
 
 // NTT, source: https://blog.csdn.net/wu_tongtong/article/details/77620709
@@ -106,8 +108,8 @@ class taskNTT {
         m=getInt();
         //scanf("%d%d",&n,&m);
         int i;
-        for (i=0;i<=n;i++) a[i] = getInt(); // scanf("%intd",&a[i]);
-        for (i=0;i<=m;i++) b[i] = getInt(); // scanf("%intd",&b[i]);
+        for (i=0;i<=n;i++) a[i] = getInt(); // scanf("%d",&a[i]);
+        for (i=0;i<=m;i++) b[i] = getInt(); // scanf("%d",&b[i]);
         fn=1;
         while (fn<=n+m) fn=fn<<1;
         NTT(fn,a,1); NTT(fn,b,1);
@@ -116,7 +118,7 @@ class taskNTT {
         int t=KSM(fn,mod-2);
         for (i=0;i<fn;i++) a[i]=mulmod(a[i], t, mod);
 
-        for (i=0;i<=m+n;i++) printlnInt(a[i]); // printf("%intd ",a[i]);
+        for (i=0;i<=m+n;i++) printlnInt(a[i]); // printf("%d ",a[i]);
         return 0;
     }
 };
@@ -141,6 +143,7 @@ class taskStress {
     }
     int main() {
         printlnInt(ret);
+		return 0;
     }
 }; 
 

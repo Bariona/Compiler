@@ -54,12 +54,15 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
         root.scope.addItem(((ClassDefNode) d).info);
       }
     }
+
     {
       FuncInfo ret = root.scope.queryFuncInfo("main");
       if (ret == null)
         throw new SemanticError("No main() function", root.pos);
       if (!BaseType.isIntType(ret.funcType.retType))
         throw new SemanticError("main() function should be \"int main\"", ret.pos);
+      if (!ret.paraListInfo.isEmpty())
+        throw new SemanticError("main() function has no parameter", ret.pos);
     }
 
     return root;
@@ -247,6 +250,8 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   @Override
   public ASTNode visitNewType(MxParser.NewTypeContext ctx) {
     NewExprNode node = new NewExprNode(new VarType(ctx.typeName(), false), new Position(ctx));
+    if (BaseType.isVoidType(node.exprType) || BaseType.isNullType(node.exprType))
+      throw new SemanticError("New expression error", node.pos);
     for (var dim : ctx.typeName().bracket()) {
       if (dim.expression() != null) {
         node.dimensionExpr.add((ExprNode) visit(dim.expression()));

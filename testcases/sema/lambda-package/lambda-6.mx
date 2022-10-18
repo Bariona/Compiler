@@ -6,7 +6,7 @@ Verdict: Fail
 Origin Package: Semantic Pretest
 */
 
-
+bool duck;
 int main(){
     int d = [&](int a) -> {
         int f = a;
@@ -22,12 +22,12 @@ int main(){
                 }(a);
             } else {
                 int q = [&](int d) -> {
-                    return d + 10;
+                    return duck;
                 }(a);
             }
-        }(sum);
+        }(sum++++);
         return q;
-    }(10086);
+    }(10086)++;
     d++;
     return d;
 }

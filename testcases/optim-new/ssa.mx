@@ -11,7 +11,9 @@ Output:
 
 === end ===
 ExitCode: 0
-InstLimit: 9999
+RunTimeLimit: 9999
+OutputLengthLimit: 10000
+CompileTimeLimit: 15
 */
 
 int n;
