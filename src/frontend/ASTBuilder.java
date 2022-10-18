@@ -327,6 +327,9 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     if (ctx.argumentList() != null)
       ctx.argumentList().expression().forEach(exp -> node.argumentList.add((ExprNode) visit(exp)));
 
+//    System.out.printf("%d %d\n", node.argumentList.size(), node.info.paraListInfo.size());
+    if (node.argumentList.size() != node.info.paraListInfo.size())
+      throw new SemanticError("parameter number not match", node.pos);
     return node;
   }
 }

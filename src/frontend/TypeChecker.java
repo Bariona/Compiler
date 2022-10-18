@@ -4,11 +4,31 @@ import ast.expression.BinaryExprNode;
 import ast.expression.BinaryExprNode.binaryOpType;
 import ast.expression.SelfExprNode;
 import ast.expression.UnaryExprNode;
+import utility.Position;
 import utility.error.SemanticError;
 import utility.error.SyntaxError;
 import utility.type.BaseType;
+import utility.type.VarType;
 
 public class TypeChecker {
+
+  static public void functionCheck() {
+
+  }
+
+  static public void assignCheck(VarType lhs, VarType rhs, Position pos, ScopeManager scopeManager) {
+    if (BaseType.isNullType(rhs)) {
+      if (BaseType.isPrimitiveType(lhs)) {
+        throw new SemanticError("null cannot be assigned to primitive type variable", pos);
+      }
+    } else {
+      if (!lhs.isSame(rhs))
+        throw new SemanticError("Assign expression expects same type", pos);
+      if (BaseType.isClassType(lhs) && scopeManager.getClassInfo(rhs.ClassName) == null)
+        throw new SemanticError(lhs.ClassName + " type is not defined! ", pos);
+    }
+  }
+
   static public void selfCheck(SelfExprNode node) {
     if (!BaseType.isIntType(node.expression.exprType))
       throw new SemanticError("expect INT", node.pos);

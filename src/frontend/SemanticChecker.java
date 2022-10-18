@@ -16,23 +16,10 @@ import utility.type.*;
 public class SemanticChecker implements ASTVisitor {
   private final ScopeManager scopeManager = new ScopeManager();
 
-  private void checkAssign(VarType lhs, VarType rhs, Position pos) {
-    if (BaseType.isNullType(rhs)) {
-      if (BaseType.isPrimitiveType(lhs)) {
-        throw new SemanticError("null cannot be assigned to primitive type variable", pos);
-      }
-    } else {
-      if (!lhs.isSame(rhs))
-        throw new SemanticError("Assign expression expects same type", pos);
-      if (BaseType.isClassType(lhs) && scopeManager.getClassInfo(rhs.ClassName) == null)
-        throw new SemanticError(lhs.ClassName + " type is not defined! ", pos);
-    }
-  }
-
   @Override
   public void visit(RootNode node) {
+//    node.scope.print();
     scopeManager.pushScope(node.scope);
-    node.scope.print();
     node.defs.forEach(it -> it.accept(this));
     scopeManager.popScope();
   }
@@ -48,7 +35,7 @@ public class SemanticChecker implements ASTVisitor {
       node.expr.accept(this);
       assert node.expr.exprType instanceof VarType;
       VarType exprType = (VarType) node.expr.exprType;
-      checkAssign(node.info.type, exprType, node.pos);
+      TypeChecker.assignCheck(node.info.type, exprType, node.pos, scopeManager);
     }
     VarType t = node.info.type;
     assert t != null;
@@ -62,21 +49,16 @@ public class SemanticChecker implements ASTVisitor {
     if (!(scopeManager.curScope() instanceof RootScope))
       throw new SemanticError("Class should not be defined here", node.pos);
     scopeManager.pushScope(node.scope);
-    // unsolved : 要实现forward reference, 在scope里提前additem
     node.varDefs.forEach(var -> var.accept(this));
     node.funcDefs.forEach(func -> func.accept(this));
-    assert scopeManager.curScope() instanceof ClassScope;
     scopeManager.popScope();
   }
 
   @Override
   public void visit(FuncDefNode node) {
-    if (!(scopeManager.curScope() instanceof RootScope) && !(scopeManager.curScope() instanceof ClassScope))
-      throw new SemanticError("Function should not be defined here", node.pos);
     scopeManager.pushScope(new FuncScope(node.info));
     node.info.paraListInfo.forEach(scopeManager::addItem);
-    if (node.stmts != null)
-      node.stmts.accept(this);
+    node.stmts.accept(this);
     scopeManager.popScope();
   }
 
@@ -89,7 +71,6 @@ public class SemanticChecker implements ASTVisitor {
       node.exprType = new VarType(BaseType.BuiltinType.INT);
 
     } else if (node.atom.This() != null) {
-      // unsolved: 加一个Class Name, scope manager需要classScope的定义
       node.exprType = new VarType(BaseType.BuiltinType.CLASS);
       node.exprType.ClassName = scopeManager.getClassName();
 
@@ -174,6 +155,25 @@ public class SemanticChecker implements ASTVisitor {
   }
 
   @Override
+  public void visit(LambdaExprNode node) {
+    scopeManager.pushScope(new FuncScope(node.info));
+    node.info.paraListInfo.forEach(scopeManager::addItem);
+
+    scopeManager.lambdaReturn = null;
+    node.suite.accept(this);
+    node.exprType = scopeManager.lambdaReturn.clone();
+
+    scopeManager.popScope();
+    for (int i = 0; i < node.argumentList.size(); ++i) {
+      ExprNode cur = node.argumentList.get(i);
+      cur.accept(this);
+//      System.out.println(node.exprType.typename() + " " + node.info.paraListInfo.get(i).type.typename());
+      if (!cur.exprType.isSame(node.info.paraListInfo.get(i).type))
+        throw new SemanticError("Lambda parameter's type not correct", node.pos);
+    }
+  }
+
+  @Override
   public void visit(FuncExprNode node) {
     node.callExpr.accept(this);
     if (!(node.callExpr.exprType instanceof FuncType callExp))
@@ -211,7 +211,7 @@ public class SemanticChecker implements ASTVisitor {
     node.rhs.accept(this);
     if (!node.lhs.isAssignable())
       throw new SemanticError("Assign expression expects Left value", node.lhs.pos);
-    checkAssign((VarType) node.lhs.exprType, (VarType) node.rhs.exprType, node.pos);
+    TypeChecker.assignCheck((VarType) node.lhs.exprType, (VarType) node.rhs.exprType, node.pos, scopeManager);
     node.exprType = node.lhs.exprType.clone();
   }
 
@@ -264,13 +264,29 @@ public class SemanticChecker implements ASTVisitor {
     FuncScope funcScope = scopeManager.getFuncScope();
     if (funcScope == null)
       throw new SemanticError("Return should be in a function", node.pos);
-    if (node.ret == null) {
+
+    if (node.ret != null) node.ret.accept(this);
+
+    if (funcScope.info.name.equals("Lambda")) { // lambda
+      VarType ret;
+      if (node.ret == null) {
+        ret = new VarType(BaseType.BuiltinType.VOID);
+      } else ret = (VarType) node.ret.exprType.clone();
+
+      if (scopeManager.lambdaReturn == null)  {
+        scopeManager.lambdaReturn = ret;
+      } else if (!scopeManager.lambdaReturn.isSame(ret))
+        throw new SemanticError("lambda return type not same", node.pos);
+      return ;
+    }
+
+
+    if (node.ret == null) { // case "return;":
       if (!funcScope.info.isConstructor && !BaseType.isVoidType(funcScope.info.funcType.retType))
         throw new SemanticError("Return should not be empty", node.pos);
       return ;
     }
 
-    node.ret.accept(this);
     if (!node.ret.exprType.isSame(funcScope.info.funcType.retType))
       throw new SemanticError("Return type not match", node.ret.pos);
   }
@@ -306,15 +322,6 @@ public class SemanticChecker implements ASTVisitor {
       scopeManager.popScope();
     }
     --scopeManager.forLoopCnt;
-  }
-
-  @Override
-  public void visit(LambdaExprNode node) {
-    scopeManager.pushScope(new SuiteScope());
-    node.info.paraListInfo.forEach(info -> scopeManager.addItem(info));
-    node.suite.accept(this);
-    
-    scopeManager.popScope();
   }
 
 }

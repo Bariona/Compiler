@@ -6,13 +6,16 @@ import utility.info.ClassInfo;
 import utility.info.FuncInfo;
 import utility.info.VarInfo;
 import utility.scope.*;
+import utility.type.FuncType;
+import utility.type.VarType;
 
 import java.util.Stack;
 
 public class ScopeManager {
   public int forLoopCnt;
-  ClassScope curClassScope;
-  Stack<BaseScope> scopeStack;
+  public VarType lambdaReturn;
+  private ClassScope curClassScope;
+  private Stack<BaseScope> scopeStack;
 
   public ScopeManager() {
     forLoopCnt = 0;
