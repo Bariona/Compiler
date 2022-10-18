@@ -1,24 +1,17 @@
 /*
 Test Package: Sema_Local_Preview
-Test Target: Symbol
-Author: 15' Lianming Zheng
-Time: 2019-10-14
-Verdict: Fail
-Comment: Reversed word: this
+Test Target: Basic
+Author: 15' Siqi Liu
+Time: 2019-10-20
+Verdict: Success
 Origin Package: Semantic Extended
 */
+void haha(){
+	int a;
+	return;
+}
 
-class A {
-    A(int x) {
-
-    }
-    void f() {  // "this" is a reserved word
-        bool c = true;
-        int sum = [&](int a, int b) -> { if(true);else return c;
-        return a + b; }(1, 2); // 正确
-        //int sum2 = [&]() -> { return sum; }(12); // 错误
-        int sum3 = [&]() -> { return sum; }(); // 正确
-        int foo = [&] -> {return 1;}(); // 正确
-    }
-};
-int main() {}
+int main() {
+	print("hehe\n");
+	return 0;
+}

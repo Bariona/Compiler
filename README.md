@@ -1,4 +1,4 @@
-# Compiler
+# Mx-Compiler
 ---
 
 
@@ -18,17 +18,17 @@
    javac *.java
    grun <filename> <rulename> -tokens
    
-   diff <file1> <file2> -qZB
+   diff <file1> <file2> -qZB # regardless of space, endl
 ```
 
 java编译:
 
 ```
 javac <filename>.java 
-支持中文: javac -encoding UTF-8 <filename>.java
+javac -encoding UTF-8 <filename>.java # support Chinese comment 
 java <filename>
 ```
-`assert` 开区需要IDEA在run configuration中的VM option 加上`-ea`
+`assert` 开区需要 IDEA 在 run configuration 中的 VM option 加上`-ea`
 
 ## Reference
 

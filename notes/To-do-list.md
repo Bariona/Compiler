@@ -11,7 +11,7 @@
   - [x] 改一下String 当做Class来处理?
   - [x] 函数名/变量名 重名情况
   - [ ] 多个构造函数的情况 :broken_heart:
-  - [ ] LambdaExpr (function scope + return type detect)
+  - [x] LambdaExpr (function scope + return type detect)
 - [x] 去掉exprStmt, varExprNode
 - 怪怪的做法: ASTNode → StmtNode → DefNode, ExprNode 
 
@@ -23,6 +23,11 @@ Semantic Hack Data:
 ```java
 int x = A.B.f(1,2);
 int [][][] a = new [1][][1]
+
+{
+  bool a;
+  int x = [&](int a, int b) { } (1, a);
+}
 
 function-2.mx
 ```
