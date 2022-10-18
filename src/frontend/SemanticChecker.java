@@ -5,7 +5,6 @@ import ast.RootNode;
 import ast.definition.*;
 import ast.expression.*;
 import ast.statement.*;
-import utility.Position;
 import utility.StringDealer;
 import utility.error.SemanticError;
 import utility.info.*;
@@ -146,9 +145,6 @@ public class SemanticChecker implements ASTVisitor {
       node.exprType = varInfo.type.clone();
     } else if (funcInfo != null) {
       node.exprType = funcInfo.funcType.clone();
-//      System.out.println(funcInfo);
-//      System.out.println(funcInfo.paraListInfo.size());
-//      System.out.println((funcInfo.funcType).paraListType.size());
     } else {
       throw new SemanticError("no such member has defined", node.pos);
     }
@@ -168,7 +164,7 @@ public class SemanticChecker implements ASTVisitor {
       ExprNode cur = node.argumentList.get(i);
       cur.accept(this);
 //      System.out.println(node.exprType.typename() + " " + node.info.paraListInfo.get(i).type.typename());
-      if (!cur.exprType.isSame(node.info.paraListInfo.get(i).type))
+      if (!node.info.paraListInfo.get(i).type.isSame(cur.exprType))
         throw new SemanticError("Lambda parameter's type not correct", node.pos);
     }
   }
@@ -185,8 +181,8 @@ public class SemanticChecker implements ASTVisitor {
     for (int i = 0; i < node.argumentList.size(); ++i) {
       ExprNode cur = node.argumentList.get(i);
       cur.accept(this);
-      if (!cur.exprType.isSame(callExp.paraListType.get(i)))
-        throw new SemanticError("Function parameter's type not correct", node.pos);
+      if (!callExp.paraListType.get(i).isSame(cur.exprType))
+        throw new SemanticError("Function parameter's type not correct", cur.pos);
     }
     node.exprType = callExp.retType.clone();
   }
@@ -287,7 +283,7 @@ public class SemanticChecker implements ASTVisitor {
       return ;
     }
 
-    if (!node.ret.exprType.isSame(funcScope.info.funcType.retType))
+    if (!funcScope.info.funcType.retType.isSame(node.ret.exprType))
       throw new SemanticError("Return type not match", node.ret.pos);
   }
 

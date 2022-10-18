@@ -37,8 +37,8 @@ public class Compiler {
       RootNode root = (RootNode) ast.visit(tree);
 
       // Debug Printer
-      ASTPrinter printer = new ASTPrinter(new PrintStream(outputFile));
-      printer.visit(root);
+//      ASTPrinter printer = new ASTPrinter(new PrintStream(outputFile));
+//      printer.visit(root);
 
       // Semantic Part
       SemanticChecker checker = new SemanticChecker();

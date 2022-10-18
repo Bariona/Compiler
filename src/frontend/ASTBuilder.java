@@ -44,9 +44,8 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
                     new VarInfo("n", new VarType(BuiltinType.INT)))
     );
 
-    ctx.def().forEach(elem -> {
-      root.defs.add((DefNode) visit(elem));
-    });
+    ctx.def().forEach(elem -> root.defs.add((DefNode) visit(elem)));
+
 
     for (DefNode d : root.defs) {
       if (d instanceof FuncDefNode) {
@@ -58,7 +57,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     {
       FuncInfo ret = root.scope.queryFuncInfo("main");
       if (ret == null)
-        throw new SemanticError("No main() function", ret.pos);
+        throw new SemanticError("No main() function", root.pos);
       if (!BaseType.isIntType(ret.funcType.retType))
         throw new SemanticError("main() function should be \"int main\"", ret.pos);
     }
@@ -134,7 +133,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   }
 
   @Override
-  public ASTNode visitFunctDefinition(MxParser.FunctDefinitionContext ctx) {
+  public ASTNode visitFuncDefinition(MxParser.FuncDefinitionContext ctx) {
     return visit(ctx.functionDef());
   }
 
@@ -231,7 +230,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   // ------ Expression Part -----
 
   @Override
-  public ASTNode visitParenExpr(MxParser.ParenExprContext ctx) {
+  public ASTNode visitParentExpr(MxParser.ParentExprContext ctx) {
     return visit(ctx.expression());
   }
 
@@ -246,7 +245,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   }
 
   @Override
-  public ASTNode visitNewtype(MxParser.NewtypeContext ctx) {
+  public ASTNode visitNewType(MxParser.NewTypeContext ctx) {
     NewExprNode node = new NewExprNode(new VarType(ctx.typeName(), false), new Position(ctx));
     for (var dim : ctx.typeName().bracket()) {
       if (dim.expression() != null) {

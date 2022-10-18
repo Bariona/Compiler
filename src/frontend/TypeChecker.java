@@ -61,6 +61,7 @@ public class TypeChecker {
     if (!node.lhs.exprType.isSame(node.rhs.exprType))
       throw new SemanticError("left/right ExprType not match", node.pos);
     boolean flag = false;
+
     if (BaseType.isStringType(node.lhs.exprType)) { // String Type
       if (node.opType == binaryOpType.Arithmetic && !node.opCode.equals("+"))
         flag = true;
@@ -79,7 +80,7 @@ public class TypeChecker {
         if (!BaseType.isIntType(node.lhs.exprType))
           flag = true;
       } else {
-        // equal
+        // equal generics: == !=
       }
     }
     if (flag) throw new SemanticError("type not correct", node.pos);

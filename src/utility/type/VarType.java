@@ -36,6 +36,8 @@ public class VarType extends BaseType {
   @Override
   public boolean isSame(BaseType _it) {
     if (!(_it instanceof VarType it)) return false;
+    if (it.builtinType == BuiltinType.NULL)
+      return true;
     if (it.builtinType != this.builtinType)
       return false;
     if (it.builtinType == BuiltinType.CLASS && !it.ClassName.equals(this.ClassName))

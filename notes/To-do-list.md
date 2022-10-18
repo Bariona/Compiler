@@ -29,6 +29,12 @@ int [][][] a = new [1][][1]
   int x = [&](int a, int b) { } (1, a);
 }
 
+class A{int a;};
+A foo(){
+   A ret = new A;
+   return new A();
+}
+
 function-2.mx
 ```
 

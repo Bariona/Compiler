@@ -23,7 +23,7 @@ bracket : '[' expression? ']';
 
 def     : varDef ';'                        # VarDefinition
         | classDef                          # ClassDefinition
-        | functionDef                       # FunctDefinition
+        | functionDef                       # FuncDefinition
         ;
 
 varDef  : typeName varTerm (',' varTerm)*; // include array & jagged array
@@ -60,7 +60,7 @@ expression : primary                                # AtomExpr
     | <assoc=right> op = ('++' | '--') expression   # UnaryExpr
     | <assoc=right> op = ('+' | '-') expression     # UnaryExpr
     | <assoc=right> op = ('!' | '~') expression     # UnaryExpr
-    | <assoc=right> New typeName                    # NewType
+    | <assoc=right> New typeName ('(' ')')?         # NewType
 
     | expression op = ('*' | '/' | '%') expression              # BinaryExpr
     | expression op = ('+' | '-') expression                    # BinaryExpr
@@ -163,6 +163,6 @@ Identifier  : [a-zA-Z][a-zA-Z0-9_]*;
 Decimal : [1-9][0-9]* | '0';
 
 WhiteSpace  : [ \t] -> skip; // skip space & tab
-NewLine     : ('\r\n' | '\n') -> skip;
+NewLine     : ('\r' '\n'? | '\n') -> skip;
 BlockComment    : '/*' .*? '*/' -> skip;
-LineComment     : '//' .*? '\r'? '\n' -> skip;
+LineComment     : '//' ~[\r\n]* -> skip;

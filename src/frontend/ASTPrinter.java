@@ -68,13 +68,13 @@ public class ASTPrinter implements ASTVisitor {
   public void visit(FuncDefNode node) {
     ++IndentCnt;
     PrintIn("Function Definition: " + node.info.name + " pos: " + node.pos.toString());
-    String paralist = indent + " parameter List: ";
+    String s = indent + " parameter List: ";
     for (var p : node.info.paraListInfo) {
       if (p.type.builtinType == BaseType.BuiltinType.CLASS) {
-        paralist += "CLASS " + p.type.ClassName + " " + p.name + ", ";
-      } else paralist += p.type.typename() + " " + p.name + ", ";
+        s += "CLASS " + p.type.ClassName + " " + p.name + ", ";
+      } else s += p.type.typename() + " " + p.name + ", ";
     }
-    Print(paralist);
+    Print(s);
     if (node.stmts != null) node.stmts.accept(this);
     else Print(indent + "this function's body is null");
     --IndentCnt;
