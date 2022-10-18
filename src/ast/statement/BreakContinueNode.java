@@ -6,10 +6,10 @@ import utility.Position;
 public class BreakContinueNode extends StmtNode {
   public boolean isBreak, isContinue;
 
-  public BreakContinueNode(boolean isbreak, Position pos) {
+  public BreakContinueNode(boolean isBreak, Position pos) {
     super(pos);
-    isBreak = isContinue = false;
-    if (isbreak) isBreak = true;
+    this.isBreak = isContinue = false;
+    if (isBreak) this.isBreak = true;
     else isContinue = true;
   }
 

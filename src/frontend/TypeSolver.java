@@ -7,13 +7,30 @@ import ast.expression.UnaryExprNode;
 import utility.Position;
 import utility.error.SemanticError;
 import utility.error.SyntaxError;
+import utility.scope.ScopeManager;
 import utility.type.BaseType;
+import utility.type.FuncType;
 import utility.type.VarType;
 
-public class TypeChecker {
+public class TypeSolver {
 
-  static public void functionCheck() {
-
+  static public FuncType strBuiltinFunc(String name) {
+    FuncType ret = null;
+    switch (name) {
+      case "length", "parseInt":
+        ret = new FuncType(BaseType.BuiltinType.INT);
+      break;
+      case "substring":
+        ret = new FuncType(BaseType.BuiltinType.STRING);
+        ret.paraListType.add(new VarType(BaseType.BuiltinType.INT)); // left
+        ret.paraListType.add(new VarType(BaseType.BuiltinType.INT)); // right
+      break;
+      case "ord":
+        ret = new FuncType(BaseType.BuiltinType.INT);
+        ret.paraListType.add(new VarType(BaseType.BuiltinType.INT)); // pos
+      break;
+    }
+    return ret;
   }
 
   static public void assignCheck(VarType lhs, VarType rhs, Position pos, ScopeManager scopeManager) {

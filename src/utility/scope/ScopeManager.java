@@ -1,4 +1,4 @@
-package frontend;
+package utility.scope;
 
 import utility.error.SemanticError;
 import utility.info.BaseInfo;
@@ -6,19 +6,18 @@ import utility.info.ClassInfo;
 import utility.info.FuncInfo;
 import utility.info.VarInfo;
 import utility.scope.*;
-import utility.type.FuncType;
 import utility.type.VarType;
 
 import java.util.Stack;
 
 public class ScopeManager {
-  public int forLoopCnt;
+  private int loopCnt;
   public VarType lambdaReturn;
   private ClassScope curClassScope;
   private Stack<BaseScope> scopeStack;
 
   public ScopeManager() {
-    forLoopCnt = 0;
+    loopCnt = 0;
     curClassScope = null;
     scopeStack = new Stack<>();
   }
@@ -29,7 +28,7 @@ public class ScopeManager {
   }
 
   public void addItem(BaseInfo info) {
-    if (scopeStack.peek() instanceof ClassScope) return ;
+    if (scopeStack.peek() instanceof ClassScope) return ; // avoid class's function being pushed twice
     if (getClassInfo(info.name) != null)
       throw new SemanticError("name duplicated with class " + info.name, info.pos);
     scopeStack.peek().addItem(info);
@@ -42,14 +41,19 @@ public class ScopeManager {
       assert curClassScope == null;
       curClassScope = (ClassScope) cur;
     }
+
+    if (cur instanceof LoopScope)
+      ++loopCnt;
   }
   public void popScope() {
     if (curScope() instanceof ClassScope)
       curClassScope = null;
+    if (curScope() instanceof LoopScope)
+      --loopCnt;
     scopeStack.pop();
   }
 
-  public boolean isInForLoop() { return forLoopCnt > 0; }
+  public boolean isInForLoop() { return loopCnt > 0; }
 
   public BaseInfo queryName(String name) {
     for (int i = scopeStack.size() - 1; i >= 0; --i) {

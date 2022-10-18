@@ -2,7 +2,6 @@ package ast.statement;
 
 import ast.ASTVisitor;
 import utility.Position;
-import utility.scope.BaseScope;
 
 import java.util.ArrayList;
 

@@ -10,7 +10,6 @@ public class AssignExprNode extends ExprNode {
     super(pos);
     this.lhs = lhs;
     this.rhs = rhs;
-    exprType = lhs.exprType; // expression'res type
   }
 
   @Override
