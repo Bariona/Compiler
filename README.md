@@ -66,8 +66,9 @@ A--for debug-->D[ASTPrinter]
 graph LR
 I(Code)--Character Stream-->L[Lexer]
 L--Token Stream-->P[Parser]
-P--parser tree-->AB[ASTbuilder]
-AB==AST node==>S[Semantic Checker]
+P--parser tree-->AB[AST build]
+P--visitor mode-->AB[AST build]
+AB==AST node==>S[Semantic check]
 AB==Scope manager==>S
 ```
 ### Reference
