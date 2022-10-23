@@ -1,9 +1,11 @@
 .idea
 build
+testcode
+
+data.in
 data.out
 
 *.iml
 
 *.class
 
-testcode

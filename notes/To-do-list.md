@@ -13,6 +13,7 @@
   - [ ] 多个构造函数的情况 :broken_heart:
   - [x] LambdaExpr (function scope + return type detect)
   - [ ] 好像没有不要ScopeManager里search function()? 因为一定是peek的位置
+  - [ ] 未定义行为的处理
 - [x] 去掉exprStmt, varExprNode
 - 怪怪的做法: ASTNode → StmtNode → DefNode, ExprNode 
 

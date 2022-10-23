@@ -10,13 +10,11 @@ import utility.info.*;
 import utility.scope.*;
 import utility.type.*;
 
-
 public class SemanticChecker implements ASTVisitor {
   private final ScopeManager scopeManager = new ScopeManager();
 
   @Override
   public void visit(RootNode node) {
-//    node.scope.print();
     scopeManager.pushScope(node.scope);
     node.defs.forEach(it -> it.accept(this));
     scopeManager.popScope();
@@ -171,7 +169,6 @@ public class SemanticChecker implements ASTVisitor {
     for (int i = 0; i < node.argumentList.size(); ++i) {
       ExprNode cur = node.argumentList.get(i);
       cur.accept(this);
-//      System.out.println(node.exprType.typename() + " " + node.info.paraListInfo.get(i).type.typename());
       if (!node.info.paraListInfo.get(i).type.isSame(cur.exprType))
         throw new SemanticError("Lambda parameter's type not correct", node.pos);
     }
@@ -179,10 +176,8 @@ public class SemanticChecker implements ASTVisitor {
     if (BaseType.isNullType(scopeManager.lambdaReturn.peek())) {
       ret = new VarType(BaseType.BuiltinType.VOID);
     } else ret = (VarType) scopeManager.lambdaReturn.peek().clone();
-//    System.out.println(node.exprType.typename() + " " + node.pos);
     node.exprType = ret;
     scopeManager.lambdaReturn.pop();
-//    scopeManager.popScope();
   }
 
   @Override
