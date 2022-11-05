@@ -37,6 +37,10 @@ A foo(){
    return new A();
 }
 
+int f(int f) {
+  int f;
+}
+
 function-2.mx
 ```
 
