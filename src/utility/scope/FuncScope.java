@@ -15,4 +15,5 @@ public class FuncScope extends SuiteScope {
     System.out.print("  Variable Table: ");
     varInfoTable.forEach((str, info) -> System.out.print(" " + str)); System.out.println();
   }
+
 }
