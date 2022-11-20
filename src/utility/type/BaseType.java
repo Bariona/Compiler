@@ -1,6 +1,6 @@
 package utility.type;
 
-import parser.MxParser;
+import frontend.parser.MxParser;
 import utility.Position;
 import utility.error.SyntaxError;
 

@@ -1,14 +1,14 @@
 package frontend;
 
-import ast.*;
-import ast.definition.*;
-import ast.expression.*;
-import ast.statement.*;
+import frontend.ast.*;
+import frontend.ast.definition.*;
+import frontend.ast.expression.*;
+import frontend.ast.statement.*;
 import utility.error.SemanticError;
 import utility.info.FuncInfo;
 import utility.info.VarInfo;
-import parser.MxBaseVisitor;
-import parser.MxParser;
+import frontend.parser.MxBaseVisitor;
+import frontend.parser.MxParser;
 import utility.Position;
 import utility.type.BaseType;
 import utility.type.BaseType.BuiltinType;
@@ -331,7 +331,6 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     if (ctx.argumentList() != null)
       ctx.argumentList().expression().forEach(exp -> node.argumentList.add((ExprNode) visit(exp)));
 
-//    System.out.printf("%d %d\n", node.argumentList.size(), node.info.paraListInfo.size());
     if (node.argumentList.size() != node.info.paraListInfo.size())
       throw new SemanticError("parameter number not match", node.pos);
     return node;

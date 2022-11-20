@@ -1,10 +1,10 @@
 package frontend;
 
-import ast.ASTVisitor;
-import ast.RootNode;
-import ast.definition.*;
-import ast.expression.*;
-import ast.statement.*;
+import frontend.ast.ASTVisitor;
+import frontend.ast.RootNode;
+import frontend.ast.definition.*;
+import frontend.ast.expression.*;
+import frontend.ast.statement.*;
 import utility.error.SemanticError;
 import utility.info.*;
 import utility.scope.*;

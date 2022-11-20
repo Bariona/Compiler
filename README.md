@@ -5,7 +5,7 @@
 
 :computer: [课程地址](https://github.com/ACMClassCourses/Compiler-Design-Implementation)
 
-<div align=center> <img src="notes/static/200w.gif", width="250"> </div> 
+<div align=center> <img src="doc/static/200w.gif", width="250"> </div> 
 
 - A language-processing system:
 
@@ -66,7 +66,7 @@ A--for debug-->D[ASTPrinter]
 graph LR
 I(Code)--Character Stream-->L[Lexer]
 L--Token Stream-->P[Parser]
-P--parser tree-->AB[AST build]
+P--frontend.parser tree-->AB[AST build]
 P--visitor mode-->AB[AST build]
 AB==AST node==>S[Semantic check]
 AB==Scope manager==>S

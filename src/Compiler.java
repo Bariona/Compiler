@@ -1,18 +1,16 @@
-import ast.RootNode;
+import frontend.ast.RootNode;
 import frontend.ASTBuilder;
-import frontend.ASTPrinter;
 import frontend.SemanticChecker;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import parser.MxLexer;
-import parser.MxParser;
+import frontend.parser.MxLexer;
+import frontend.parser.MxParser;
 import utility.MxErrorListener;
 import utility.error.Error;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.PrintStream;
 
 public class Compiler {
   public static void main(String[] args) throws Exception {
@@ -28,7 +26,7 @@ public class Compiler {
       lexer.removeErrorListeners();
       lexer.addErrorListener(new MxErrorListener());
       CommonTokenStream tokens = new CommonTokenStream(lexer);
-      MxParser parser = new MxParser(tokens); // parser
+      MxParser parser = new MxParser(tokens); // frontend.parser
       parser.removeErrorListeners();
       parser.addErrorListener(new MxErrorListener());
 

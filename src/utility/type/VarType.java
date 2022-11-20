@@ -1,8 +1,7 @@
 package utility.type;
 
-import parser.MxParser;
+import frontend.parser.MxParser;
 import utility.Position;
-import utility.error.SemanticError;
 import utility.error.SyntaxError;
 
 public class VarType extends BaseType {

@@ -1,9 +1,9 @@
 package frontend;
 
-import ast.expression.BinaryExprNode;
-import ast.expression.BinaryExprNode.binaryOpType;
-import ast.expression.SelfExprNode;
-import ast.expression.UnaryExprNode;
+import frontend.ast.expression.BinaryExprNode;
+import frontend.ast.expression.BinaryExprNode.binaryOpType;
+import frontend.ast.expression.SelfExprNode;
+import frontend.ast.expression.UnaryExprNode;
 import utility.Position;
 import utility.error.SemanticError;
 import utility.error.SyntaxError;
