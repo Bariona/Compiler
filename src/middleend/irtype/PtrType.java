@@ -1,7 +1,7 @@
 package middleend.irtype;
 
 public class PtrType extends IRBaseType {
-  IRBaseType target;
+  public IRBaseType target;
   final int dim;
 
   public PtrType() {

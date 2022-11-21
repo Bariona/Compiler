@@ -5,8 +5,8 @@
 - [ ] 字符串长度的限制(64个, 255个), 添加负数, 运算范围等等
 - [ ] 数组长度(return等时候)是否会越界
 - [ ] testcode : gitignore
-- [ ] 各个expression的type类型
-- [ ] ++a++的判断: a++优先级高, 但是返回的不是引用, 所以这是一个错误用法
+- [x] 各个expression的type类型
+- [x] ++a++的判断: a++优先级高, 但是返回的不是引用, 所以这是一个错误用法
 - [x] 10.12: 目前需要重新更新一下FuncDefNode等数据, 加上registery类型(这样能够更加匹配scope类型中的Hash)
   - [x] 改一下String 当做Class来处理?
   - [x] 函数名/变量名 重名情况
@@ -44,3 +44,10 @@ int f(int f) {
 function-2.mx
 ```
 
+
+
+### Questions
+
+- [ ] why that identified structure type starts with a symbol '%'? 
+
+  shouldn't it be @ since it's global?

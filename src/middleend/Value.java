@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Value {
-  String name;
+  public String name;
   IRBaseType type;
   ArrayList<User> useList;
 
@@ -37,4 +37,7 @@ public class Value {
     return "%" + this.name;
   }
 
+  public String getTypeAndName() {
+    return type.toString() + " " + this.getName();
+  }
 }

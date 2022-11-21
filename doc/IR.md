@@ -26,11 +26,9 @@ Based on *LLVM IR*, most LLVM operations, including all arithmetic and logical o
 
 - [Value Class](https://llvm.org/doxygen/Value_8h_source.html)
   - def: everything is treated as (or say... derived from) `Value`, including variable/constant/expression/symbol
-  - components: VTy(it's type), useList
 
 <details>
 	<summary> from LLVM doc </summary>
-```
  	This is a very important LLVM class. It is the base class of all values
 computed by a program that may be used as operands to other values. Value is
 the super class of other important classes such as Instruction and Function.
@@ -40,9 +38,10 @@ automatically updates the module's symbol table.
 
  	Every value has a "use list" that keeps track of which other Values are
 using this Value. 	
-																																				
-```
 </details>
+
+
+
 - Use & User
 
   `Use` is made to describe IR instructions' relations, including prev/next/parent(user node)
@@ -98,16 +97,54 @@ Thus, we can directly see that **User** (regarded as abstract class) is also a k
 *mentioned that constants will be treated as **operands** in my repo
 
 
+### General
 
+- Value
 
-### Instruction
+  components: name, VTy (it's type), useList\<\>
 
+- User (derived from value)
+
+  component: operands (i.e. values)
 
 
 ```mermaid
 graph LR
 	V[Value]-->U[User];
 	V-->O[Operands];
-end
+	U-->I[Instruction];
+	I-->B[BasicBlocks];
+	U-->F[IR Function];
+	B--CFG-->F;
+	F-->M[Module];
+	O-->C[Constants];
+end;
 ```
+
+### Instruction
+
+- br
+- call
+- icmp
+- ret
+- global variable: since global variable will be created during compiling stage, it must be initialized.
+
+`toString():` 
+
+​	e.g. ret_instr2\.toString = "%2 = br void"
+
+
+
+### Function
+
+- [def](https://llvm.org/docs/LangRef.html#functions)
+
+
+- toString(): to print `.ll` file
+
+
+
+### Module
+
+​	LLVM programs are composed of `Module`’s, each of which is a translation unit of the input programs. Each module consists of functions, global variables, and symbol table entries. 
 

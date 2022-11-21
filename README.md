@@ -1,7 +1,7 @@
 # Mx-Compiler
 ---
 
-- [x] Current Progress: Semantic Check
+- [x] Current Progress: IR Node writing...
 
 :computer: [课程地址](https://github.com/ACMClassCourses/Compiler-Design-Implementation)
 
