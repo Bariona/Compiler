@@ -3,14 +3,18 @@ package middleend.hierarchy;
 import middleend.IRVisitor;
 import middleend.User;
 import middleend.Value;
-import middleend.irtype.IRBaseType;
+import middleend.irtype.FuncType;
 
 public class IRFunction extends User {
-  public IRFunction(String name, IRBaseType retType) {
-    super(name, retType);
+  public IRBasicBlock entryBlock;
+  public FuncType funcType; // retType and paraType e.g. %struct = type {i32, i1}
+
+  public IRFunction(String name, FuncType funcType) {
+    super(name, funcType.retType);
+    this.funcType = funcType;
   }
 
-  void addParameters(Value para) {
+  public void addParameters(Value para) {
     addOperands(para);
   }
 

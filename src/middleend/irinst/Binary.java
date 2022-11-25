@@ -16,9 +16,26 @@ public class Binary extends IRBaseInst {
     addOperands(op2);
   }
 
+  String Trans(String opcode) {
+    String ret = switch (opcode) {
+      case "+" -> "add";
+      case "-" -> "sub";
+      case "*" -> "mul";
+      case "/" -> "sdiv";
+      case "%" -> "srem";
+      case "^" -> "xor";
+      case "|" -> "or";
+      case "&" -> "and";
+      case "<<" -> "shl";
+      case ">>" -> "ashr";
+      default -> null;
+    };
+    return ret;
+  }
+
   @Override
   public String toString() {
-    return opcode + " " + getOperand(0).getTypeAndName() + " " + getOperand(1).getName();
+    return getName() + " = " + Trans(opcode) + " " + getOperand(0).getTypeAndName() + " " + getOperand(1).getName();
   }
 
   @Override

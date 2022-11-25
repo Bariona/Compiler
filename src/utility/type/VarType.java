@@ -15,7 +15,6 @@ public class VarType extends BaseType {
   public VarType(MxParser.TypeNameContext ctx, boolean checkDimValidity) {
     super(ctx);
     this.dimension = ctx.bracket().size();
-//    System.out.println(this.type.name() + " " + this.dimension);
     if (checkDimValidity) {
       for (int i = 0; i < ctx.bracket().size(); ++i) {
         if (ctx.bracket(i).expression() != null)
@@ -41,7 +40,7 @@ public class VarType extends BaseType {
       return false;
     if (it.builtinType == BuiltinType.CLASS && !it.ClassName.equals(this.ClassName))
       return false;
-    // unsolved: class name
     return it.dimension == this.dimension;
   }
+
 }

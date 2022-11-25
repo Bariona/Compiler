@@ -13,7 +13,7 @@ public class BinaryExprNode extends ExprNode {
   public String opCode;
   public binaryOpType opType;
 
-  void match(String symbol) {
+  private void match(String symbol) {
     opType = switch (symbol) {
       case "+", "-", "*", "/", "%", "^", "|", "&", "<<", ">>" -> binaryOpType.Arithmetic;
       case "<", ">", "<=", ">=" -> binaryOpType.Compare;

@@ -41,7 +41,7 @@ public class TypeSolver {
     } else {
       if (!lhs.isSame(rhs))
         throw new SemanticError("Assign expression expects same type", pos);
-      if (BaseType.isClassType(lhs) && scopeManager.getClassInfo(rhs.ClassName) == null)
+      if (BaseType.isClassType(lhs) && scopeManager.queryClassInfo(rhs.ClassName) == null)
         throw new SemanticError(lhs.ClassName + " type is not defined! ", pos);
     }
   }

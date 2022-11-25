@@ -11,8 +11,8 @@ public class IRModule {
   public ArrayList<GlobalDef> globVarList;
   public ArrayList<StructType> structList;
 
-  public IRModule(String id) {
-    identifier = id;
+  public IRModule(String identifier) {
+    this.identifier = identifier;
     irFunctionList = new ArrayList<>();
     globVarList = new ArrayList<>();
     structList = new ArrayList<>();

@@ -68,7 +68,7 @@ public class SemanticChecker implements ASTVisitor {
 
     } else if (node.atom.This() != null) {
       node.exprType = new VarType(BaseType.BuiltinType.CLASS);
-      node.exprType.ClassName = scopeManager.getClassName();
+      node.exprType.ClassName = scopeManager.getCurClassName();
 
     } else if (node.atom.True() != null || node.atom.False() != null) {
       node.exprType = new VarType(BaseType.BuiltinType.BOOL);
@@ -84,7 +84,7 @@ public class SemanticChecker implements ASTVisitor {
       } else throw new SemanticError("Atom not defined", node.pos);
 
     } else {
-      // null 类型
+      // null
       node.exprType = new VarType(BaseType.BuiltinType.NULL);
     }
   }
@@ -110,7 +110,7 @@ public class SemanticChecker implements ASTVisitor {
   }
 
   @Override
-  public void visit(BracketExprNode node) { // unsolved: 从底层优化BracketNode? 改成index vector?
+  public void visit(BracketExprNode node) {
     node.index.accept(this);
     if (!BaseType.isIntType(node.index.exprType))
       throw new SemanticError("bracket index must be integral", node.index.pos);
@@ -143,7 +143,7 @@ public class SemanticChecker implements ASTVisitor {
     if (node.callExpr.exprType.builtinType != BaseType.BuiltinType.CLASS)
       throw new SemanticError("MemberExpr left hand side should be class", node.callExpr.pos);
 
-    ClassInfo classInfo = scopeManager.getClassInfo(node.callExpr.exprType.ClassName);
+    ClassInfo classInfo = scopeManager.queryClassInfo(node.callExpr.exprType.ClassName);
     VarInfo varInfo = classInfo.findVarInfo(node.member);
     FuncInfo funcInfo = classInfo.findFuncInfo(node.member);
 

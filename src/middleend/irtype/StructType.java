@@ -5,13 +5,18 @@ import java.util.ArrayList;
 public class StructType extends IRBaseType {
   public String className;
   public ArrayList<IRBaseType> memberType;
-  int size;
-  boolean calculated;
+
+  private int size;
+  private boolean calculated;
 
   public StructType(String clsName) {
     this.className = clsName;
     this.memberType = new ArrayList<>();
     this.calculated = false;
+  }
+
+  public void addMember(IRBaseType type) {
+    memberType.add(type);
   }
 
   @Override

@@ -18,6 +18,7 @@ public abstract class User extends Value {
 
   public void addOperands(Value val) {
     operands.add(val);
+    val.addUser(this);
   }
 
   public void setOperands(int i, Value val) {

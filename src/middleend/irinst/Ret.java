@@ -20,9 +20,7 @@ public class Ret extends IRBaseInst {
   public String toString() {
     if (this.operands.size() > 0) {
       return getName() + " = ret " + getOperand(0).getTypeAndName();
-    } else {
-      return getName() + " = ret void";
-    }
+    } else return getName() + " = ret void";
   }
 
   @Override

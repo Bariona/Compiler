@@ -16,7 +16,7 @@ public class Alloca extends IRBaseInst {
 
   @Override
   public String toString() {
-    return "alloca " + allocaType.toString();
+    return getName() + " = alloca " + allocaType.toString();
   }
 
   @Override

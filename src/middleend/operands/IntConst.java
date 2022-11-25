@@ -1,6 +1,5 @@
 package middleend.operands;
 
-import middleend.irtype.IRBaseType;
 import middleend.irtype.IntType;
 
 public class IntConst extends IRBaseConst {

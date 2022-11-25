@@ -9,4 +9,9 @@ abstract public class IRBaseConst extends Value {
     super(name, type);
   }
 
+  @Override
+  public String toString() {
+    assert false;
+    return null;
+  }
 }

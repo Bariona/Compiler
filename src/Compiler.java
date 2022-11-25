@@ -16,8 +16,8 @@ public class Compiler {
   public static void main(String[] args) throws Exception {
     System.out.println("Current directory: " + System.getProperty("user.dir"));
 
-    String filename = "data.in";
-    String outputFile = "data.out";
+    String filename = "testspace/data.in";
+    String outputFile = "testspace/data.out";
     InputStream input = new FileInputStream(filename);
 //    InputStream input = System.in;
 
@@ -34,7 +34,7 @@ public class Compiler {
       ASTBuilder ast = new ASTBuilder(); // new visitor for AST making
       RootNode root = (RootNode) ast.visit(tree);
 
-      // Debug Printer
+      // Print AST
 //      ASTPrinter printer = new ASTPrinter(new PrintStream(outputFile));
 //      printer.visit(root);
 

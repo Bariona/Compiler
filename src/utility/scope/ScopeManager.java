@@ -1,11 +1,12 @@
 package utility.scope;
 
+import middleend.Value;
+import org.antlr.v4.runtime.misc.Pair;
 import utility.error.SemanticError;
 import utility.info.BaseInfo;
 import utility.info.ClassInfo;
 import utility.info.FuncInfo;
 import utility.info.VarInfo;
-import utility.scope.*;
 import utility.type.VarType;
 
 import java.util.Stack;
@@ -14,7 +15,7 @@ public class ScopeManager {
   private int loopCnt;
   public Stack<VarType> lambdaReturn;
   private ClassScope curClassScope;
-  private Stack<BaseScope> scopeStack;
+  private final Stack<BaseScope> scopeStack;
 
   public ScopeManager() {
     loopCnt = 0;
@@ -29,13 +30,17 @@ public class ScopeManager {
   }
 
   public void addItem(BaseInfo info) {
-    if (scopeStack.peek() instanceof ClassScope) return ; // avoid class's function being pushed twice
-    if (getClassInfo(info.name) != null)
+    if (scopeStack.peek() instanceof ClassScope)
+      return; // avoid class's function being pushed twice
+    if (queryClassInfo(info.name) != null)
       throw new SemanticError("name duplicated with class " + info.name, info.pos);
     scopeStack.peek().addItem(info);
   }
 
-  public BaseScope curScope() { return scopeStack.peek(); }
+  public BaseScope curScope() {
+    return scopeStack.peek();
+  }
+
   public void pushScope(BaseScope cur) {
     scopeStack.push(cur);
     if (cur instanceof ClassScope) {
@@ -46,6 +51,7 @@ public class ScopeManager {
     if (cur instanceof LoopScope)
       ++loopCnt;
   }
+
   public void popScope() {
     if (curScope() instanceof ClassScope)
       curClassScope = null;
@@ -54,7 +60,9 @@ public class ScopeManager {
     scopeStack.pop();
   }
 
-  public boolean isInForLoop() { return loopCnt > 0; }
+  public boolean isInForLoop() {
+    return loopCnt > 0;
+  }
 
   public BaseInfo queryName(String name) {
     for (int i = scopeStack.size() - 1; i >= 0; --i) {
@@ -77,13 +85,29 @@ public class ScopeManager {
     return null;
   }
 
-  public ClassInfo getClassInfo(String className) {
+  public ClassInfo queryClassInfo(String className) {
     RootScope rootScope = (RootScope) scopeStack.get(0);
     return rootScope.queryClassInfo(className);
   }
 
-  public String getClassName() {
+  public String getCurClassName() {
     return curClassScope.name;
+  }
+
+  public ClassInfo getCurClassInfo() {
+    return queryClassInfo(getCurClassName());
+  }
+
+  public Pair<Value, Boolean> queryValue(String name) {
+    for (int i = scopeStack.size() - 1; i >= 0; --i) {
+      BaseScope cur = scopeStack.get(i);
+      VarInfo ret = cur.queryVarInfo(name);
+      if (ret != null) {
+        assert ret.value != null;
+        return new Pair<>(ret.value, cur instanceof ClassScope);
+      }
+    }
+    return null;
   }
 
 }

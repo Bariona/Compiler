@@ -3,16 +3,13 @@ package middleend.irinst;
 import middleend.IRVisitor;
 import middleend.Value;
 import middleend.hierarchy.IRBasicBlock;
-import middleend.irtype.IRBaseType;
 import middleend.irtype.PtrType;
 
 public class Load extends IRBaseInst {
 
-  public Load(IRBaseType loadType, Value ptr, IRBasicBlock parenBlock) {
-    super("load", loadType, parenBlock);
-    if (ptr.getType() instanceof PtrType ptrType) {
-      assert loadType.match(ptrType.target);
-    } else assert false;
+  // %val = load i32, i32* %ptr
+  public Load(Value ptr, IRBasicBlock parenBlock) {
+    super("load", ((PtrType) ptr.getType()).target, parenBlock);
     addOperands(ptr);
   }
 

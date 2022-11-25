@@ -14,7 +14,6 @@ statement : suite                                               # SuiteStmt
     | While '(' expression ')' statement                        # WhileStmt
     | For '(' (initialExpr = expression | varDef)? ';' (condiExpr = expression)? ';' (stepExpr = expression)? ')' statement    # ForStmt
     | expression ';'                                            # PurExprStmt
-//    | sysfunction                                               # Sysyemfunc
     | ';'                                                       # EmptyStmt
     ;
 
@@ -34,24 +33,10 @@ parameterList : typeName Identifier (',' typeName Identifier)*;
 
 classDef    :   Class Identifier '{' (varDef ';' | functionDef)* '}' ';' ;
 
-//sysfunction   : 'print' '(' expression ')'  # PrintStr
-//    | 'println' '(' expression ')'          # PrintlnStr
-//    | 'printInt' '(' expression ')'         # PrintInt
-//    | 'printlnInt' '(' expression ')'       # PrintlnInt
-//    | 'getString' '(' ')'                   # getString
-//    | 'getInt' '(' ')'                      # getInt
-//    | 'toString' '(' expression ')'         # toString
-//    | 'length' '(' ')'                      # StrLength
-//    | 'substring' '(' expression ',' expression ')' # StrSubstr
-//    | 'parseInt' '(' ')'                    # StrtoInt
-//    | 'ord' '(' expression ')'              # StrtoASCii
-//    ;
-
 argumentList   :  expression (',' expression)*;
 
 expression : primary                                # AtomExpr
     | '(' expression ')'                            # ParentExpr
-//    | sysfunction                                   # SystemFunc
     // this can be written as Identifier, with 'a.size()' seen as FunctionExpr -> MemberExpr
     | expression '.' Identifier                     # MemberExpr
     | expression '[' expression ']'                 # BracketExpr

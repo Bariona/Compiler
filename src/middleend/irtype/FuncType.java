@@ -11,6 +11,10 @@ public class FuncType extends IRBaseType {
     this.paraListType = new ArrayList<>();
   }
 
+  public void addParaType(IRBaseType type) {
+    paraListType.add(type);
+  }
+
   @Override
   public boolean match(IRBaseType it) {
     return it instanceof FuncType;
