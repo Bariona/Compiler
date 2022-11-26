@@ -91,7 +91,7 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(NewExprNode node) {
-    assert node.exprType != null;
+    assert node.exprType instanceof VarType;
     boolean flag = true, tag = false;
     for (ExprNode expr : node.dimensionExpr) {
       if (expr == null) {

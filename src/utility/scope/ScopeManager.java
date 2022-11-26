@@ -14,7 +14,7 @@ import java.util.Stack;
 public class ScopeManager {
   private int loopCnt;
   public Stack<VarType> lambdaReturn;
-  private ClassScope curClassScope;
+  public ClassScope curClassScope;
   private final Stack<BaseScope> scopeStack;
 
   public ScopeManager() {

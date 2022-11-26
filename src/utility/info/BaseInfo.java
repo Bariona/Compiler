@@ -14,7 +14,7 @@ abstract public class BaseInfo {
     this.pos = pos;
   }
 
-  public BaseInfo(String name, Value value) {
+  public BaseInfo(String name) {
     this.name = name;
     this.pos = null;
   }

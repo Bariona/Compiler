@@ -2,39 +2,46 @@ package middleend;
 
 import frontend.ast.ASTVisitor;
 import frontend.ast.RootNode;
-import frontend.ast.definition.*;
+import frontend.ast.definition.ClassDefNode;
+import frontend.ast.definition.FuncDefNode;
+import frontend.ast.definition.VarDefNode;
+import frontend.ast.definition.VarSingleDefNode;
 import frontend.ast.expression.*;
 import frontend.ast.statement.*;
 import middleend.hierarchy.IRBasicBlock;
 import middleend.hierarchy.IRFunction;
+import middleend.hierarchy.IRModule;
 import middleend.irinst.*;
 import middleend.irtype.*;
-import middleend.irtype.FuncType;
 import middleend.operands.BoolConst;
 import middleend.operands.IntConst;
 import middleend.operands.NullConst;
 import org.antlr.v4.runtime.misc.Pair;
+import utility.error.IRBuildError;
 import utility.info.BaseInfo;
 import utility.info.ClassInfo;
 import utility.info.FuncInfo;
 import utility.info.VarInfo;
-import utility.scope.FuncScope;
-import utility.scope.RootScope;
-import utility.scope.ScopeManager;
-import utility.type.*;
+import utility.scope.*;
+import utility.type.BaseType;
+import utility.type.VarType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class IRBuilder implements ASTVisitor {
+  private IRModule module;
   private final ScopeManager scopeManager = new ScopeManager();
+  private IRBasicBlock forExit, forStep;
   private IRBasicBlock curBlock, initBlock;
+  private IRFunction curFunction;
   private final IRBasicBlock globalInitBlock;
 
   private final HashMap<String, StructType> structCollection = new HashMap<>();
-  private final HashMap<String, FuncType> funcCollection = new HashMap<>();
+  // private final HashMap<String, FuncType> funcCollection = new HashMap<>();
 
-  public IRBuilder(RootNode root) {
+  public IRBuilder(IRModule module, RootNode root) {
+    this.module = module;
     this.initBlock = new IRBasicBlock("global dec", null);
     IRFunction globInitFunc = new IRFunction("global_init", new FuncType(new VoidType()));
     this.globalInitBlock = new IRBasicBlock("Init", globInitFunc);
@@ -50,10 +57,10 @@ public class IRBuilder implements ASTVisitor {
       case CLASS -> structCollection.get(type.ClassName);
       default -> null;
     };
+
     for (int i = 1; i <= type.dimension; ++i)
       ret = new PtrType(ret);
 
-    // ??? not finished: include array / class
     return ret;
   }
 
@@ -77,16 +84,21 @@ public class IRBuilder implements ASTVisitor {
 
       for (var clsNode : clsList) {
         String name = clsNode.info.name;
-
         StructType struct = structCollection.get(name);
+
         for (var variable : clsNode.info.varInfos)
           struct.addMember(transType(variable.type));
+        module.addStruct(struct);
+
         // add class.method
         for (var funcInfo : clsNode.info.funcInfos) {
-          FuncType function = new FuncType(transType(funcInfo.funcType.retType));
+          FuncType funcType = new FuncType(transType(funcInfo.funcType.retType));
           for (var para : funcInfo.paraListInfo)
-            function.addParaType(transType(para.type));
-          funcCollection.put(name + "." + funcInfo.name, function);
+            funcType.addParaType(transType(para.type));
+          // funcCollection.put(name + "." + funcInfo.name, funcType);
+          funcInfo.value = new IRFunction(name + "." + funcInfo.name, funcType);
+
+          module.addFunction((IRFunction) funcInfo.value);
         }
 
       }
@@ -97,10 +109,13 @@ public class IRBuilder implements ASTVisitor {
       for (var nexNode : node.defs) {
         if (!(nexNode instanceof FuncDefNode funcNode))
           continue;
-        FuncType function = new FuncType(transType(funcNode.info.funcType.retType));
+        FuncType funcType = new FuncType(transType(funcNode.info.funcType.retType));
         for (var para : funcNode.info.paraListInfo)
-          function.addParaType(transType(para.type));
-        funcCollection.put(funcNode.info.name, function);
+          funcType.addParaType(transType(para.type));
+        // funcCollection.put(funcNode.info.name, funcType);
+        funcNode.value = funcNode.info.value = new IRFunction(funcNode.info.name, funcType);
+
+        module.addFunction((IRFunction) funcNode.value);
       }
     }
 
@@ -175,11 +190,11 @@ public class IRBuilder implements ASTVisitor {
 
     // declare several variables
     boolean isMethod = !(scopeManager.curScope() instanceof RootScope);
-    String funcName = node.info.name;
-    FuncType funcType = funcCollection.get(isMethod ? (scopeManager.getCurClassName() + "." + funcName) : funcName);
-    IRFunction function = new IRFunction(node.info.name, funcType);
+    IRFunction function = (IRFunction) node.info.value;
     curBlock = new IRBasicBlock("entry_of_" + node.info.name, function);
     function.entryBlock = curBlock;
+
+    curFunction = function;
 
     node.info.paraListInfo.forEach(scopeManager::addItem); // ??? delete?
 
@@ -187,9 +202,9 @@ public class IRBuilder implements ASTVisitor {
 
     node.stmts.accept(this);
 
-    node.info.value =  node.value = function;
     // ??? whether here add new cur Basic Block
 
+    curFunction = null;
     scopeManager.popScope();
   }
 
@@ -204,10 +219,7 @@ public class IRBuilder implements ASTVisitor {
       FuncInfo info = scopeManager.getFuncScope().info;
       if (info.value instanceof IRFunction func) {
         node.value = func.getOperand(0); // get "this pointer"
-      } else {
-        System.out.println("\"this\" is not a IRFunction ?? ");
-        assert false;
-      }
+      } else throw new IRBuildError("\"this\" is not a IRFunction ?? ", node.pos);
 
     } else if (node.atom.True() != null || node.atom.False() != null) {
       node.value = new BoolConst(node.atom.True() != null ? "true" : "false"); // ??? optimize bool Const
@@ -225,11 +237,14 @@ public class IRBuilder implements ASTVisitor {
         Value address;
         if (isMemberVariable) {
           // use getelementptr to acquire member
+          assert scopeManager.getFuncScope() != null;
+
           ClassInfo curClass = scopeManager.getCurClassInfo();
           Value curFunc = scopeManager.getFuncScope().info.value;
           Value thisOperand = ((IRFunction) curFunc).getOperand(0);
           address = visitStructMember(curClass, thisOperand, name);
-
+          if (address == null)
+            throw new IRBuildError("can't find member: " + name + " in " + curClass.name, node.pos);
         } else {
           address = pair.a;
         }
@@ -247,45 +262,148 @@ public class IRBuilder implements ASTVisitor {
 
   }
 
-  @Override
-  public void visit(NewExprNode it) {
+  private void MallocArray(NewExprNode node) {
 
+  }
+
+  @Override
+  public void visit(NewExprNode node) {
+    VarType type = (VarType) node.exprType;
+    if (type.dimension == 0) {
+      assert BaseType.isClassType(type);
+      // node
+      StructType classType = (StructType) transType(type);
+      Call call = new Call(module.MallocFunction(), curBlock, new IntConst(classType.size()));
+      return ;
+    }
+    MallocArray(node);
   }
 
   @Override
   public void visit(MemberExprNode node) {
     node.callExpr.accept(this);
     // getelementptr
+    if (BaseType.isStringType(node.callExpr.exprType)) {
+      return;
+    }
+
+    if (BaseType.isArray(node.callExpr.exprType)) {
+      return;
+    }
+
+    ClassInfo classInfo = scopeManager.queryClassInfo(node.callExpr.exprType.ClassName);
+
+    if (node.exprType instanceof VarType) {
+      Value strPtr = node.callExpr.value;
+      assert strPtr.getType() instanceof PtrType;
+      Value address = visitStructMember(classInfo, strPtr, node.member);
+      if (address == null)
+        throw new IRBuildError("can't find member: " + node.member + " in " + classInfo.name, node.pos);
+      node.value = load(address);
+    } else {
+      // function call
+      node.value = scopeManager.curClassScope.queryFuncInfo(node.member).value;
+    }
   }
 
   @Override
   public void visit(BracketExprNode node) {
-    node.index.accept(this);
     node.callExpr.accept(this);
+    node.index.accept(this);
+    GetElePtr address = new GetElePtr(transType((VarType) node.exprType), node.callExpr.value, curBlock);
+    address.addOperands(node.index.value);
+    node.value = load(address);
     // type : node.callExpr.value.target, value: ?
   }
 
   @Override
   public void visit(FuncExprNode node) {
     node.callExpr.accept(this);
+    if (!(node.callExpr.value instanceof IRFunction callFunc))
+      throw new IRBuildError("not a function call", node.pos);
+    Call call = new Call(callFunc, curBlock);
+
+    if (node.callExpr instanceof MemberExprNode memberExp) {
+      call.addOperands(memberExp.callExpr.value);
+    }
+
+    for (int i = 0; i < node.argumentList.size(); ++i) {
+      ExprNode cur = node.argumentList.get(i);
+      cur.accept(this);
+      call.addOperands(cur.value);
+    }
+    node.value = call;
   }
 
   @Override
-  public void visit(SelfExprNode it) {
+  public void visit(SelfExprNode node) {
+    node.expression.accept(this);
+    String op = node.opCode.equals("++") ? "+" : "-";
+    Value calcRes = new Binary(op, node.expression.value, new IntConst(1), curBlock);
+    store(calcRes, node.expression.value); // ??? this is not correct!
 
+    node.value = node.expression.value;
+    // x = 2, int y = x++; => x = 3, y = 2;
   }
 
   @Override
-  public void visit(UnaryExprNode it) {
-
+  public void visit(UnaryExprNode node) {
+    node.expression.accept(this);
+    switch (node.opCode) {
+      case "+" -> node.value = node.expression.value;
+      case "-" -> node.value = new Binary("-", new IntConst(0), node.expression.value, curBlock);
+      case "!" -> node.value = new Binary("^", node.expression.value, new BoolConst("true"), curBlock);
+      case "~" -> node.value = new Binary("^", node.expression.value, new IntConst(-1), curBlock);
+      default -> {
+        // ++x and --x
+        String op = node.opCode.equals("++") ? "+" : "-";
+        Value calcRes = new Binary(op, node.expression.value, new IntConst(1), curBlock);
+        store(calcRes, node.expression.value); // ??? this is not correct
+        node.value = calcRes;
+      }
+    }
   }
 
   @Override
   public void visit(BinaryExprNode node) {
     node.lhs.accept(this);
-    node.rhs.accept(this);
+    if (node.opType == BinaryExprNode.binaryOpType.Logic) {
+      IRBasicBlock tmpBlock = curBlock;
+      if (node.opCode.equals("&&")) {
+        IRBasicBlock exitAnd = new IRBasicBlock("exitAnd", curFunction);
+        IRBasicBlock ifTrue = new IRBasicBlock("calc.True", curFunction);
+        new Branch(node.lhs.value, ifTrue, exitAnd, tmpBlock);
 
-    if (node.opType == BinaryExprNode.binaryOpType.Equal || node.opType == BinaryExprNode.binaryOpType.Compare) {
+        curBlock = ifTrue;
+        node.rhs.accept(this);
+
+        curBlock = exitAnd;
+        Phi phi = new Phi(new BoolType(), curBlock);
+        phi.addOperands(new BoolConst("false"), tmpBlock);
+        phi.addOperands(node.rhs.value, ifTrue);
+
+        node.value = phi;
+      } else {
+        IRBasicBlock exitOr = new IRBasicBlock("exitOr", curFunction);
+        IRBasicBlock ifFalse = new IRBasicBlock("calc.False", curFunction);
+        new Branch(node.lhs.value, exitOr, ifFalse, tmpBlock);
+
+        curBlock = ifFalse;
+        node.rhs.accept(this);
+
+        curBlock = exitOr;
+        Phi phi = new Phi(new BoolType(), curBlock);
+        phi.addOperands(new BoolConst("true"), tmpBlock);
+        phi.addOperands(node.rhs.value, ifFalse);
+
+        node.value = phi;
+      }
+      return;
+    }
+
+    node.rhs.accept(this);
+    if (node.opType == BinaryExprNode.binaryOpType.Equal
+            || node.opType == BinaryExprNode.binaryOpType.Compare) {
       node.value = new Icmp(node.opCode, node.lhs.value, node.rhs.value, curBlock);
     } else {
       node.value = new Binary(node.opCode, node.lhs.value, node.rhs.value, curBlock);
@@ -294,22 +412,45 @@ public class IRBuilder implements ASTVisitor {
 
   @Override
   public void visit(AssignExprNode node) {
-
+    node.lhs.accept(this); // lhs的load其实是不必要的? e.g. x = y;
+    node.rhs.accept(this);
+    store(node.lhs.value, node.rhs.value); // ??? resolver
+    node.value = node.rhs.value;
   }
 
   @Override
   public void visit(SuiteStmtNode node) {
-
+    scopeManager.pushScope(new SuiteScope());
+    node.stmts.forEach(stmt -> stmt.accept(this));
+    scopeManager.popScope();
   }
 
   @Override
-  public void visit(IfStmtNode it) {
+  public void visit(IfStmtNode node) {
+    IRBasicBlock ifTrue = new IRBasicBlock("if.True", curFunction);
+    IRBasicBlock ifFalse = new IRBasicBlock("if.False", curFunction);
+    IRBasicBlock fellow = new IRBasicBlock("if.end", curFunction);
 
-  }
+    node.condition.accept(this);
+    new Branch(node.condition.value, ifTrue, ifFalse, curBlock);
 
-  @Override
-  public void visit(BreakContinueNode it) {
+    if (node.thenStmt != null) {
+      curBlock = ifTrue;
+      scopeManager.pushScope(new SuiteScope());
+      node.thenStmt.accept(this);
+      new Branch(fellow, curBlock);
+      scopeManager.popScope();
+    }
 
+    if (node.elseStmt != null) {
+      curBlock = ifFalse;
+      scopeManager.pushScope(new SuiteScope());
+      node.elseStmt.accept(this);
+      new Branch(fellow, curBlock);
+      scopeManager.popScope();
+    }
+
+    curBlock = fellow;
   }
 
   @Override
@@ -323,17 +464,70 @@ public class IRBuilder implements ASTVisitor {
   }
 
   @Override
-  public void visit(WhileStmtNode it) {
+  public void visit(WhileStmtNode node) {
+    IRBasicBlock whileCondition = new IRBasicBlock("while.condition", curFunction);
+    IRBasicBlock whileBody = new IRBasicBlock("while.body", curFunction);
+    IRBasicBlock exitBlock = new IRBasicBlock("while.exit", curFunction);
+    new Branch(whileCondition, curBlock);
 
+    curBlock = whileCondition;
+    node.condition.accept(this);
+    new Branch(node.condition.value, whileBody, exitBlock, curBlock);
+
+    if (node.stmt != null) {
+      curBlock = whileBody;
+      scopeManager.pushScope(new LoopScope());
+      node.stmt.accept(this);
+      new Branch(whileCondition, curBlock);
+      scopeManager.popScope();
+    }
+
+    curBlock = exitBlock;
   }
 
   @Override
-  public void visit(ForStmtNode it) {
+  public void visit(ForStmtNode node) {
+    IRBasicBlock forCondition = new IRBasicBlock("for.condition", curFunction);
+    IRBasicBlock forBody = new IRBasicBlock("for.body", curFunction);
+    forStep = new IRBasicBlock("for.step", curFunction);
+    forExit = new IRBasicBlock("for.exit", curFunction);
 
+    if (node.initial != null)
+      node.initial.accept(this);
+    new Branch(forCondition, curBlock);
+
+    if (node.condition != null) {
+      curBlock = forCondition;
+      node.condition.accept(this);
+      new Branch(node.condition.value, forBody, forExit, curBlock);
+    }
+
+    if (node.stmt != null) {
+      curBlock = forBody;
+      scopeManager.pushScope(new LoopScope());
+      node.stmt.accept(this);
+      new Branch(forStep, curBlock);
+      scopeManager.popScope();
+    }
+
+    if (node.step != null) {
+      curBlock = forStep;
+      node.step.accept(this);
+      new Branch(forCondition, curBlock);
+    }
+
+    curBlock = forExit;
   }
 
   @Override
-  public void visit(LambdaExprNode it) {}
+  public void visit(BreakContinueNode node) {
+    new Branch(node.isBreak ? forExit : forStep, curBlock);
+  }
+
+  @Override
+  public void visit(LambdaExprNode node) {
+    throw new IRBuildError("Lambda expression not supported", node.pos);
+  }
 
   private Value allocate(IRBaseType type) {
     return new Alloca(type, curBlock);
@@ -357,10 +551,7 @@ public class IRBuilder implements ASTVisitor {
       }
       ++idx;
     }
-    System.out.println("can't find member: " + member + " in " + info.name);
-    assert false;
     return null;
-    // GetElePtr ptr = new GetElePtr()
   }
 
 }

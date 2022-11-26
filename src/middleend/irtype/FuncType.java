@@ -1,18 +1,20 @@
 package middleend.irtype;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class FuncType extends IRBaseType {
   public IRBaseType retType;
-  public ArrayList<IRBaseType> paraListType;
+  public ArrayList<IRBaseType> paraTypeList;
 
-  public FuncType(IRBaseType retType) {
+  public FuncType(IRBaseType retType, IRBaseType... paraList) {
     this.retType = retType;
-    this.paraListType = new ArrayList<>();
+    this.paraTypeList = new ArrayList<>();
+    Collections.addAll(paraTypeList, paraList);
   }
 
   public void addParaType(IRBaseType type) {
-    paraListType.add(type);
+    paraTypeList.add(type);
   }
 
   @Override

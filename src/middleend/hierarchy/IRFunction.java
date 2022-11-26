@@ -9,9 +9,11 @@ public class IRFunction extends User {
   public IRBasicBlock entryBlock;
   public FuncType funcType; // retType and paraType e.g. %struct = type {i32, i1}
 
-  public IRFunction(String name, FuncType funcType) {
+  public IRFunction(String name, FuncType funcType, Value... paraList) {
     super(name, funcType.retType);
     this.funcType = funcType;
+    for (Value para : paraList)
+      addOperands(para);
   }
 
   public void addParameters(Value para) {

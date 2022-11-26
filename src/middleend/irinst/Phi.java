@@ -1,6 +1,7 @@
 package middleend.irinst;
 
 import middleend.IRVisitor;
+import middleend.Value;
 import middleend.hierarchy.IRBasicBlock;
 import middleend.irtype.IRBaseType;
 
@@ -9,12 +10,17 @@ public class Phi extends IRBaseInst {
     super("phi", type, parenBlock);
   }
 
+  public void addOperands(Value... valList) {
+    for (Value val : valList) super.addOperands(val);
+  }
+
   @Override
   public String toString() {
     StringBuilder ret = new StringBuilder(getName() + " = phi ");
-    for (int i = 0; i < operands.size(); ++i) {
+    ret.append(getType().toString() + " ");
+    for (int i = 0; i < operands.size(); i += 2) {
       if (getOperand(i) instanceof IRBaseInst instr) {
-        ret.append("[ ").append(instr.getName()).append(", ").append(instr.parenBlock.getName()).append(" ]");
+        ret.append("[ ").append(instr.getName()).append(", ").append(getOperand(i + 1).getName()).append(" ]");
       } else assert false;
 
       if (i < operands.size() - 1) {
