@@ -9,8 +9,8 @@ import middleend.irtype.PtrType;
 public class Alloca extends IRBaseInst {
   IRBaseType allocaType;
 
-  public Alloca(IRBaseType allocaType, IRBasicBlock parenBlock) {
-    super("alloca", new PtrType(allocaType), parenBlock);
+  public Alloca(String name, IRBaseType allocaType, IRBasicBlock parenBlock) {
+    super(name, new PtrType(allocaType), parenBlock);
     this.allocaType = allocaType;
   }
 

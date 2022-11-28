@@ -3,17 +3,50 @@ package middleend.hierarchy;
 import middleend.IRVisitor;
 import middleend.User;
 import middleend.Value;
+import middleend.irinst.Alloca;
+import middleend.irinst.Load;
+import middleend.irinst.Ret;
 import middleend.irtype.FuncType;
+import middleend.irtype.VoidType;
+
+import java.util.ArrayList;
 
 public class IRFunction extends User {
-  public IRBasicBlock entryBlock;
+  public ArrayList<IRBasicBlock> blockList = new ArrayList<>();
   public FuncType funcType; // retType and paraType e.g. %struct = type {i32, i1}
+  public Value retValPtr;
 
   public IRFunction(String name, FuncType funcType, Value... paraList) {
     super(name, funcType.retType);
     this.funcType = funcType;
     for (Value para : paraList)
       addOperands(para);
+    this.init();
+  }
+
+  private void init() {
+    new IRBasicBlock("entry_of_" + name, this);
+    new IRBasicBlock("exit_of_" + name, this);
+
+    if (getType() instanceof VoidType) {
+      new Ret(getExitBlock());
+    } else {
+      retValPtr = new Alloca(name + ".ret", getType(), getEntryBlock());
+      Value ret = new Load(retValPtr, getExitBlock());
+      new Ret(ret, getExitBlock());
+    }
+  }
+
+  public IRBasicBlock getEntryBlock() {
+    return blockList.get(0);
+  }
+
+  public IRBasicBlock getExitBlock() {
+    return blockList.get(1);
+  }
+
+  public void addBlock(IRBasicBlock block) {
+    blockList.add(block);
   }
 
   public void addParameters(Value para) {

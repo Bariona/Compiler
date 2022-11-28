@@ -8,4 +8,8 @@ public class ZeroInitPtr extends IRBaseConst {
     super("zeroinitializer", type);
   }
 
+  @Override
+  public String getName() {
+    return this.name;
+  }
 }

@@ -10,13 +10,14 @@ public class Binary extends IRBaseInst {
   // <result> = opcode <ty> <op1>, <op2>          ; yields ty:result
   public Binary(String opcode, Value op1, Value op2, IRBasicBlock parenBlock) {
     super(opcode, op1.getType(), parenBlock);
+    this.opcode = opcode;
 
     assert op1.getType().match(op2.getType());
     addOperands(op1);
     addOperands(op2);
   }
 
-  String Trans(String opcode) {
+  static public String Trans(String opcode) {
     String ret = switch (opcode) {
       case "+" -> "add";
       case "-" -> "sub";
@@ -35,7 +36,8 @@ public class Binary extends IRBaseInst {
 
   @Override
   public String toString() {
-    return getName() + " = " + Trans(opcode) + " " + getOperand(0).getTypeAndName() + " " + getOperand(1).getName();
+    return getName() + " = " + opcode + " " +
+            getOperand(0).getTypeAndName() + ", " + getOperand(1).getName();
   }
 
   @Override

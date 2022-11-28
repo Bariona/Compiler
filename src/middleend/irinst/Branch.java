@@ -27,9 +27,9 @@ public class Branch extends IRBaseInst {
   @Override
   public String toString() {
     if (this.operands.size() > 1)
-      return getName() + " = br " + getOperand(0).getTypeAndName() + ", " +
+      return "br " + getOperand(0).getTypeAndName() + ", " +
               getOperand(1).getTypeAndName() + ", " + getOperand(2).getTypeAndName();
-    return getName() + " = br " + getOperand(0).getTypeAndName();
+    return "br " + getOperand(0).getTypeAndName();
   }
 
   @Override

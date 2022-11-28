@@ -9,8 +9,8 @@ import middleend.operands.IntConst;
 
 public class GetElePtr extends IRBaseInst {
 
-  public GetElePtr(IRBaseType targetEleType, Value structPtr, IRBasicBlock parenBlock) {
-    super("getelementptr", targetEleType, parenBlock);
+  public GetElePtr(String name, IRBaseType targetEleType, Value structPtr, IRBasicBlock parenBlock) {
+    super(name, new PtrType(targetEleType), parenBlock);
     addOperands(structPtr);
     addOperands(new IntConst(0));
   }

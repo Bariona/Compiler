@@ -1,6 +1,7 @@
 package middleend.irinst;
 
 import middleend.IRVisitor;
+import middleend.User;
 import middleend.Value;
 import middleend.hierarchy.IRBasicBlock;
 import middleend.irtype.BoolType;
@@ -11,23 +12,20 @@ import middleend.operands.BoolConst;
 import middleend.operands.IntConst;
 import middleend.operands.ZeroInitPtr;
 
-public class GlobalDef extends IRBaseInst {
+public class GlobalDef extends User {
   // global variable
 
-  public GlobalDef(String name, Value value, IRBasicBlock parenBlock) {
-    super("glob_" + name, value.getType(), parenBlock);
-    addOperands(value);
-  }
+  public GlobalDef(String name, IRBaseType type) {
+    super("glob_" + name, type);
 
-  public GlobalDef(String name, IRBaseType type, IRBasicBlock parenBlock) {
-    super("glob_" + name, type, parenBlock);
-    if (type instanceof StructType) {
-      addOperands(new ZeroInitPtr(type));
-    } else if (type instanceof IntType) {
+    if (type instanceof IntType) {
       addOperands(new IntConst(0));
     } else if (type instanceof BoolType) {
       addOperands(new BoolConst("false"));
-    } else assert false;
+    } else {
+      // array and struct type
+      addOperands(new ZeroInitPtr(type));
+    }
   }
 
   @Override

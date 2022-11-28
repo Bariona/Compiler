@@ -5,6 +5,7 @@ import middleend.Value;
 import middleend.hierarchy.IRBasicBlock;
 import middleend.irtype.PtrType;
 import middleend.irtype.VoidType;
+import utility.Debugger;
 
 public class Store extends IRBaseInst {
 
@@ -13,7 +14,9 @@ public class Store extends IRBaseInst {
 
     if (ptr.getType() instanceof PtrType ptrType) {
       assert value.getType().match(ptrType.target);
-    } else assert false;
+    } else {
+      Debugger.error(ptr.getTypeAndName());
+    }
 
     addOperands(value);
     addOperands(ptr);
@@ -21,7 +24,7 @@ public class Store extends IRBaseInst {
 
   @Override
   public String toString() {
-    return getName() + " = store " + getOperand(0).getTypeAndName() + ", " + getOperand(1).getTypeAndName();
+    return "store " + getOperand(0).getTypeAndName() + ", " + getOperand(1).getTypeAndName();
   }
 
   @Override

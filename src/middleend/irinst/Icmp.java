@@ -17,14 +17,14 @@ public class Icmp extends IRBaseInst {
     addOperands(op2);
   }
 
-  private String Trans(String opcode) {
+  static public String Trans(String opcode) {
     String ret = switch (opcode) {
       case "==" -> "eq";
       case "!=" -> "ne";
       case ">=" -> "sge";
       case "<=" -> "sle";
-      case ">"  -> "sgt";
-      case "<"  -> "slt";
+      case ">" -> "sgt";
+      case "<" -> "slt";
       default -> null;
     };
     return ret;
@@ -32,7 +32,8 @@ public class Icmp extends IRBaseInst {
 
   @Override
   public String toString() {
-    return getName() + " = icmp " + Trans(opcode) + " " + getOperand(0).getTypeAndName() + " " + getOperand(1).getName();
+    return getName() + " = icmp " + opcode + " " +
+            getOperand(0).getTypeAndName() + ", " + getOperand(1).getName();
   }
 
   @Override

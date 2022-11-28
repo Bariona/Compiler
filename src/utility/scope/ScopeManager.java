@@ -103,7 +103,10 @@ public class ScopeManager {
       BaseScope cur = scopeStack.get(i);
       VarInfo ret = cur.queryVarInfo(name);
       if (ret != null) {
-        assert ret.value != null;
+        if (ret.value == null) {
+          System.out.println("query " + name + "'s value failed!");
+          assert false;
+        }
         return new Pair<>(ret.value, cur instanceof ClassScope);
       }
     }

@@ -52,7 +52,7 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(FuncDefNode node) {
-    scopeManager.pushScope(new FuncScope(node.info));
+    scopeManager.pushScope(node.scope);
     node.info.paraListInfo.forEach(scopeManager::addItem);
     node.stmts.accept(this);
     scopeManager.popScope();
@@ -81,7 +81,7 @@ public class SemanticChecker implements ASTVisitor {
         node.exprType = varInfo.type.clone();
       } else if (info instanceof FuncInfo funcInfo) {
         node.exprType = funcInfo.funcType.clone();
-      } else throw new SemanticError("Atom not defined", node.pos);
+      } else throw new SemanticError("Atom " + name + " not defined", node.pos);
 
     } else {
       // null
@@ -158,7 +158,7 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(LambdaExprNode node) {
-    scopeManager.pushScope(new FuncScope(node.info));
+    scopeManager.pushScope(node.scope);
     scopeManager.lambdaReturn.push(new VarType(BaseType.BuiltinType.NULL));
     node.info.paraListInfo.forEach(scopeManager::addItem);
 
@@ -236,7 +236,7 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(SuiteStmtNode node) {
-    scopeManager.pushScope(new SuiteScope());
+    scopeManager.pushScope(node.scope);
     node.stmts.forEach(stmt -> stmt.accept(this));
     scopeManager.popScope();
   }
@@ -248,13 +248,13 @@ public class SemanticChecker implements ASTVisitor {
       throw new SemanticError("condition res type error", node.condition.pos);
 
     if (node.thenStmt != null) {
-      scopeManager.pushScope(new SuiteScope());
+      scopeManager.pushScope(node.thenScope);
       node.thenStmt.accept(this);
       scopeManager.popScope();
     }
 
     if (node.elseStmt != null) {
-      scopeManager.pushScope(new SuiteScope());
+      scopeManager.pushScope(node.elseScope);
       node.elseStmt.accept(this);
       scopeManager.popScope();
     }
@@ -306,7 +306,7 @@ public class SemanticChecker implements ASTVisitor {
     if (!BaseType.isBoolType(node.condition.exprType))
       throw new SemanticError("condition expr should be bool type", node.condition.pos);
     if (node.stmt != null) {
-      scopeManager.pushScope(new LoopScope());
+      scopeManager.pushScope(node.scope);
       node.stmt.accept(this);
       scopeManager.popScope();
     }
@@ -315,7 +315,13 @@ public class SemanticChecker implements ASTVisitor {
 
   @Override
   public void visit(ForStmtNode node) {
-    if (node.initial != null) node.initial.accept(this);
+    if (node.initial != null)
+      node.initial.accept(this);
+
+    node.initVarDef.forEach(var -> var.accept(this));
+
+    // scopeManager.curScope().print();
+
     if (node.condition != null) {
       node.condition.accept(this);
       if (!BaseType.isBoolType(node.condition.exprType))
@@ -324,7 +330,7 @@ public class SemanticChecker implements ASTVisitor {
     if (node.step != null) node.step.accept(this);
 
     if (node.stmt != null) {
-      scopeManager.pushScope(new LoopScope());
+      scopeManager.pushScope(node.scope);
       node.stmt.accept(this);
       scopeManager.popScope();
     }

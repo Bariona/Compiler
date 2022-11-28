@@ -3,6 +3,8 @@ import frontend.ast.RootNode;
 import frontend.ASTBuilder;
 import frontend.SemanticChecker;
 import middleend.IRBuilder;
+import middleend.IRPrinter;
+import middleend.hierarchy.IRModule;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -21,6 +23,8 @@ public class Compiler {
 
     String filename = "testspace/data.in";
     String outputFile = "testspace/data.out";
+    String irFile = "testspace/data.ll";
+
     InputStream input = new FileInputStream(filename);
 //    InputStream input = System.in;
 
@@ -45,7 +49,10 @@ public class Compiler {
       SemanticChecker checker = new SemanticChecker();
       checker.visit(root);
 
-      // IRBuilder irBuilder = new IRBuilder(root);
+      IRModule module = new IRModule("data.ll");
+      IRBuilder irBuilder = new IRBuilder(module, root);
+      IRPrinter irPrinter = new IRPrinter(new PrintStream(irFile));
+      irPrinter.printModule(module);
 
       System.out.println("\033[33m🎉  Done successfully.\033[0m");
     } catch (Error e) {

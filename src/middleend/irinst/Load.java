@@ -9,7 +9,7 @@ public class Load extends IRBaseInst {
 
   // %val = load i32, i32* %ptr
   public Load(Value ptr, IRBasicBlock parenBlock) {
-    super("load", ((PtrType) ptr.getType()).target, parenBlock);
+    super("load_" + ptr.name, ((PtrType) ptr.getType()).target, parenBlock);
     addOperands(ptr);
   }
 

@@ -211,13 +211,21 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   @Override
   public ASTNode visitForStmt(MxParser.ForStmtContext ctx) {
-    return new ForStmtNode(
+
+    ForStmtNode forStmtNode = new ForStmtNode(
             ctx.initialExpr == null ? null : (ExprNode) visit(ctx.initialExpr),
             ctx.condiExpr == null ? null : (ExprNode) visit(ctx.condiExpr),
             ctx.stepExpr == null ? null : (ExprNode) visit(ctx.stepExpr),
             (StmtNode) visit(ctx.statement()),
             new Position(ctx)
     );
+
+    if (ctx.varDef() != null) {
+      VarDefNode node = (VarDefNode) visit(ctx.varDef());
+      for (var def : node.varList)
+        forStmtNode.initVarDef.add(def);
+    }
+    return forStmtNode;
   }
 
   @Override

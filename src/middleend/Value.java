@@ -7,21 +7,26 @@ import java.util.HashMap;
 
 public class Value {
   public String name;
-  IRBaseType type;
-  ArrayList<User> useList;
+  public Value recordPtr;
+  private final IRBaseType type;
+  private final ArrayList<User> useList;
 
   public static HashMap<String, Integer> renameTable = new HashMap<>();
 
   public Value(String name, IRBaseType type) {
-    this.name = name;
+    this.name = rename(name);
     this.type = type;
     this.useList = new ArrayList<>();
   }
 
   public static String rename(String s) {
-    int cnt = renameTable.get(s);
-    renameTable.put(s, cnt + 1);
-    if (cnt == 0) return s;
+    Integer cnt = renameTable.get(s);
+
+    if (cnt == null) {
+      renameTable.put(s, 1);
+      return s;
+    } else renameTable.put(s, cnt + 1);
+
     return s + "." + cnt;
   }
 

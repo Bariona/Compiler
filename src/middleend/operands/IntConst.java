@@ -10,4 +10,8 @@ public class IntConst extends IRBaseConst {
     this.value = value;
   }
 
+  @Override
+  public String getName() {
+    return String.valueOf(value);
+  }
 }
