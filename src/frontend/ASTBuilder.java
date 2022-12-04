@@ -21,6 +21,12 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
   public ASTNode visitProgram(MxParser.ProgramContext ctx) {
     RootNode root = new RootNode(new Position(ctx));
     // Builtin Functions
+
+    root.scope.addItem(
+            new FuncInfo("malloc", new VarType(BuiltinType.VOID),
+                    new VarInfo("size", new VarType(BuiltinType.INT)))
+    );
+
     root.scope.addItem(
             new FuncInfo("print", new VarType(BuiltinType.VOID),
                     new VarInfo("str", new VarType(BuiltinType.STRING)))

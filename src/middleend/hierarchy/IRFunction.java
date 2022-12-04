@@ -12,6 +12,7 @@ import middleend.irtype.VoidType;
 import java.util.ArrayList;
 
 public class IRFunction extends User {
+  public String description;
   public ArrayList<IRBasicBlock> blockList = new ArrayList<>();
   public FuncType funcType; // retType and paraType e.g. %struct = type {i32, i1}
   public Value retValPtr;
@@ -21,10 +22,10 @@ public class IRFunction extends User {
     this.funcType = funcType;
     for (Value para : paraList)
       addOperands(para);
-    this.init();
+    initialized();
   }
 
-  private void init() {
+  private void initialized() {
     new IRBasicBlock("entry_of_" + name, this);
     new IRBasicBlock("exit_of_" + name, this);
 
@@ -51,6 +52,7 @@ public class IRFunction extends User {
 
   public void addParameters(Value para) {
     addOperands(para);
+    funcType.addParaType(para.getType());
   }
 
   public String toStr() { // without "define"

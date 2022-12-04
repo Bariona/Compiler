@@ -10,6 +10,6 @@ public class ZeroInitPtr extends IRBaseConst {
 
   @Override
   public String getName() {
-    return this.name;
+    return "zeroinitializer";
   }
 }

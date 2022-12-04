@@ -18,7 +18,7 @@ public class Binary extends IRBaseInst {
   }
 
   static public String Trans(String opcode) {
-    String ret = switch (opcode) {
+    return switch (opcode) {
       case "+" -> "add";
       case "-" -> "sub";
       case "*" -> "mul";
@@ -31,7 +31,6 @@ public class Binary extends IRBaseInst {
       case ">>" -> "ashr";
       default -> null;
     };
-    return ret;
   }
 
   @Override

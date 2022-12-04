@@ -20,7 +20,7 @@ public class IRBasicBlock extends Value {
   }
 
   public void addInst(IRBaseInst instr) {
-    if (instr instanceof Alloca) {
+    if (instr instanceof Alloca) { // add alloca at the front of "entry block"
       instrList.addFirst(instr);
     } else {
       instrList.addLast(instr);

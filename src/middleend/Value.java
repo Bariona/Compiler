@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class Value {
   public String name;
   public Value recordPtr;
-  private final IRBaseType type;
+  public final IRBaseType type;
   private final ArrayList<User> useList;
 
   public static HashMap<String, Integer> renameTable = new HashMap<>();
@@ -27,7 +27,7 @@ public class Value {
       return s;
     } else renameTable.put(s, cnt + 1);
 
-    return s + "." + cnt;
+    return s + cnt;
   }
 
   public void addUser(User user) {

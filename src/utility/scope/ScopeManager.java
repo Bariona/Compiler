@@ -1,6 +1,8 @@
 package utility.scope;
 
 import middleend.Value;
+import middleend.hierarchy.IRBasicBlock;
+import middleend.irinst.GetElePtr;
 import org.antlr.v4.runtime.misc.Pair;
 import utility.error.SemanticError;
 import utility.info.BaseInfo;
@@ -16,6 +18,9 @@ public class ScopeManager {
   public Stack<VarType> lambdaReturn;
   public ClassScope curClassScope;
   private final Stack<BaseScope> scopeStack;
+
+  private final Stack<IRBasicBlock> loopStep = new Stack<>();
+  private final Stack<IRBasicBlock> loopExit = new Stack<>();
 
   public ScopeManager() {
     loopCnt = 0;
@@ -98,19 +103,40 @@ public class ScopeManager {
     return queryClassInfo(getCurClassName());
   }
 
+  // ==== LLVM IR ↓ ====
   public Pair<Value, Boolean> queryValue(String name) {
     for (int i = scopeStack.size() - 1; i >= 0; --i) {
       BaseScope cur = scopeStack.get(i);
       VarInfo ret = cur.queryVarInfo(name);
       if (ret != null) {
-        if (ret.value == null) {
-          System.out.println("query " + name + "'s value failed!");
-          assert false;
-        }
+//        if (ret.value == null) {
+//          System.out.println(cur.toString());
+//          System.out.println("query " + name + "'s value failed!");
+//          assert false;
+//        }
         return new Pair<>(ret.value, cur instanceof ClassScope);
       }
     }
     return null;
   }
+
+  public void pushLoopBlock(IRBasicBlock step, IRBasicBlock exit) {
+    loopExit.push(exit);
+    loopStep.push(step);
+  }
+
+  public void popLoopBlock() {
+    loopExit.pop();
+    loopStep.pop();
+  }
+
+  public IRBasicBlock loopStep() {
+    return loopStep.peek();
+  }
+
+  public IRBasicBlock loopExit() {
+    return loopExit.peek();
+  }
+
 
 }

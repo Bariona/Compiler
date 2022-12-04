@@ -27,4 +27,6 @@ public interface IRVisitor {
   void visit(IRFunction irFunction);
 
   void visit(GlobalDef globalDef);
+
+  void visit(BitCast bitCast);
 }

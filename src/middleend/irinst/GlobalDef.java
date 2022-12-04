@@ -2,12 +2,7 @@ package middleend.irinst;
 
 import middleend.IRVisitor;
 import middleend.User;
-import middleend.Value;
-import middleend.hierarchy.IRBasicBlock;
-import middleend.irtype.BoolType;
-import middleend.irtype.IRBaseType;
-import middleend.irtype.IntType;
-import middleend.irtype.StructType;
+import middleend.irtype.*;
 import middleend.operands.BoolConst;
 import middleend.operands.IntConst;
 import middleend.operands.ZeroInitPtr;
@@ -16,7 +11,7 @@ public class GlobalDef extends User {
   // global variable
 
   public GlobalDef(String name, IRBaseType type) {
-    super("glob_" + name, type);
+    super("glob_" + name, new PtrType(type));
 
     if (type instanceof IntType) {
       addOperands(new IntConst(0));

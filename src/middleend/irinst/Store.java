@@ -5,6 +5,7 @@ import middleend.Value;
 import middleend.hierarchy.IRBasicBlock;
 import middleend.irtype.PtrType;
 import middleend.irtype.VoidType;
+import middleend.operands.NullConst;
 import utility.Debugger;
 
 public class Store extends IRBaseInst {
@@ -13,7 +14,11 @@ public class Store extends IRBaseInst {
     super("store", new VoidType(), parenBlock);
 
     if (ptr.getType() instanceof PtrType ptrType) {
-      assert value.getType().match(ptrType.target);
+      if (value instanceof NullConst) {
+        value = new NullConst(ptrType.target);
+      } else if (!value.getType().match(ptrType.target)) {
+        Debugger.error("target type: " + ptrType.target.toString() + " ← store value type: " + value.getType().toString());
+      }
     } else {
       Debugger.error(ptr.getTypeAndName());
     }
