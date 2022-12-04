@@ -8,10 +8,7 @@ import frontend.ast.statement.*;
 import middleend.hierarchy.*;
 import middleend.irinst.*;
 import middleend.irtype.*;
-import middleend.operands.BoolConst;
-import middleend.operands.IntConst;
-import middleend.operands.NullConst;
-import middleend.operands.StringConst;
+import middleend.operands.*;
 import org.antlr.v4.runtime.misc.Pair;
 import utility.Debugger;
 import utility.error.IRBuildError;
@@ -106,19 +103,8 @@ public class IRBuilder implements ASTVisitor {
 
     if (node.expr != null) {
       node.expr.accept(this);
-//        Debugger.print(node.expr.value.getType().toString());
-//      if (BaseType.isStringType(node.info.type)) {
-//        Value charArrayPtr = new GetElePtr(node.info.name, new PtrType(new IntType(8)), node.value, curBlock, new IntConst(0));
-//        store(node.expr.value, charArrayPtr);
-//      } else {
       store(node.expr.value, node.value.recordPtr);
-      //}
     }
-
-//    if (BaseType.isStringType(node.info.type)) {
-//      node.value = load(new GetElePtr(node.info.name, new PtrType(new IntType(8)), node.value, curBlock, new IntConst(0)));
-//      node.value.recordPtr = node.value;
-//    }
 
   }
 
@@ -408,8 +394,6 @@ public class IRBuilder implements ASTVisitor {
     node.lhs.accept(this); // lhs的load其实是不必要的? e.g. x = y;
     node.rhs.accept(this);
 
-    // Debugger.printPause(node.rhs.value.getTypeAndName());
-
     Value storePtr = node.lhs.value.recordPtr;
     store(node.rhs.value, storePtr);
 
@@ -598,15 +582,10 @@ public class IRBuilder implements ASTVisitor {
 
   private void updateParaList(boolean isMethod, IRFunction function, FuncDefNode node) {
     if (isMethod) {
-      // Debugger.print(function.name);
       String className = scopeManager.getCurClassName();
       Value This = new Value("this", new PtrType(module.getStruct(className)));
 
       function.addParameters(This);
-//      for (int i = 0; i < node.info.paraListInfo.size(); ++i) {
-//        VarInfo info = node.info.paraListInfo.get(i);
-//
-//      }
     }
 
     for (var info : node.info.paraListInfo) {
@@ -643,7 +622,6 @@ public class IRBuilder implements ASTVisitor {
     if (curDim + 1 == dimExpr.size() || dimExpr.get(curDim + 1) == null)
       return ptr;
 
-    // GetElePtr cur = new GetElePtr("ptr.cur", ptr, new IntConst(0), curBlock);
     GetElePtr tail = new GetElePtr("ptr.tail", ptr, arraySize, curBlock);
 
     IRBasicBlock whileCond = newBlock("while.cond");

@@ -23,7 +23,7 @@ public class PtrType extends IRBaseType {
 
   @Override
   public int size() {
-    return 4;
+    return 8;
   }
 
   @Override
