@@ -1,8 +1,7 @@
 package utility.scope;
 
-import middleend.Value;
-import middleend.hierarchy.IRBasicBlock;
-import middleend.irinst.GetElePtr;
+import frontend.ir.Value;
+import frontend.ir.hierarchy.IRBasicBlock;
 import org.antlr.v4.runtime.misc.Pair;
 import utility.error.SemanticError;
 import utility.info.BaseInfo;
@@ -108,7 +107,7 @@ public class ScopeManager {
     for (int i = scopeStack.size() - 1; i >= 0; --i) {
       BaseScope cur = scopeStack.get(i);
       VarInfo ret = cur.queryVarInfo(name);
-      if (ret != null) {
+      if (ret != null && ret.value != null) {
 //        if (ret.value == null) {
 //          System.out.println(cur.toString());
 //          System.out.println("query " + name + "'s value failed!");

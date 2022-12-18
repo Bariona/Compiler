@@ -1,11 +1,12 @@
 package frontend.ast;
 
-import frontend.ast.definition.ClassDefNode;
-import frontend.ast.definition.FuncDefNode;
-import frontend.ast.definition.VarDefNode;
-import frontend.ast.definition.VarSingleDefNode;
-import frontend.ast.expression.*;
-import frontend.ast.statement.*;
+import frontend.ast.astnode.RootNode;
+import frontend.ast.astnode.definition.ClassDefNode;
+import frontend.ast.astnode.definition.FuncDefNode;
+import frontend.ast.astnode.definition.VarDefNode;
+import frontend.ast.astnode.definition.VarSingleDefNode;
+import frontend.ast.astnode.expression.*;
+import frontend.ast.astnode.statement.*;
 
 public interface ASTVisitor {
   void visit(RootNode it);

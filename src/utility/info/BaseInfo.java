@@ -1,6 +1,6 @@
 package utility.info;
 
-import middleend.Value;
+import frontend.ir.Value;
 import utility.Position;
 
 abstract public class BaseInfo {

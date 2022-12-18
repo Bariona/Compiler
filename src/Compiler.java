@@ -1,10 +1,9 @@
-import frontend.ASTPrinter;
-import frontend.ast.RootNode;
-import frontend.ASTBuilder;
-import frontend.SemanticChecker;
-import middleend.IRBuilder;
-import middleend.IRPrinter;
-import middleend.hierarchy.IRModule;
+import frontend.ast.astnode.RootNode;
+import frontend.ast.ASTBuilder;
+import frontend.ast.SemanticChecker;
+import frontend.ir.IRBuilder;
+import frontend.ir.IRPrinter;
+import frontend.ir.hierarchy.IRModule;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -25,6 +24,7 @@ public class Compiler {
     String outputFile = "testspace/data.out";
     String irFile = "testspace/data.ll";
 
+//    InputStream input = System.in;
     InputStream input = new FileInputStream(filename);
 //    InputStream input = System.in;
 
