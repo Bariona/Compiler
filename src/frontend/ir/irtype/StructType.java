@@ -19,6 +19,13 @@ public class StructType extends IRBaseType {
     memberType.add(type);
   }
 
+  public int calcOffset(int idx) {
+    int ret = 0;
+    for (int i = 0; i < idx; ++i)
+      ret += memberType.get(i).size();
+    return ret;
+  }
+
   @Override
   public boolean match(IRBaseType _it) {
     if (_it instanceof StructType it) {

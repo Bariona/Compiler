@@ -2,15 +2,16 @@ package frontend.ir.instruction;
 
 import frontend.ir.IRVisitor;
 import frontend.ir.Value;
-import frontend.ir.hierarchy.IRBasicBlock;
+import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.irtype.PtrType;
 import frontend.ir.irtype.VoidType;
 import frontend.ir.operands.NullConst;
 import utility.Debugger;
 
 public class Store extends IRBaseInst {
+  // e.g.  store i32 %add1, i32* %A_x
 
-  public Store(Value value, Value ptr, IRBasicBlock parenBlock) {
+  public Store(Value value, Value ptr, IRBlock parenBlock) {
     super("store", new VoidType(), parenBlock);
 
     if (ptr.getType() instanceof PtrType ptrType) {

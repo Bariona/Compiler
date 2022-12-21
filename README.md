@@ -45,6 +45,22 @@ java <filename>
 `assert` 模式开启需要 IDEA 在 run configuration 中的 VM option 加上`-ea`
 
 
+
+`.c` to `.ll`
+
+```
+clang <filename>.c -S -emit-llvm -O0 -fno-discard-value-names
+```
+
+`.ll` to `.s`
+
+```
+llc builtin.ll -o builtin.s -march=riscv32 -mattr=+m
+```
+
+
+
+
 ## Semantic Design
 
 - File structure:

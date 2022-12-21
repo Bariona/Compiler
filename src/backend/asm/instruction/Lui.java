@@ -14,8 +14,6 @@ public class Lui extends ASMBaseInst {
     super(parenBlock);
     this.rd = rd;
     this.imm = imm;
-    if (parenBlock != null)
-      parenBlock.addInst(this);
   }
 
   @Override

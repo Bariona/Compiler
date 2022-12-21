@@ -1,6 +1,6 @@
 package frontend.ir;
 
-import frontend.ir.hierarchy.IRBasicBlock;
+import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.hierarchy.IRFunction;
 import frontend.ir.hierarchy.IRModule;
 
@@ -62,9 +62,10 @@ public class IRPrinter {
     os.println();
   }
 
-  public void printBlock(IRBasicBlock block, boolean ifPrintLabel) {
+  public void printBlock(IRBlock block, boolean ifPrintLabel) {
     if (ifPrintLabel)
       os.println(block.name + ":");
+    os.println(INDENT + block.phiInst.toString());
     for (var instr : block.instrList) {
       os.println(INDENT + instr.toString());
     }

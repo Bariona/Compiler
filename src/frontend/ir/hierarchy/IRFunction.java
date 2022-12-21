@@ -16,7 +16,7 @@ public class IRFunction extends User {
   public boolean isMethod = false;
   public FuncType funcType; // retType and paraType e.g. %struct = type {i32, i1}
   public Value retValPtr;
-  public ArrayList<IRBasicBlock> blockList = new ArrayList<>();
+  public ArrayList<IRBlock> blockList = new ArrayList<>();
 
   public IRFunction(String name, FuncType funcType, Value... paraList) {
     super(name, funcType.retType);
@@ -27,8 +27,8 @@ public class IRFunction extends User {
   }
 
   private void initialized() {
-    new IRBasicBlock("entry_of_" + name, this);
-    new IRBasicBlock("exit_of_" + name, this);
+    new IRBlock("entry_of_" + name, this);
+    new IRBlock("exit_of_" + name, this);
 
     if (getType() instanceof VoidType) {
       new Ret(getExitBlock());
@@ -39,15 +39,15 @@ public class IRFunction extends User {
     }
   }
 
-  public IRBasicBlock getEntryBlock() {
+  public IRBlock getEntryBlock() {
     return blockList.get(0);
   }
 
-  public IRBasicBlock getExitBlock() {
+  public IRBlock getExitBlock() {
     return blockList.get(1);
   }
 
-  public void addBlock(IRBasicBlock block) {
+  public void addBlock(IRBlock block) {
     blockList.add(block);
   }
 

@@ -2,13 +2,13 @@ package frontend.ir.instruction;
 
 import frontend.ir.IRVisitor;
 import frontend.ir.Value;
-import frontend.ir.hierarchy.IRBasicBlock;
+import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.irtype.PtrType;
 
 public class Load extends IRBaseInst {
 
   // %val = load i32, i32* %ptr
-  public Load(Value ptr, IRBasicBlock parenBlock) {
+  public Load(Value ptr, IRBlock parenBlock) {
     super(ptr.name + ".load", ((PtrType) ptr.getType()).target, parenBlock);
     addOperands(ptr);
   }

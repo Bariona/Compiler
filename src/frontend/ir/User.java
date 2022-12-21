@@ -13,7 +13,7 @@ public abstract class User extends Value {
   }
 
   public Value getOperand(int i) {
-    return operands.get(i);
+    return (i >= operands.size()) ? null : operands.get(i);
   }
 
   public void addOperands(Value val) {
@@ -21,7 +21,9 @@ public abstract class User extends Value {
     val.addUser(this);
   }
 
-  public void setOperands(int i, Value val) {
+  public void resetOperands(int i, Value val) {
+    operands.get(i).userList.remove(this);
+    val.addUser(this);
     operands.set(i, val);
   }
 

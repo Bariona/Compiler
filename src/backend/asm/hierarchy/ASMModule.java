@@ -2,14 +2,13 @@ package backend.asm.hierarchy;
 
 import backend.asm.operand.GlobalReg;
 import backend.asm.operand.PhysicalReg;
-import frontend.ir.hierarchy.IRFunction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 public class ASMModule {
-  public ArrayList<IRFunction> func = new ArrayList<>();
+  public ArrayList<ASMFunction> func = new ArrayList<>();
   public LinkedList<GlobalReg> globVar = new LinkedList<>();
   public ArrayList<GlobalReg> strConst = new ArrayList<>();
 

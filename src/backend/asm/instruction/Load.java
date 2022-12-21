@@ -16,8 +16,6 @@ public class Load extends ASMBaseInst {
     this.address = address;
     this.offset = offset;
     this.size = size;
-    if (parenBlock != null)
-      parenBlock.addInst(this);
   }
 
   static public String translate(int size) {

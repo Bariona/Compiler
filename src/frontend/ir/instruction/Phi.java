@@ -2,11 +2,11 @@ package frontend.ir.instruction;
 
 import frontend.ir.IRVisitor;
 import frontend.ir.Value;
-import frontend.ir.hierarchy.IRBasicBlock;
+import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.irtype.IRBaseType;
 
 public class Phi extends IRBaseInst {
-  public Phi(IRBaseType type, IRBasicBlock parenBlock) {
+  public Phi(IRBaseType type, IRBlock parenBlock) {
     super("phi", type, parenBlock);
   }
 
@@ -20,13 +20,8 @@ public class Phi extends IRBaseInst {
     StringBuilder ret = new StringBuilder(getName() + " = phi ");
     ret.append(getType().toString() + " ");
     for (int i = 0; i < operands.size(); i += 2) {
-      // if (getOperand(i) instanceof IRBaseInst instr) {
-      ret.append("[ ").append(getOperand(i).getName()).append(", ").append(getOperand(i + 1).getName()).append(" ]");
-//      } else {
-//        Debugger.error(getOperand(i).toString());
-//        assert false;
-//      }
-
+      ret.append("[ ").append(getOperand(i).getName()).append(", ")
+              .append(getOperand(i + 1).getName()).append(" ]");
       if (i + 2 < operands.size()) {
         ret.append(", ");
       }

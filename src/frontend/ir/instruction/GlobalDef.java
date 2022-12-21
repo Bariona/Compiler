@@ -13,6 +13,8 @@ public class GlobalDef extends User {
   public GlobalDef(String name, IRBaseType type) {
     super("glob_" + name, new PtrType(type));
 
+    this.setGlobal();
+
     if (type instanceof IntType) {
       addOperands(new IntConst(0));
     } else if (type instanceof BoolType) {

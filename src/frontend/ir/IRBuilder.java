@@ -25,12 +25,10 @@ public class IRBuilder implements ASTVisitor {
   private final IRModule module;
   private final ScopeManager scopeManager = new ScopeManager();
 
-  private IRBasicBlock curBlock, initCurBlock;
+  private IRBlock curBlock, initCurBlock;
   private IRFunction curFunction;
 
   private final IRFunction globInitFunc;
-
-  // private IRBasicBlock globalInitBlock = globInitFunc.getEntryBlock();
 
   private final Value zero = new IntConst(0),
           one = new IntConst(1),
@@ -45,6 +43,14 @@ public class IRBuilder implements ASTVisitor {
     root.accept(this);
 
     new Branch(globInitFunc.getExitBlock(), initCurBlock);
+    buildCFG();
+  }
+
+  private void buildCFG() {
+    for (var func : module.irFuncList) {
+      for (var block : func.blockList)
+        block.insert2CFG();
+    }
   }
 
   @Override
@@ -356,10 +362,10 @@ public class IRBuilder implements ASTVisitor {
   public void visit(BinaryExprNode node) {
     node.lhs.accept(this);
     if (node.opType == BinaryExprNode.binaryOpType.Logic) {
-      IRBasicBlock tmpBlock = curBlock;
+      IRBlock tmpBlock = curBlock;
       if (node.opCode.equals("&&")) {
-        IRBasicBlock exitAnd = newBlock("exitAnd");
-        IRBasicBlock ifTrue = newBlock("calc.True");
+        IRBlock exitAnd = newBlock("exitAnd");
+        IRBlock ifTrue = newBlock("calc.True");
         new Branch(node.lhs.value, ifTrue, exitAnd, tmpBlock);
 
         curBlock = ifTrue;
@@ -373,8 +379,8 @@ public class IRBuilder implements ASTVisitor {
         curBlock = exitAnd;
         node.value = phi;
       } else {
-        IRBasicBlock exitOr = newBlock("exitOr");
-        IRBasicBlock ifFalse = newBlock("calc.False");
+        IRBlock exitOr = newBlock("exitOr");
+        IRBlock ifFalse = newBlock("calc.False");
         new Branch(node.lhs.value, exitOr, ifFalse, tmpBlock);
 
         curBlock = ifFalse;
@@ -428,9 +434,9 @@ public class IRBuilder implements ASTVisitor {
 
   @Override
   public void visit(IfStmtNode node) {
-    IRBasicBlock ifTrue = newBlock("if.then");
-    IRBasicBlock ifFalse = newBlock("if.else");
-    IRBasicBlock ifExit = newBlock("if.end");
+    IRBlock ifTrue = newBlock("if.then");
+    IRBlock ifFalse = newBlock("if.else");
+    IRBlock ifExit = newBlock("if.end");
 
     node.condition.accept(this);
     new Branch(node.condition.value, ifTrue, ifFalse, curBlock);
@@ -458,8 +464,6 @@ public class IRBuilder implements ASTVisitor {
   public void visit(ReturnStmtNode node) {
     if (node.ret != null) {
       node.ret.accept(this);
-//      System.out.println(node.pos.toString());
-//      System.out.println(node.ret.value.getTypeAndName());
       store(node.ret.value, curFunction.retValPtr);
     }
     new Branch(curFunction.getExitBlock(), curBlock);
@@ -467,9 +471,9 @@ public class IRBuilder implements ASTVisitor {
 
   @Override
   public void visit(WhileStmtNode node) {
-    IRBasicBlock whileCond = newBlock("while.cond");
-    IRBasicBlock whileBody = newBlock("while.body");
-    IRBasicBlock whileExit = newBlock("while.end");
+    IRBlock whileCond = newBlock("while.cond");
+    IRBlock whileBody = newBlock("while.body");
+    IRBlock whileExit = newBlock("while.end");
 
     scopeManager.pushLoopBlock(whileCond, whileExit);
     new Branch(whileCond, curBlock);
@@ -492,10 +496,10 @@ public class IRBuilder implements ASTVisitor {
 
   @Override
   public void visit(ForStmtNode node) {
-    IRBasicBlock forCond = newBlock("for.cond");
-    IRBasicBlock forBody = newBlock("for.body");
-    IRBasicBlock forStep = newBlock("for.inc");
-    IRBasicBlock forExit = newBlock("for.end");
+    IRBlock forCond = newBlock("for.cond");
+    IRBlock forBody = newBlock("for.body");
+    IRBlock forStep = newBlock("for.inc");
+    IRBlock forExit = newBlock("for.end");
 
     scopeManager.pushLoopBlock(forStep, forExit);
 
@@ -558,8 +562,8 @@ public class IRBuilder implements ASTVisitor {
     return ret;
   }
 
-  private IRBasicBlock newBlock(String name) {
-    return new IRBasicBlock(name, curFunction);
+  private IRBlock newBlock(String name) {
+    return new IRBlock(name, curFunction);
   }
   private BitCast bitcast(Value value, IRBaseType targetType) {
     return new BitCast(value, targetType, curBlock);
@@ -644,9 +648,9 @@ public class IRBuilder implements ASTVisitor {
 
     GetElePtr tail = new GetElePtr("ptr.tail", ptr, arraySize, curBlock);
 
-    IRBasicBlock whileCond = newBlock("while.cond");
-    IRBasicBlock whileBody = newBlock("while.body");
-    IRBasicBlock whileExit = newBlock("while.end");
+    IRBlock whileCond = newBlock("while.cond");
+    IRBlock whileBody = newBlock("while.body");
+    IRBlock whileExit = newBlock("while.end");
 
     new Branch(whileCond, curBlock);
 

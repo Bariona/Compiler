@@ -1,7 +1,7 @@
 package utility.scope;
 
 import frontend.ir.Value;
-import frontend.ir.hierarchy.IRBasicBlock;
+import frontend.ir.hierarchy.IRBlock;
 import org.antlr.v4.runtime.misc.Pair;
 import utility.error.SemanticError;
 import utility.info.BaseInfo;
@@ -18,8 +18,8 @@ public class ScopeManager {
   public ClassScope curClassScope;
   private final Stack<BaseScope> scopeStack;
 
-  private final Stack<IRBasicBlock> loopStep = new Stack<>();
-  private final Stack<IRBasicBlock> loopExit = new Stack<>();
+  private final Stack<IRBlock> loopStep = new Stack<>();
+  private final Stack<IRBlock> loopExit = new Stack<>();
 
   public ScopeManager() {
     loopCnt = 0;
@@ -119,7 +119,7 @@ public class ScopeManager {
     return null;
   }
 
-  public void pushLoopBlock(IRBasicBlock step, IRBasicBlock exit) {
+  public void pushLoopBlock(IRBlock step, IRBlock exit) {
     loopExit.push(exit);
     loopStep.push(step);
   }
@@ -129,11 +129,11 @@ public class ScopeManager {
     loopStep.pop();
   }
 
-  public IRBasicBlock loopStep() {
+  public IRBlock loopStep() {
     return loopStep.peek();
   }
 
-  public IRBasicBlock loopExit() {
+  public IRBlock loopExit() {
     return loopExit.peek();
   }
 

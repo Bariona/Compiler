@@ -9,14 +9,15 @@ public class Value {
   public String name;
   public Value recordPtr;
   public final IRBaseType type;
-  private final ArrayList<User> useList;
+  private boolean isGlobal = false;
+  public final ArrayList<User> userList;
 
   public static HashMap<String, Integer> renameTable = new HashMap<>();
 
   public Value(String name, IRBaseType type) {
     this.name = rename(name);
     this.type = type;
-    this.useList = new ArrayList<>();
+    this.userList = new ArrayList<>();
   }
 
   public static String rename(String s) {
@@ -30,8 +31,16 @@ public class Value {
   }
 
 
+  public void setGlobal() {
+    isGlobal = true;
+  }
+
+  public boolean isGlobal() {
+    return isGlobal;
+  }
+
   public void addUser(User user) {
-    useList.add(user);
+    userList.add(user);
   }
 
   public IRBaseType getType() {

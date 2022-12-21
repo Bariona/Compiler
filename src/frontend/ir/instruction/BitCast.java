@@ -2,12 +2,12 @@ package frontend.ir.instruction;
 
 import frontend.ir.IRVisitor;
 import frontend.ir.Value;
-import frontend.ir.hierarchy.IRBasicBlock;
+import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.irtype.IRBaseType;
 
 public class BitCast extends IRBaseInst {
 
-  public BitCast(Value curValue, IRBaseType targetType, IRBasicBlock parenBlock) {
+  public BitCast(Value curValue, IRBaseType targetType, IRBlock parenBlock) {
     super("bitcast", targetType, parenBlock);
     addOperands(curValue);
   }

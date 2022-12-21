@@ -7,6 +7,8 @@ public abstract class ASMBaseInst {
 
   public ASMBaseInst(ASMBlock parenBlock) {
     this.parenBlock = parenBlock;
+    if (parenBlock != null)
+      parenBlock.addInst(this);
   }
 
   abstract public String toString();

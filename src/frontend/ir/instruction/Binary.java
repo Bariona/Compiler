@@ -2,13 +2,13 @@ package frontend.ir.instruction;
 
 import frontend.ir.IRVisitor;
 import frontend.ir.Value;
-import frontend.ir.hierarchy.IRBasicBlock;
+import frontend.ir.hierarchy.IRBlock;
 
 public class Binary extends IRBaseInst {
   String opcode;
 
   // <result> = opcode <ty> <op1>, <op2>          ; yields ty:result
-  public Binary(String opcode, Value op1, Value op2, IRBasicBlock parenBlock) {
+  public Binary(String opcode, Value op1, Value op2, IRBlock parenBlock) {
     super(opcode, op1.getType(), parenBlock);
     this.opcode = opcode;
 
@@ -30,6 +30,16 @@ public class Binary extends IRBaseInst {
       case "<<" -> "shl";
       case ">>" -> "ashr";
       default -> null;
+    };
+  }
+
+  public String getOpcode() {
+    return switch (opcode) {
+      case "shl"-> "sll";
+      case "ashr" -> "sra";
+      case "srem" -> "rem"; // remainder
+      case "sdiv" -> "div";
+      default -> opcode;
     };
   }
 

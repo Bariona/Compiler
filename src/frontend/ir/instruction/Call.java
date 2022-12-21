@@ -2,12 +2,12 @@ package frontend.ir.instruction;
 
 import frontend.ir.IRVisitor;
 import frontend.ir.Value;
-import frontend.ir.hierarchy.IRBasicBlock;
+import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.hierarchy.IRFunction;
 import frontend.ir.irtype.VoidType;
 
 public class Call extends IRBaseInst {
-  public Call(IRFunction func, IRBasicBlock parenBlock, Value... Args) {
+  public Call(IRFunction func, IRBlock parenBlock, Value... Args) {
     super(func.name + ".call", func.getType(), parenBlock);
     addOperands(func);
     for (Value arg : Args) addOperands(arg);

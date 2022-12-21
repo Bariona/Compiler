@@ -13,8 +13,6 @@ public class Li extends ASMBaseInst {
     super(parenBlock);
     this.reg = reg;
     this.imm = imm;
-    if (parenBlock != null)
-      parenBlock.addInst(this);
   }
 
   @Override

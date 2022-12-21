@@ -1,3 +1,7 @@
+import backend.asm.ASMBuilder;
+import backend.asm.ASMPrinter;
+import backend.asm.RegAllocator;
+import backend.asm.hierarchy.ASMModule;
 import frontend.ast.astnode.RootNode;
 import frontend.ast.ASTBuilder;
 import frontend.ast.SemanticChecker;
@@ -23,6 +27,7 @@ public class Compiler {
     String filename = "testspace/data.in";
     String outputFile = "testspace/data.out";
     String irFile = "testspace/data.ll";
+    String asmFile = "testspace/data.s";
 
 //    InputStream input = System.in;
     InputStream input = new FileInputStream(filename);
@@ -49,10 +54,15 @@ public class Compiler {
       SemanticChecker checker = new SemanticChecker();
       checker.visit(root);
 
-      IRModule module = new IRModule("data.ll");
-      IRBuilder irBuilder = new IRBuilder(module, root);
-      IRPrinter irPrinter = new IRPrinter(new PrintStream(irFile));
-      irPrinter.printModule(module);
+      IRModule irModule = new IRModule("data.ll");
+      IRBuilder irBuilder = new IRBuilder(irModule, root);
+      new IRPrinter(new PrintStream(irFile)).printModule(irModule);
+
+      ASMModule asmModule = new ASMModule();
+      ASMBuilder asmBuilder = new ASMBuilder(asmModule, irModule);
+      new ASMPrinter(new PrintStream(asmFile)).printModule(asmModule);
+      RegAllocator allocator = new RegAllocator(asmModule);
+      allocator.doit();
 
       System.out.println("\033[33m🎉  Done successfully.\033[0m");
     } catch (Error e) {
@@ -60,6 +70,6 @@ public class Compiler {
       System.out.println("\033[31m😢 Process terminated with error.\033[0m");
       throw new RuntimeException("Compiling failed.");
     }
-//    System.out.println("!");
   }
+
 }

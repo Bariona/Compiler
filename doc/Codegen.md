@@ -6,15 +6,30 @@
   - ASM Function
 
     - parameters (a0-7: reg | 8+: memory)
-
-
     - Blocks
       - Instructions
     - callee register
-
-
+    
 
 Virtual Register: actually is memory.
+
+
+
+### procedure
+
+f:
+
+callee store
+
+​	$\vdots$
+
+​	caller store
+
+​	call g
+
+​	caller load
+
+callee load
 
 
 

@@ -29,4 +29,6 @@ public interface IRVisitor {
   void visit(GlobalDef globalDef);
 
   void visit(BitCast bitCast);
+
+  void visit(Assign assign);
 }
