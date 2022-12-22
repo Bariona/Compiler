@@ -18,4 +18,9 @@ public class ASMBlock {
   public void addInst(ASMBaseInst inst) {
     instrList.add(inst);
   }
+
+  @Override
+  public String toString() {
+    return label;
+  }
 }

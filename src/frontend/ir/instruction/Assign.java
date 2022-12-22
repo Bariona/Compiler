@@ -6,7 +6,7 @@ import frontend.ir.hierarchy.IRBlock;
 
 public class Assign extends IRBaseInst {
   // used for asm
-  Value rs, rd;
+  public Value rs, rd;
 
   public Assign(Value rs, Value rd, IRBlock parenBlock) {
     super("assign", null, parenBlock);
@@ -15,7 +15,7 @@ public class Assign extends IRBaseInst {
   }
 
   @Override
-  protected void accept(IRVisitor visitor) {
+  public void accept(IRVisitor visitor) {
     visitor.visit(this);
   }
 }

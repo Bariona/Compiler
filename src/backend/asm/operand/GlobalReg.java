@@ -12,4 +12,11 @@ public class GlobalReg extends Register {
     this.str = str;
   }
 
+  public String reFormat() {
+    return str
+            .replace("\\", "\\\\")
+            .replace("\n", "\\n")
+            .replace("\"", "\\\"");
+  }
+
 }

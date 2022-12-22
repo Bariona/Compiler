@@ -27,5 +27,5 @@ public abstract class User extends Value {
     operands.set(i, val);
   }
 
-  protected abstract void accept(IRVisitor visitor);
+  public abstract void accept(IRVisitor visitor);
 }

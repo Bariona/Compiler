@@ -78,7 +78,7 @@ public class IRFunction extends User {
   }
 
   @Override
-  protected void accept(IRVisitor visitor) {
+  public void accept(IRVisitor visitor) {
     visitor.visit(this);
   }
 

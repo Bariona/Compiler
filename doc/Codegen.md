@@ -19,7 +19,7 @@ Virtual Register: actually is memory.
 
 f:
 
-callee store
+callee store (e.g. ra/sp...)
 
 ​	$\vdots$
 
@@ -33,7 +33,39 @@ callee load
 
 
 
-Tiger Book P142
+sp: (stack pointer) always points to the top of the stack
+
+fp: (frame pointer) always points to the top of current frame
+
+ra: (return address) stores return address
+
+#### pseudo instruction
+
+- call: `jalr x1, offset[11:0](x1)` 
+
+  jump and stores `ra`
+
+- ret:  `jalr x0, 0(x1)` 
+
+  return to `ra`'s location
+
+
+
+`.size`: This directive sets the size associated with a symbol `name`. The size in bytes is computed from `expression` which can make use of label arithmetic.
+
+`.p2align`: For example .p2align 3 advances the location counter until it a multiple of 8. If the location counter is already a multiple of 8, no change is needed. 
+
+`.type`: used to set the type of a symbol
+
+`.rodata`: Directive: enter read-only data section
+
+---
+
+- A *critical edge* is an edge from a node with several successors to a node with several predecessors.
+
+![](static/Snipaste_2022-12-22_20-43-51.png)
+
+"Tiger Book" P142
 
 ### The Stack Pointer (sp)
 
@@ -47,7 +79,7 @@ Tiger Book P142
 
 ![](static/Snipaste_2022-12-17_21-33-33.png)
 
-- After allocation (sub sp), the old sp now becomes the current fp (frame pointer), and the old fp will be store in memory.
+- After allocation (sub sp, size), the old sp now becomes the current fp (frame pointer), and the old fp will be store in memory.
 - When $f$ exits, just copies fp back to sp and fetches back the saved fp.
 
 ### Parameter Passing

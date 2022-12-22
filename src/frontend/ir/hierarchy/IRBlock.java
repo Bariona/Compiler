@@ -1,10 +1,7 @@
 package frontend.ir.hierarchy;
 
 import frontend.ir.Value;
-import frontend.ir.instruction.Alloca;
-import frontend.ir.instruction.Branch;
-import frontend.ir.instruction.IRBaseInst;
-import frontend.ir.instruction.Phi;
+import frontend.ir.instruction.*;
 import frontend.ir.irtype.LabelType;
 
 import java.util.ArrayList;
@@ -14,7 +11,7 @@ import java.util.LinkedList;
 public class IRBlock extends Value {
   public Phi phiInst;
   public LinkedList<IRBaseInst> instrList = new LinkedList<>();
-  public HashMap<Value, Value> copyMp = new HashMap<>();
+  public HashMap<Value, Value> pCopy = new HashMap<>();
   public ArrayList<IRBlock> prev = new ArrayList<>(), next = new ArrayList<>();
   IRFunction parenFunc;
   IRBaseInst tailInst = null;
@@ -22,7 +19,10 @@ public class IRBlock extends Value {
   public IRBlock(String name, IRFunction func) {
     super(name, new LabelType());
     parenFunc = func;
-    func.addBlock(this);
+    if (func != null) {
+      // used for phi elimination
+      func.addBlock(this);
+    }
   }
 
   public void addEdge(IRBlock block) {
@@ -32,6 +32,8 @@ public class IRBlock extends Value {
 
   public void insert2CFG() {
     Branch inst = this.getTerminator();
+    if (inst == null) // "ret" instr
+      return ;
     if (inst.isJump()) {
       addEdge(inst.dstBlock());
     } else {
@@ -41,6 +43,8 @@ public class IRBlock extends Value {
   }
 
   public Branch getTerminator() {
+    if (tailInst instanceof Ret)
+      return null;
     return (Branch) tailInst;
   }
 

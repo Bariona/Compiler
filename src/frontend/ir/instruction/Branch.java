@@ -34,14 +34,14 @@ public class Branch extends IRBaseInst {
 
   @Override
   public String toString() {
-    if (isJump())
+    if (!isJump())
       return "br " + getOperand(0).getTypeAndName() + ", " +
               getOperand(1).getTypeAndName() + ", " + getOperand(2).getTypeAndName();
     return "br " + getOperand(0).getTypeAndName();
   }
 
   @Override
-  protected void accept(IRVisitor visitor) {
+  public void accept(IRVisitor visitor) {
     visitor.visit(this);
   }
 }
