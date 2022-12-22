@@ -27,7 +27,7 @@ public class Compiler {
     String filename = "testspace/data.in";
     String outputFile = "testspace/data.out";
     String irFile = "testspace/data.ll";
-    String asmFile = "testspace/data.s";
+    String asmFile = "testspace/test.s";
 
 //    InputStream input = System.in;
     InputStream input = new FileInputStream(filename);
@@ -60,9 +60,10 @@ public class Compiler {
 
       ASMModule asmModule = new ASMModule();
       ASMBuilder asmBuilder = new ASMBuilder(asmModule, irModule);
-      new ASMPrinter(new PrintStream(asmFile)).printModule(asmModule);
       RegAllocator allocator = new RegAllocator(asmModule);
       allocator.doit();
+
+      new ASMPrinter(new PrintStream(asmFile)).printModule(asmModule);
 
       System.out.println("\033[33m🎉  Done successfully.\033[0m");
     } catch (Error e) {

@@ -15,27 +15,28 @@ public class SSADestruct {
     // split critical path
     ArrayList<IRBlock> midBlocks = new ArrayList<>();
     for (var srcBlock : func.blockList) {
-      if (srcBlock.phiInst == null || srcBlock.next.size() <= 1)
+      if (srcBlock.next.size() <= 1)
         continue;
+
       HashMap<IRBlock, IRBlock> relinkMp = new HashMap<>();
       // src -> mid -> dst
       for (var dstBlock : srcBlock.next) {
         IRBlock midBlock = new IRBlock("midBlock", null);
         midBlocks.add(midBlock);
         new Branch(dstBlock, midBlock);
+        relinkMp.put(midBlock, dstBlock);
 
         // change dst's phi(1st) instruction
         var phi = dstBlock.phiInst;
+        if (phi == null) continue;
         for (int i = 0; i < phi.operands.size(); i += 2)
-          if (phi.getOperand(i + 1) == dstBlock) {
-            srcBlock.copyMp.put(phi, phi.getOperand(i));
+          if (phi.getOperand(i + 1) == dstBlock)
             phi.resetOperands(i + 1, midBlock);
-          }
-        relinkMp.put(midBlock, dstBlock);
+
       }
-      // change src's terminate instruction
+
       relinkMp.forEach((mid, dst) -> {
-        srcBlock.relinkBlock(mid, dst);
+        srcBlock.relinkBlock(mid, dst); // change src's terminate instruction
         srcBlock.next.remove(dst);
         srcBlock.next.add(mid);
         mid.insert2CFG();
@@ -48,7 +49,18 @@ public class SSADestruct {
 
   public void killPhi(IRFunction func) {
     for (var block : func.blockList) {
-      block.copyMp.forEach((target, value) ->
+      // parallel copy
+      var phi = block.phiInst;
+      if (phi == null) continue;
+      for (int i = 0; i < phi.operands.size(); i += 2) {
+        var b = (IRBlock) phi.getOperand(i + 1);
+        b.pCopy.put(phi, phi.getOperand(i));
+      }
+      block.phiInst = null; // eliminate phi
+    }
+
+    for (var block : func.blockList) {
+      block.pCopy.forEach((target, value) ->
               block.addInstBack(new Assign(target, value, block)));
     }
   }

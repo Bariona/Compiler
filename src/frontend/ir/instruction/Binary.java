@@ -50,7 +50,7 @@ public class Binary extends IRBaseInst {
   }
 
   @Override
-  protected void accept(IRVisitor visitor) {
+  public void accept(IRVisitor visitor) {
     visitor.visit(this);
   }
 }

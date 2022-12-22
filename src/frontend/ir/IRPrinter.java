@@ -65,7 +65,8 @@ public class IRPrinter {
   public void printBlock(IRBlock block, boolean ifPrintLabel) {
     if (ifPrintLabel)
       os.println(block.name + ":");
-    os.println(INDENT + block.phiInst.toString());
+    if (block.phiInst != null)
+      os.println(INDENT + block.phiInst.toString());
     for (var instr : block.instrList) {
       os.println(INDENT + instr.toString());
     }
