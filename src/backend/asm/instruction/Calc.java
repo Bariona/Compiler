@@ -5,9 +5,9 @@ import backend.asm.operand.BaseOperand;
 import backend.asm.operand.Register;
 
 public class Calc extends ASMBaseInst {
-  String op;
-  Register rd;
-  BaseOperand rs1, rs2;
+  public String op;
+  public Register rd;
+  public BaseOperand rs1, rs2;
 
   // binary & icmp
   public Calc(String op, Register rd, BaseOperand rs1, BaseOperand rs2, ASMBlock parenBlock) {
@@ -22,4 +22,10 @@ public class Calc extends ASMBaseInst {
   public String toString() {
     return op + " " + rd.toString() + ", " + rs1.toString() + ", " + rs2.toString();
   }
+
+  @Override
+  public void accept(InstVisitor visitor) {
+    visitor.visit(this);
+  }
+
 }

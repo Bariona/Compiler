@@ -7,14 +7,14 @@ import backend.asm.operand.Register;
 public class Store extends ASMBaseInst {
   // s{b|h|w|d} <rd>, <symbol>: store byte, half word, word or double word to global
 
-  public Register reg, address;
+  public Register rs, rd, address = null;
   public Immediate offset;
   final int size;
 
-  public Store(Register reg, Register address, Immediate offset, int size, ASMBlock parenBlock) {
+  public Store(Register rs, Register rd, Immediate offset, int size, ASMBlock parenBlock) {
     super(parenBlock);
-    this.reg = reg;
-    this.address = address;
+    this.rs = rs;
+    this.rd = rd;
     this.offset = offset;
     this.size = size;
   }
@@ -30,7 +30,17 @@ public class Store extends ASMBaseInst {
 
   @Override
   public String toString() {
-    return translate(size) + " " + reg.toString() + ", "
-            + offset.toString() + "(" + address.toString() + ")";
+//    String ret = translate(size) + " " + rs.toString() + ", "
+//            + offset.toString() + "(" + rd.toString() + ")";
+//    if (address != null) ret += address.toString();
+//    if (true) return ret;
+    return translate(size) + " " + rs.toString() + ", "
+            + offset.toString() + "(" + rd.toString() + ")";
   }
+
+  @Override
+  public void accept(InstVisitor visitor) {
+    visitor.visit(this);
+  }
+
 }

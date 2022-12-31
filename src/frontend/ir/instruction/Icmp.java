@@ -6,7 +6,7 @@ import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.irtype.BoolType;
 
 public class Icmp extends IRBaseInst {
-  String opcode;
+  public String opcode;
 
   public Icmp(String op, Value op1, Value op2, IRBlock parenBlock) {
     super(op, new BoolType(), parenBlock);

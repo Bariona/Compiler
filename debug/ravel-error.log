@@ -1,0 +1,181 @@
+Ignoring directive: .type	globInit,@function
+Ignoring directive: .size	globInit, .-globInit
+Ignoring directive: .type	main,@function
+Ignoring directive: .size	main, .-main
+Ignoring directive: .type	glob_a,@object
+Ignoring directive: .size	glob_a, 4
+Ignoring directive: .file	"builtin.c"
+Ignoring directive: .type	_toy_malloc,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 16
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_toy_malloc, .Lfunc_end0-_toy_malloc
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	print,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 16
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	print, .Lfunc_end1-print
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	println,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 16
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	println, .Lfunc_end2-println
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	printInt,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 16
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	printInt, .Lfunc_end3-printInt
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	printlnInt,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 16
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	printlnInt, .Lfunc_end4-printlnInt
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	getString,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 32
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	getString, .Lfunc_end5-getString
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	getInt,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 16
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	getInt, .Lfunc_end6-getInt
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	toString,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 32
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	toString, .Lfunc_end7-toString
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	_str_add,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 48
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_str_add, .Lfunc_end8-_str_add
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	_str_eq,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 32
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_str_eq, .Lfunc_end9-_str_eq
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	_str_neq,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 32
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_str_neq, .Lfunc_end10-_str_neq
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	_str_slt,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 32
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_str_slt, .Lfunc_end11-_str_slt
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	_str_sle,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 32
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_str_sle, .Lfunc_end12-_str_sle
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	_str_sgt,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 32
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_str_sgt, .Lfunc_end13-_str_sgt
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	_str_sge,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 32
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_str_sge, .Lfunc_end14-_str_sge
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	_str_length,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 16
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_str_length, .Lfunc_end15-_str_length
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	_str_substring,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 48
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_str_substring, .Lfunc_end16-_str_substring
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	_str_parseInt,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 32
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_str_parseInt, .Lfunc_end17-_str_parseInt
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	_str_ord,@function
+Ignoring directive: .cfi_startproc
+Ignoring directive: .cfi_def_cfa_offset 32
+Ignoring directive: .cfi_offset ra, -4
+Ignoring directive: .cfi_offset s0, -8
+Ignoring directive: .cfi_def_cfa s0, 0
+Ignoring directive: .size	_str_ord, .Lfunc_end18-_str_ord
+Ignoring directive: .cfi_endproc
+Ignoring directive: .type	.L.str,@object
+Ignoring directive: .size	.L.str, 3
+Ignoring directive: .type	.L.str.1,@object
+Ignoring directive: .size	.L.str.1, 4
+Ignoring directive: .type	.L.str.2,@object
+Ignoring directive: .size	.L.str.2, 3
+Ignoring directive: .type	.L.str.3,@object
+Ignoring directive: .size	.L.str.3, 4
+Ignoring directive: .ident	"clang version 10.0.0-4ubuntu1 "
+Ignoring directive: .section	".note.GNU-stack","",@progbits
+Ignoring directive: .addrsig
+Ignoring directive: .addrsig_sym malloc
+Ignoring directive: .addrsig_sym printf
+Ignoring directive: .addrsig_sym __isoc99_scanf
+Ignoring directive: .addrsig_sym sprintf
+Ignoring directive: .addrsig_sym strlen
+Ignoring directive: .addrsig_sym strcpy
+Ignoring directive: .addrsig_sym strcat
+Ignoring directive: .addrsig_sym strcmp
+Ignoring directive: .addrsig_sym __isoc99_sscanf
+
+Build finished in 7 ms

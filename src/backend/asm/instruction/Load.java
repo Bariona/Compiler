@@ -6,14 +6,14 @@ import backend.asm.operand.Register;
 
 public class Load extends ASMBaseInst {
   // load an address from the GOT(Global Offset Table)
-  public Register reg, address;
+  public Register rd, rs, address = null;
   public Immediate offset;
   final int size;
 
-  public Load(Register reg, Register address, Immediate offset, int size, ASMBlock parenBlock) {
+  public Load(Register rd, Register rs, Immediate offset, int size, ASMBlock parenBlock) {
     super(parenBlock);
-    this.reg = reg;
-    this.address = address;
+    this.rd = rd;
+    this.rs = rs;
     this.offset = offset;
     this.size = size;
   }
@@ -29,7 +29,17 @@ public class Load extends ASMBaseInst {
 
   @Override
   public String toString() {
-    return translate(size) + " " + reg.toString() + ", "
-            + offset.toString() + "(" + address.toString() + ")";
+//    String ret = translate(size) + " " + rd.toString() + ", "
+//            + offset.toString() + "(" + rs.toString() + ")";
+//    if (address != null) ret += address.toString();
+//    if (true) return ret;
+    return translate(size) + " " + rd.toString() + ", "
+            + offset.toString() + "(" + rs.toString() + ")";
   }
+
+  @Override
+  public void accept(InstVisitor visitor) {
+    visitor.visit(this);
+  }
+
 }

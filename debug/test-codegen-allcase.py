@@ -1,6 +1,9 @@
 import os
 import time
 
+#  export CLASSPATH="/mnt/d/Program/Java/antlr4/antlr-4.11.1-complete.jar:$CLASSPATH"
+
+# export PATH="/usr/local/opt/bin:$PATH"
 
 def cleanup ():
     os.system("cd ../src && (find -name '*.class' | xargs rm) && cd ../debug")
@@ -53,11 +56,11 @@ if __name__ == '__main__':
 	    output_fp.close()
 	    std_fp.close()
 
-	    print("\033[34m Loading finish. Start to run LLVM IR.")
+	    print("\033[34m Loading finish. Start to run Codegen.")
 
-	    os.system("cd ../src && javac Compiler.java &&  cp {code_file} test.mx && java Compiler < test.mx > test.ll && cd ../debug".format(code_file=code_file))
+	    os.system("cd ../src && javac Compiler.java &&  cp {code_file} test.mx && java Compiler < test.mx > test.s && cd ../debug".format(code_file=code_file))
 
-	    os.system("cp ../testspace/test.ll test.ll && ./test-llvm-ir.sh < {input_file} > {output_file}".format(input_file=input_file,output_file=output_file))
+	    os.system("cp ../testspace/test.s test.s && ./test-codegen.sh < {input_file} > {output_file}".format(input_file=input_file,output_file=output_file))
 
 
 	    wrap = os.popen(

@@ -12,4 +12,10 @@ public class Ret extends ASMBaseInst {
   public String toString() {
     return "ret";
   }
+
+  @Override
+  public void accept(InstVisitor visitor) {
+    visitor.visit(this);
+  }
+
 }

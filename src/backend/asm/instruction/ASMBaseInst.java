@@ -12,4 +12,6 @@ public abstract class ASMBaseInst {
   }
 
   abstract public String toString();
+
+  abstract public void accept(InstVisitor visitor);
 }

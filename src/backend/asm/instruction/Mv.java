@@ -16,6 +16,12 @@ public class Mv extends ASMBaseInst {
 
   @Override
   public String toString() {
-    return "mv " + rd.toString() + " " + rs.toString();
+    return "mv " + rd.toString() + ", " + rs.toString();
   }
+
+  @Override
+  public void accept(InstVisitor visitor) {
+    visitor.visit(this);
+  }
+
 }

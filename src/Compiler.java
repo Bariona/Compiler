@@ -24,14 +24,13 @@ public class Compiler {
   public static void main(String[] args) throws Exception {
     System.out.println("Current directory: " + System.getProperty("user.dir"));
 
-    String filename = "testspace/data.in";
-    String outputFile = "testspace/data.out";
-    String irFile = "testspace/data.ll";
+    String filename = "testspace/test.in";
+    String outputFile = "testspace/test.out";
+    String irFile = "testspace/test.ll";
     String asmFile = "testspace/test.s";
 
 //    InputStream input = System.in;
     InputStream input = new FileInputStream(filename);
-//    InputStream input = System.in;
 
     try {
       MxLexer lexer = new MxLexer(CharStreams.fromStream(input)); // lexer
@@ -54,14 +53,15 @@ public class Compiler {
       SemanticChecker checker = new SemanticChecker();
       checker.visit(root);
 
-      IRModule irModule = new IRModule("data.ll");
-      IRBuilder irBuilder = new IRBuilder(irModule, root);
+      IRModule irModule = new IRModule("test.ll");
+      new IRBuilder(irModule, root);
       new IRPrinter(new PrintStream(irFile)).printModule(irModule);
 
       ASMModule asmModule = new ASMModule();
-      ASMBuilder asmBuilder = new ASMBuilder(asmModule, irModule);
-      RegAllocator allocator = new RegAllocator(asmModule);
-      allocator.doit();
+      new ASMBuilder(asmModule, irModule);
+      new ASMPrinter(new PrintStream("testspace/tmp.s")).printModule(asmModule);
+
+      new RegAllocator().doit(asmModule);
 
       new ASMPrinter(new PrintStream(asmFile)).printModule(asmModule);
 

@@ -1,5 +1,9 @@
-- ASM Module
+- [ ] function arguments (> 8) stack allocation
+- [ ] function arguments's link (.asmoperand)
+- [ ] 去掉一些没必要的Mv :pensive:
 
+
+- ASM Module
   - Physical registers (32 reg)
 
 
@@ -12,6 +16,14 @@
     
 
 Virtual Register: actually is memory.
+
+
+
+### Code generation
+
+We only uses several register, say `ra`, `sp`, `fp`, `a0`...
+
+Other values will only be stored in the memory.
 
 
 
@@ -33,9 +45,9 @@ callee load
 
 
 
-sp: (stack pointer) always points to the top of the stack
+s0/fp: (frame pointer) always points to the top of current frame
 
-fp: (frame pointer) always points to the top of current frame
+sp: (stack pointer) always points to the top of the stack
 
 ra: (return address) stores return address
 
@@ -65,7 +77,7 @@ ra: (return address) stores return address
 
 ![](static/Snipaste_2022-12-22_20-43-51.png)
 
-"Tiger Book" P142
+referenced from ***Tiger Book*** P142
 
 ### The Stack Pointer (sp)
 

@@ -52,6 +52,11 @@ public class ASMModule {
 
   public ArrayList<PhysicalReg> getCallee() {
     ArrayList<PhysicalReg> ret = new ArrayList<>();
+    if (true) {
+      ret.add(getReg("s0"));
+      // ret.add(getReg("a0"));
+      return ret;
+    }
     for (int i = 8; i <= 9; ++i) ret.add(getReg(i));
     for (int i = 18; i <= 27; ++i) ret.add(getReg(i));
     return ret;

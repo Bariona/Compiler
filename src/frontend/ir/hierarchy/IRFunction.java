@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class IRFunction extends User {
   public String description = null;
   public boolean isMethod = false;
+  public boolean isBuiltin = false;
   public FuncType funcType; // retType and paraType e.g. %struct = type {i32, i1}
   public Value retValPtr;
   public ArrayList<IRBlock> blockList = new ArrayList<>();

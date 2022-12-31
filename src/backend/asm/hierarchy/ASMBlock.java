@@ -19,6 +19,14 @@ public class ASMBlock {
     instrList.add(inst);
   }
 
+  public void addInstFront(ASMBaseInst inst) {
+    instrList.add(0, inst);
+  }
+
+  public void addInstBack(ASMBaseInst inst) {
+    instrList.add(instrList.size() - 1, inst);
+  }
+
   @Override
   public String toString() {
     return label;

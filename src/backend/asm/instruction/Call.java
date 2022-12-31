@@ -15,4 +15,10 @@ public class Call extends ASMBaseInst {
   public String toString() {
     return "call " + func.name;
   }
+
+  @Override
+  public void accept(InstVisitor visitor) {
+    visitor.visit(this);
+  }
+
 }

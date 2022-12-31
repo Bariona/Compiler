@@ -51,6 +51,8 @@ public class IRModule {
     strBuiltinFunction.add(new IRFunction("_str_sle", new FuncType(Bool), s1, s2));
     strBuiltinFunction.add(new IRFunction("_str_sgt", new FuncType(Bool), s1, s2));
     strBuiltinFunction.add(new IRFunction("_str_sge", new FuncType(Bool), s1, s2));
+
+    strBuiltinFunction.forEach(f -> f.isBuiltin = true);
   }
 
   private void setBuiltinFunction() {
@@ -70,6 +72,8 @@ public class IRModule {
     builtinFuncList.add(new IRFunction("getString", new FuncType(i8Star)));
     builtinFuncList.add(new IRFunction("getInt", new FuncType(Int)));
     builtinFuncList.add(new IRFunction("toString", new FuncType(i8Star), new Value("n", Int)));
+
+    builtinFuncList.forEach(f -> f.isBuiltin = true);
   }
 
   public void addGlobVariable(Value glob) {

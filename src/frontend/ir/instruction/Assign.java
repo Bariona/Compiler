@@ -8,8 +8,8 @@ public class Assign extends IRBaseInst {
   // used for asm
   public Value rs, rd;
 
-  public Assign(Value rs, Value rd, IRBlock parenBlock) {
-    super("assign", null, parenBlock);
+  public Assign(Value rs, Value rd) {
+    super("assign", null, null);
     this.rs = rs;
     this.rd = rd;
   }

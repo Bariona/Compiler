@@ -1,5 +1,7 @@
 package frontend.ir;
 
+import backend.asm.operand.BaseOperand;
+import backend.asm.operand.Register;
 import frontend.ir.irtype.IRBaseType;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ public class Value {
   public Value recordPtr;
   public final IRBaseType type;
   private boolean isGlobal = false;
+  public BaseOperand asmOperand = null;
   public final ArrayList<User> userList;
 
   public static HashMap<String, Integer> renameTable = new HashMap<>();

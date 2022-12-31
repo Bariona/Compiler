@@ -54,13 +54,20 @@ public class IRBlock extends Value {
     } else {
       if (instr instanceof Phi phi) {
         phiInst = phi;
-      } else instrList.addLast(instr);
+      } else {
+        instrList.addLast(instr);
+        tailInst = instr;
+      }
     }
-    tailInst = instr;
   }
 
   public void addInstBack(IRBaseInst instr) {
+//    System.out.println("-- " + this.name + " ---- ");
+//    instrList.forEach(i -> System.out.println(i.toString()));
     instrList.add(instrList.size() - 1, instr);
+//    System.out.println("----");
+//    instrList.forEach(i -> System.out.println(i.toString()));
+//    System.out.println("--end--");
   }
 
   public void relinkBlock(IRBlock prev, IRBlock nex) {

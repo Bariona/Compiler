@@ -1,5 +1,6 @@
 package frontend.ir;
 
+import backend.asm.instruction.La;
 import frontend.ir.hierarchy.IRFunction;
 import frontend.ir.instruction.*;
 
@@ -31,4 +32,5 @@ public interface IRVisitor {
   void visit(BitCast bitCast);
 
   void visit(Assign assign);
+
 }

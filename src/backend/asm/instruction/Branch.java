@@ -20,4 +20,10 @@ public class Branch extends ASMBaseInst {
   public String toString() {
     return op + " " + rs1.toString() + ", " + rs2.toString() + ", " + dest.toString();
   }
+
+  @Override
+  public void accept(InstVisitor visitor) {
+    visitor.visit(this);
+  }
+
 }

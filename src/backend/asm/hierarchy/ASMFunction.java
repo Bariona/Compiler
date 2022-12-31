@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class ASMFunction {
   public String name = null;
+  public int spOffset = 0;
 
   public VirtualReg raSaved = null;
 
@@ -14,7 +15,12 @@ public class ASMFunction {
   public ArrayList<VirtualReg> calleeSaved = new ArrayList<>();
   public ArrayList<ASMBlock> asmBlocks = new ArrayList<>();
 
-  public ASMFunction() {
+  public ASMBlock getEntryBlock() {
+    return asmBlocks.get(0);
+  }
+
+  public ASMBlock getExitBlock() {
+    return asmBlocks.get(1);
   }
 
   public void setName(String name) {

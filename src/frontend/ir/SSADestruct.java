@@ -21,18 +21,19 @@ public class SSADestruct {
       HashMap<IRBlock, IRBlock> relinkMp = new HashMap<>();
       // src -> mid -> dst
       for (var dstBlock : srcBlock.next) {
+        var phi = dstBlock.phiInst;
+        if (phi == null) continue;
+
+        System.out.println("critical path: " + srcBlock.name + " -> " + dstBlock.name);
         IRBlock midBlock = new IRBlock("midBlock", null);
         midBlocks.add(midBlock);
         new Branch(dstBlock, midBlock);
         relinkMp.put(midBlock, dstBlock);
 
         // change dst's phi(1st) instruction
-        var phi = dstBlock.phiInst;
-        if (phi == null) continue;
         for (int i = 0; i < phi.operands.size(); i += 2)
           if (phi.getOperand(i + 1) == dstBlock)
             phi.resetOperands(i + 1, midBlock);
-
       }
 
       relinkMp.forEach((mid, dst) -> {
@@ -43,6 +44,7 @@ public class SSADestruct {
         dst.prev.remove(srcBlock);
         dst.prev.add(mid);
       });
+      relinkMp.clear();
     }
     func.blockList.addAll(midBlocks);
   }
@@ -60,8 +62,10 @@ public class SSADestruct {
     }
 
     for (var block : func.blockList) {
+      if (block.pCopy.isEmpty()) continue;
       block.pCopy.forEach((target, value) ->
-              block.addInstBack(new Assign(target, value, block)));
+              block.addInstBack(new Assign(target, value)));
+      System.out.println(block.name + " " + block.instrList.getLast().toString());
     }
   }
 

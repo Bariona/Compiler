@@ -11,7 +11,7 @@ abstract public class IRBaseInst extends User {
     super(name, type);
     this.parenBlock = parenBlock;
 
-    assert parenBlock != null;
-    parenBlock.addInst(this);
+    if (parenBlock != null)
+      parenBlock.addInst(this);
   }
 }

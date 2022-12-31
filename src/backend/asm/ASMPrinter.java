@@ -20,8 +20,8 @@ public class ASMPrinter {
   }
 
   public void printFunction(ASMFunction func) {
-    os.println("\t.global\t" + func.name);
-    os.println("\tp2align\t2");
+    os.println("\t.globl\t" + func.name);
+    os.println("\t.p2align\t2");
     os.println("\t.type\t" + func.name + ",@function");
     os.println(func.name + ":");
     func.asmBlocks.forEach(this::printBlock);

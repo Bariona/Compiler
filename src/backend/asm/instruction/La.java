@@ -1,28 +1,25 @@
 package backend.asm.instruction;
 
 import backend.asm.hierarchy.ASMBlock;
-import backend.asm.operand.Immediate;
 import backend.asm.operand.Register;
 
-public class Li extends ASMBaseInst {
+public class La extends ASMBaseInst {
+  public String name;
   public Register rd;
-  public Immediate imm;
 
-  // Load immediate
-  public Li(Register rd, Immediate imm, ASMBlock parenBlock) {
+  public La(Register rd, String name, ASMBlock parenBlock) {
     super(parenBlock);
+    this.name = name;
     this.rd = rd;
-    this.imm = imm;
   }
 
   @Override
   public String toString() {
-    return "li " + rd.toString() + ", " + imm.toString();
+    return "la " + rd.toString() + ", " + name;
   }
 
   @Override
   public void accept(InstVisitor visitor) {
     visitor.visit(this);
   }
-
 }
