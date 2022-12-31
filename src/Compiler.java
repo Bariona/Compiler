@@ -13,10 +13,12 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import frontend.parser.MxLexer;
 import frontend.parser.MxParser;
+import utility.BuiltinPrinter;
 import utility.MxErrorListener;
 import utility.error.Error;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 
@@ -67,8 +69,9 @@ public class Compiler {
         new ASMPrinter(new PrintStream(prefix + "tmp.s")).printModule(asmModule);
 
       new RegAllocator().doit(asmModule);
-      new ASMPrinter(System.out).printModule(asmModule);
+      new ASMPrinter(new PrintStream("output.s")).printModule(asmModule);
 
+      new BuiltinPrinter("builtin.s");
       System.out.println("\033[33m🎉  Done successfully.\033[0m");
     } catch (Error e) {
       e.printStackTrace();

@@ -5,23 +5,9 @@
 	.type	_toy_malloc,@function
 _toy_malloc:                            # @_toy_malloc
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -16
-	.cfi_def_cfa_offset 16
-	sw	ra, 12(sp)
-	sw	s0, 8(sp)
-	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 16
-	.cfi_def_cfa s0, 0
-	sw	a0, -12(s0)
-	lw	a0, -12(s0)
+# %bb.0:                                # %entry
 	srai	a1, a0, 31
-	call	malloc
-	lw	s0, 8(sp)
-	lw	ra, 12(sp)
-	addi	sp, sp, 16
-	ret
+	tail	malloc
 .Lfunc_end0:
 	.size	_toy_malloc, .Lfunc_end0-_toy_malloc
 	.cfi_endproc
@@ -31,24 +17,13 @@ _toy_malloc:                            # @_toy_malloc
 	.type	print,@function
 print:                                  # @print
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -16
-	.cfi_def_cfa_offset 16
-	sw	ra, 12(sp)
-	sw	s0, 8(sp)
-	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 16
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	lw	a1, -16(s0)
-	lui	a0, %hi(.L.str)
-	addi	a0, a0, %lo(.L.str)
-	call	printf
-	lw	s0, 8(sp)
-	lw	ra, 12(sp)
-	addi	sp, sp, 16
-	ret
+# %bb.0:                                # %entry
+	lui	a1, %hi(.L.str)
+	addi	a1, a1, %lo(.L.str)
+	mv	a2, a0
+	mv	a0, a1
+	mv	a1, a2
+	tail	printf
 .Lfunc_end1:
 	.size	print, .Lfunc_end1-print
 	.cfi_endproc
@@ -58,24 +33,8 @@ print:                                  # @print
 	.type	println,@function
 println:                                # @println
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -16
-	.cfi_def_cfa_offset 16
-	sw	ra, 12(sp)
-	sw	s0, 8(sp)
-	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 16
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	lw	a1, -16(s0)
-	lui	a0, %hi(.L.str.1)
-	addi	a0, a0, %lo(.L.str.1)
-	call	printf
-	lw	s0, 8(sp)
-	lw	ra, 12(sp)
-	addi	sp, sp, 16
-	ret
+# %bb.0:                                # %entry
+	tail	puts
 .Lfunc_end2:
 	.size	println, .Lfunc_end2-println
 	.cfi_endproc
@@ -85,24 +44,13 @@ println:                                # @println
 	.type	printInt,@function
 printInt:                               # @printInt
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -16
-	.cfi_def_cfa_offset 16
-	sw	ra, 12(sp)
-	sw	s0, 8(sp)
-	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 16
-	.cfi_def_cfa s0, 0
-	sw	a0, -12(s0)
-	lw	a1, -12(s0)
-	lui	a0, %hi(.L.str.2)
-	addi	a0, a0, %lo(.L.str.2)
-	call	printf
-	lw	s0, 8(sp)
-	lw	ra, 12(sp)
-	addi	sp, sp, 16
-	ret
+# %bb.0:                                # %entry
+	lui	a1, %hi(.L.str.2)
+	addi	a1, a1, %lo(.L.str.2)
+	mv	a2, a0
+	mv	a0, a1
+	mv	a1, a2
+	tail	printf
 .Lfunc_end3:
 	.size	printInt, .Lfunc_end3-printInt
 	.cfi_endproc
@@ -112,24 +60,13 @@ printInt:                               # @printInt
 	.type	printlnInt,@function
 printlnInt:                             # @printlnInt
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -16
-	.cfi_def_cfa_offset 16
-	sw	ra, 12(sp)
-	sw	s0, 8(sp)
-	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 16
-	.cfi_def_cfa s0, 0
-	sw	a0, -12(s0)
-	lw	a1, -12(s0)
-	lui	a0, %hi(.L.str.3)
-	addi	a0, a0, %lo(.L.str.3)
-	call	printf
-	lw	s0, 8(sp)
-	lw	ra, 12(sp)
-	addi	sp, sp, 16
-	ret
+# %bb.0:                                # %entry
+	lui	a1, %hi(.L.str.3)
+	addi	a1, a1, %lo(.L.str.3)
+	mv	a2, a0
+	mv	a0, a1
+	mv	a1, a2
+	tail	printf
 .Lfunc_end4:
 	.size	printlnInt, .Lfunc_end4-printlnInt
 	.cfi_endproc
@@ -139,29 +76,25 @@ printlnInt:                             # @printlnInt
 	.type	getString,@function
 getString:                              # @getString
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -32
-	.cfi_def_cfa_offset 32
-	sw	ra, 28(sp)
-	sw	s0, 24(sp)
+# %bb.0:                                # %entry
+	addi	sp, sp, -16
+	.cfi_def_cfa_offset 16
+	sw	ra, 12(sp)
+	sw	s0, 8(sp)
 	.cfi_offset ra, -4
 	.cfi_offset s0, -8
-	addi	s0, sp, 32
-	.cfi_def_cfa s0, 0
 	addi	a0, zero, 1024
 	mv	a1, zero
 	call	malloc
-	sw	a0, -16(s0)
-	lw	a1, -16(s0)
+	mv	s0, a0
 	lui	a0, %hi(.L.str)
 	addi	a0, a0, %lo(.L.str)
+	mv	a1, s0
 	call	__isoc99_scanf
-	lw	a1, -16(s0)
-	sw	a0, -20(s0)
-	mv	a0, a1
-	lw	s0, 24(sp)
-	lw	ra, 28(sp)
-	addi	sp, sp, 32
+	mv	a0, s0
+	lw	s0, 8(sp)
+	lw	ra, 12(sp)
+	addi	sp, sp, 16
 	ret
 .Lfunc_end5:
 	.size	getString, .Lfunc_end5-getString
@@ -172,23 +105,16 @@ getString:                              # @getString
 	.type	getInt,@function
 getInt:                                 # @getInt
 	.cfi_startproc
-# %bb.0:
+# %bb.0:                                # %entry
 	addi	sp, sp, -16
 	.cfi_def_cfa_offset 16
 	sw	ra, 12(sp)
-	sw	s0, 8(sp)
 	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 16
-	.cfi_def_cfa s0, 0
 	lui	a0, %hi(.L.str.2)
 	addi	a0, a0, %lo(.L.str.2)
-	addi	a1, s0, -12
+	addi	a1, sp, 8
 	call	__isoc99_scanf
-	lw	a1, -12(s0)
-	sw	a0, -16(s0)
-	mv	a0, a1
-	lw	s0, 8(sp)
+	lw	a0, 8(sp)
 	lw	ra, 12(sp)
 	addi	sp, sp, 16
 	ret
@@ -201,31 +127,30 @@ getInt:                                 # @getInt
 	.type	toString,@function
 toString:                               # @toString
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -32
-	.cfi_def_cfa_offset 32
-	sw	ra, 28(sp)
-	sw	s0, 24(sp)
+# %bb.0:                                # %entry
+	addi	sp, sp, -16
+	.cfi_def_cfa_offset 16
+	sw	ra, 12(sp)
+	sw	s0, 8(sp)
+	sw	s1, 4(sp)
 	.cfi_offset ra, -4
 	.cfi_offset s0, -8
-	addi	s0, sp, 32
-	.cfi_def_cfa s0, 0
-	sw	a0, -12(s0)
+	.cfi_offset s1, -12
+	mv	s0, a0
 	addi	a0, zero, 13
 	mv	a1, zero
 	call	malloc
-	sw	a0, -16(s0)
-	lw	a0, -16(s0)
-	lw	a2, -12(s0)
-	lui	a1, %hi(.L.str.2)
-	addi	a1, a1, %lo(.L.str.2)
+	mv	s1, a0
+	lui	a0, %hi(.L.str.2)
+	addi	a1, a0, %lo(.L.str.2)
+	mv	a0, s1
+	mv	a2, s0
 	call	sprintf
-	lw	a1, -16(s0)
-	sw	a0, -20(s0)
-	mv	a0, a1
-	lw	s0, 24(sp)
-	lw	ra, 28(sp)
-	addi	sp, sp, 32
+	mv	a0, s1
+	lw	s1, 4(sp)
+	lw	s0, 8(sp)
+	lw	ra, 12(sp)
+	addi	sp, sp, 16
 	ret
 .Lfunc_end7:
 	.size	toString, .Lfunc_end7-toString
@@ -236,52 +161,46 @@ toString:                               # @toString
 	.type	_str_add,@function
 _str_add:                               # @_str_add
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -48
-	.cfi_def_cfa_offset 48
-	sw	ra, 44(sp)
-	sw	s0, 40(sp)
+# %bb.0:                                # %entry
+	addi	sp, sp, -32
+	.cfi_def_cfa_offset 32
+	sw	ra, 28(sp)
+	sw	s0, 24(sp)
+	sw	s1, 20(sp)
+	sw	s2, 16(sp)
+	sw	s3, 12(sp)
 	.cfi_offset ra, -4
 	.cfi_offset s0, -8
-	addi	s0, sp, 48
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	sw	a1, -24(s0)
-	lw	a0, -16(s0)
+	.cfi_offset s1, -12
+	.cfi_offset s2, -16
+	.cfi_offset s3, -20
+	mv	s2, a1
+	mv	s3, a0
 	call	strlen
-	lw	a2, -24(s0)
-	sw	a0, -36(s0)
-	mv	a0, a2
-	sw	a1, -40(s0)
+	mv	s0, a0
+	mv	s1, a1
+	mv	a0, s2
 	call	strlen
-	lw	a2, -40(s0)
-	add	a1, a2, a1
-	lw	a3, -36(s0)
-	add	a0, a3, a0
-	sltu	a4, a0, a3
-	add	a1, a1, a4
-	addi	a4, a0, 1
-	sltu	a0, a4, a0
+	add	a1, s1, a1
+	add	a2, s0, a0
+	sltu	a0, a2, s0
 	add	a1, a1, a0
-	mv	a0, a4
+	addi	a0, a2, 1
+	sltu	a2, a0, a2
+	add	a1, a1, a2
 	call	malloc
-	sw	a0, -32(s0)
-	lw	a0, -32(s0)
-	lw	a1, -16(s0)
+	mv	s0, a0
+	mv	a1, s3
 	call	strcpy
-	lw	a1, -32(s0)
-	lw	a2, -24(s0)
-	sw	a0, -44(s0)
-	mv	a0, a1
-	mv	a1, a2
-	call	strcat
-	lw	a1, -32(s0)
-	sw	a0, -48(s0)
-	mv	a0, a1
-	lw	s0, 40(sp)
-	lw	ra, 44(sp)
-	addi	sp, sp, 48
-	ret
+	mv	a0, s0
+	mv	a1, s2
+	lw	s3, 12(sp)
+	lw	s2, 16(sp)
+	lw	s1, 20(sp)
+	lw	s0, 24(sp)
+	lw	ra, 28(sp)
+	addi	sp, sp, 32
+	tail	strcat
 .Lfunc_end8:
 	.size	_str_add, .Lfunc_end8-_str_add
 	.cfi_endproc
@@ -291,24 +210,15 @@ _str_add:                               # @_str_add
 	.type	_str_eq,@function
 _str_eq:                                # @_str_eq
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -32
-	.cfi_def_cfa_offset 32
-	sw	ra, 28(sp)
-	sw	s0, 24(sp)
+# %bb.0:                                # %entry
+	addi	sp, sp, -16
+	.cfi_def_cfa_offset 16
+	sw	ra, 12(sp)
 	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 32
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	sw	a1, -24(s0)
-	lw	a0, -16(s0)
-	lw	a1, -24(s0)
 	call	strcmp
 	seqz	a0, a0
-	lw	s0, 24(sp)
-	lw	ra, 28(sp)
-	addi	sp, sp, 32
+	lw	ra, 12(sp)
+	addi	sp, sp, 16
 	ret
 .Lfunc_end9:
 	.size	_str_eq, .Lfunc_end9-_str_eq
@@ -319,24 +229,15 @@ _str_eq:                                # @_str_eq
 	.type	_str_neq,@function
 _str_neq:                               # @_str_neq
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -32
-	.cfi_def_cfa_offset 32
-	sw	ra, 28(sp)
-	sw	s0, 24(sp)
+# %bb.0:                                # %entry
+	addi	sp, sp, -16
+	.cfi_def_cfa_offset 16
+	sw	ra, 12(sp)
 	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 32
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	sw	a1, -24(s0)
-	lw	a0, -16(s0)
-	lw	a1, -24(s0)
 	call	strcmp
 	snez	a0, a0
-	lw	s0, 24(sp)
-	lw	ra, 28(sp)
-	addi	sp, sp, 32
+	lw	ra, 12(sp)
+	addi	sp, sp, 16
 	ret
 .Lfunc_end10:
 	.size	_str_neq, .Lfunc_end10-_str_neq
@@ -347,24 +248,15 @@ _str_neq:                               # @_str_neq
 	.type	_str_slt,@function
 _str_slt:                               # @_str_slt
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -32
-	.cfi_def_cfa_offset 32
-	sw	ra, 28(sp)
-	sw	s0, 24(sp)
+# %bb.0:                                # %entry
+	addi	sp, sp, -16
+	.cfi_def_cfa_offset 16
+	sw	ra, 12(sp)
 	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 32
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	sw	a1, -24(s0)
-	lw	a0, -16(s0)
-	lw	a1, -24(s0)
 	call	strcmp
 	srli	a0, a0, 31
-	lw	s0, 24(sp)
-	lw	ra, 28(sp)
-	addi	sp, sp, 32
+	lw	ra, 12(sp)
+	addi	sp, sp, 16
 	ret
 .Lfunc_end11:
 	.size	_str_slt, .Lfunc_end11-_str_slt
@@ -375,24 +267,15 @@ _str_slt:                               # @_str_slt
 	.type	_str_sle,@function
 _str_sle:                               # @_str_sle
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -32
-	.cfi_def_cfa_offset 32
-	sw	ra, 28(sp)
-	sw	s0, 24(sp)
+# %bb.0:                                # %entry
+	addi	sp, sp, -16
+	.cfi_def_cfa_offset 16
+	sw	ra, 12(sp)
 	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 32
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	sw	a1, -24(s0)
-	lw	a0, -16(s0)
-	lw	a1, -24(s0)
 	call	strcmp
 	slti	a0, a0, 1
-	lw	s0, 24(sp)
-	lw	ra, 28(sp)
-	addi	sp, sp, 32
+	lw	ra, 12(sp)
+	addi	sp, sp, 16
 	ret
 .Lfunc_end12:
 	.size	_str_sle, .Lfunc_end12-_str_sle
@@ -403,25 +286,15 @@ _str_sle:                               # @_str_sle
 	.type	_str_sgt,@function
 _str_sgt:                               # @_str_sgt
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -32
-	.cfi_def_cfa_offset 32
-	sw	ra, 28(sp)
-	sw	s0, 24(sp)
+# %bb.0:                                # %entry
+	addi	sp, sp, -16
+	.cfi_def_cfa_offset 16
+	sw	ra, 12(sp)
 	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 32
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	sw	a1, -24(s0)
-	lw	a0, -16(s0)
-	lw	a1, -24(s0)
 	call	strcmp
-	mv	a1, zero
-	slt	a0, a1, a0
-	lw	s0, 24(sp)
-	lw	ra, 28(sp)
-	addi	sp, sp, 32
+	sgtz	a0, a0
+	lw	ra, 12(sp)
+	addi	sp, sp, 16
 	ret
 .Lfunc_end13:
 	.size	_str_sgt, .Lfunc_end13-_str_sgt
@@ -432,25 +305,16 @@ _str_sgt:                               # @_str_sgt
 	.type	_str_sge,@function
 _str_sge:                               # @_str_sge
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -32
-	.cfi_def_cfa_offset 32
-	sw	ra, 28(sp)
-	sw	s0, 24(sp)
+# %bb.0:                                # %entry
+	addi	sp, sp, -16
+	.cfi_def_cfa_offset 16
+	sw	ra, 12(sp)
 	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 32
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	sw	a1, -24(s0)
-	lw	a0, -16(s0)
-	lw	a1, -24(s0)
 	call	strcmp
 	not	a0, a0
 	srli	a0, a0, 31
-	lw	s0, 24(sp)
-	lw	ra, 28(sp)
-	addi	sp, sp, 32
+	lw	ra, 12(sp)
+	addi	sp, sp, 16
 	ret
 .Lfunc_end14:
 	.size	_str_sge, .Lfunc_end14-_str_sge
@@ -461,19 +325,12 @@ _str_sge:                               # @_str_sge
 	.type	_str_length,@function
 _str_length:                            # @_str_length
 	.cfi_startproc
-# %bb.0:
+# %bb.0:                                # %entry
 	addi	sp, sp, -16
 	.cfi_def_cfa_offset 16
 	sw	ra, 12(sp)
-	sw	s0, 8(sp)
 	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 16
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	lw	a0, -16(s0)
 	call	strlen
-	lw	s0, 8(sp)
 	lw	ra, 12(sp)
 	addi	sp, sp, 16
 	ret
@@ -486,39 +343,31 @@ _str_length:                            # @_str_length
 	.type	_str_substring,@function
 _str_substring:                         # @_str_substring
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -48
-	.cfi_def_cfa_offset 48
-	sw	ra, 44(sp)
-	sw	s0, 40(sp)
+# %bb.0:                                # %entry
+	addi	sp, sp, -16
+	.cfi_def_cfa_offset 16
+	sw	ra, 12(sp)
+	sw	s0, 8(sp)
+	sw	s1, 4(sp)
+	sw	s2, 0(sp)
 	.cfi_offset ra, -4
 	.cfi_offset s0, -8
-	addi	s0, sp, 48
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	sw	a1, -20(s0)
-	sw	a2, -24(s0)
-	lw	a0, -24(s0)
-	lw	a1, -20(s0)
-	sub	a0, a0, a1
-	addi	a0, a0, 1
+	.cfi_offset s1, -12
+	.cfi_offset s2, -16
+	mv	s0, a1
+	mv	s2, a0
+	sub	s1, a2, a1
+	addi	a0, s1, 1
 	srai	a1, a0, 31
 	call	malloc
-	sw	a0, -32(s0)
-	lw	a0, -32(s0)
-	lw	a1, -16(s0)
-	lw	a2, -20(s0)
-	add	a1, a1, a2
-	lw	a3, -24(s0)
-	sub	a2, a3, a2
-	call	memcpy
-	lw	a1, -32(s0)
-	sw	a0, -36(s0)
-	mv	a0, a1
-	lw	s0, 40(sp)
-	lw	ra, 44(sp)
-	addi	sp, sp, 48
-	ret
+	add	a1, s2, s0
+	mv	a2, s1
+	lw	s2, 0(sp)
+	lw	s1, 4(sp)
+	lw	s0, 8(sp)
+	lw	ra, 12(sp)
+	addi	sp, sp, 16
+	tail	memcpy
 .Lfunc_end16:
 	.size	_str_substring, .Lfunc_end16-_str_substring
 	.cfi_endproc
@@ -528,27 +377,18 @@ _str_substring:                         # @_str_substring
 	.type	_str_parseInt,@function
 _str_parseInt:                          # @_str_parseInt
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -32
-	.cfi_def_cfa_offset 32
-	sw	ra, 28(sp)
-	sw	s0, 24(sp)
+# %bb.0:                                # %entry
+	addi	sp, sp, -16
+	.cfi_def_cfa_offset 16
+	sw	ra, 12(sp)
 	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 32
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	lw	a0, -16(s0)
 	lui	a1, %hi(.L.str.2)
 	addi	a1, a1, %lo(.L.str.2)
-	addi	a2, s0, -20
+	addi	a2, sp, 8
 	call	__isoc99_sscanf
-	lw	a1, -20(s0)
-	sw	a0, -24(s0)
-	mv	a0, a1
-	lw	s0, 24(sp)
-	lw	ra, 28(sp)
-	addi	sp, sp, 32
+	lw	a0, 8(sp)
+	lw	ra, 12(sp)
+	addi	sp, sp, 16
 	ret
 .Lfunc_end17:
 	.size	_str_parseInt, .Lfunc_end17-_str_parseInt
@@ -559,24 +399,9 @@ _str_parseInt:                          # @_str_parseInt
 	.type	_str_ord,@function
 _str_ord:                               # @_str_ord
 	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -32
-	.cfi_def_cfa_offset 32
-	sw	ra, 28(sp)
-	sw	s0, 24(sp)
-	.cfi_offset ra, -4
-	.cfi_offset s0, -8
-	addi	s0, sp, 32
-	.cfi_def_cfa s0, 0
-	sw	a0, -16(s0)
-	sw	a1, -20(s0)
-	lw	a0, -16(s0)
-	lw	a1, -20(s0)
+# %bb.0:                                # %entry
 	add	a0, a0, a1
 	lb	a0, 0(a0)
-	lw	s0, 24(sp)
-	lw	ra, 28(sp)
-	addi	sp, sp, 32
 	ret
 .Lfunc_end18:
 	.size	_str_ord, .Lfunc_end18-_str_ord
@@ -587,11 +412,6 @@ _str_ord:                               # @_str_ord
 .L.str:
 	.asciz	"%s"
 	.size	.L.str, 3
-
-	.type	.L.str.1,@object        # @.str.1
-.L.str.1:
-	.asciz	"%s\n"
-	.size	.L.str.1, 4
 
 	.type	.L.str.2,@object        # @.str.2
 .L.str.2:
@@ -605,13 +425,3 @@ _str_ord:                               # @_str_ord
 
 	.ident	"clang version 10.0.0-4ubuntu1 "
 	.section	".note.GNU-stack","",@progbits
-	.addrsig
-	.addrsig_sym malloc
-	.addrsig_sym printf
-	.addrsig_sym __isoc99_scanf
-	.addrsig_sym sprintf
-	.addrsig_sym strlen
-	.addrsig_sym strcpy
-	.addrsig_sym strcat
-	.addrsig_sym strcmp
-	.addrsig_sym __isoc99_sscanf

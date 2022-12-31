@@ -1,7 +1,7 @@
 # Mx-Compiler
 ---
 
-- [x] Current Progress: IR done...
+- [x] Current Progress: Codegen done...
 
 :computer: [课程地址](https://github.com/ACMClassCourses/Compiler-Design-Implementation)
 
