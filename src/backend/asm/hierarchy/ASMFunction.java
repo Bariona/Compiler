@@ -1,5 +1,6 @@
 package backend.asm.hierarchy;
 
+import backend.asm.operand.Immediate;
 import backend.asm.operand.Register;
 import backend.asm.operand.VirtualReg;
 
@@ -14,6 +15,8 @@ public class ASMFunction {
   public ArrayList<Register> args = new ArrayList<>();
   public ArrayList<VirtualReg> calleeSaved = new ArrayList<>();
   public ArrayList<ASMBlock> asmBlocks = new ArrayList<>();
+
+  public ArrayList<Immediate> stackOffsetImm = new ArrayList<>();
 
   public ASMBlock getEntryBlock() {
     return asmBlocks.get(0);

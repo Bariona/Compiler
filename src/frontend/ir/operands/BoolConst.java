@@ -18,4 +18,9 @@ public class BoolConst extends IRBaseConst {
   public String getName() {
     return String.valueOf(isTrue ? 1 : 0);
   }
+
+  @Override
+  public String toString() {
+    return isTrue ? "true" : "false";
+  }
 }

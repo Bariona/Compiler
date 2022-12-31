@@ -5,6 +5,7 @@ import frontend.ir.hierarchy.IRFunction;
 import frontend.ir.hierarchy.IRModule;
 import frontend.ir.instruction.Assign;
 import frontend.ir.instruction.Branch;
+import org.antlr.v4.runtime.misc.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,20 +25,20 @@ public class SSADestruct {
         var phi = dstBlock.phiInst;
         if (phi == null) continue;
 
-        System.out.println("critical path: " + srcBlock.name + " -> " + dstBlock.name);
+        // System.out.println("critical path: " + srcBlock.name + " -> " + dstBlock.name);
         IRBlock midBlock = new IRBlock("midBlock", null);
         midBlocks.add(midBlock);
-        new Branch(dstBlock, midBlock);
+        new Branch(dstBlock, midBlock); // br mid -> dst
         relinkMp.put(midBlock, dstBlock);
 
-        // change dst's phi(1st) instruction
+        // change dst's phi(always 1st in block) instruction
         for (int i = 0; i < phi.operands.size(); i += 2)
-          if (phi.getOperand(i + 1) == dstBlock)
+          if (phi.getOperand(i + 1) == srcBlock)
             phi.resetOperands(i + 1, midBlock);
       }
 
       relinkMp.forEach((mid, dst) -> {
-        srcBlock.relinkBlock(mid, dst); // change src's terminate instruction
+        srcBlock.relinkBlock(dst, mid); // change src's terminate instruction
         srcBlock.next.remove(dst);
         srcBlock.next.add(mid);
         mid.insert2CFG();
@@ -64,8 +65,8 @@ public class SSADestruct {
     for (var block : func.blockList) {
       if (block.pCopy.isEmpty()) continue;
       block.pCopy.forEach((target, value) ->
-              block.addInstBack(new Assign(target, value)));
-      System.out.println(block.name + " " + block.instrList.getLast().toString());
+              block.addInstBack(new Assign(value, target)));
+      // System.out.println(block.name + " " + block.instrList.getLast().toString());
     }
   }
 

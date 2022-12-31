@@ -24,13 +24,15 @@ public class Compiler {
   public static void main(String[] args) throws Exception {
     System.out.println("Current directory: " + System.getProperty("user.dir"));
 
-    String filename = "testspace/test.in";
-    String outputFile = "testspace/test.out";
-    String irFile = "testspace/test.ll";
-    String asmFile = "testspace/test.s";
+    boolean ONLINE_JUDGE = true;
+    String prefix = ONLINE_JUDGE ? "testspace/" : "src/testspace/";
+    String filename = prefix + "test.mx";
+    String outputFile = prefix + "test.out";
+    String irFile = prefix + "test.ll";
+    String asmFile = prefix + "test.s";
 
-//    InputStream input = System.in;
-    InputStream input = new FileInputStream(filename);
+    InputStream input = System.in;
+//    InputStream input = new FileInputStream(filename);
 
     try {
       MxLexer lexer = new MxLexer(CharStreams.fromStream(input)); // lexer
@@ -53,17 +55,19 @@ public class Compiler {
       SemanticChecker checker = new SemanticChecker();
       checker.visit(root);
 
+      // LLVM IR
       IRModule irModule = new IRModule("test.ll");
       new IRBuilder(irModule, root);
-      new IRPrinter(new PrintStream(irFile)).printModule(irModule);
+//      new IRPrinter(new PrintStream(irFile)).printModule(irModule);
 
+      // naive Codegen
       ASMModule asmModule = new ASMModule();
       new ASMBuilder(asmModule, irModule);
-      new ASMPrinter(new PrintStream("testspace/tmp.s")).printModule(asmModule);
+      if (!ONLINE_JUDGE)
+        new ASMPrinter(new PrintStream(prefix + "tmp.s")).printModule(asmModule);
 
       new RegAllocator().doit(asmModule);
-
-      new ASMPrinter(new PrintStream(asmFile)).printModule(asmModule);
+      new ASMPrinter(System.out).printModule(asmModule);
 
       System.out.println("\033[33m🎉  Done successfully.\033[0m");
     } catch (Error e) {

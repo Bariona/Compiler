@@ -18,4 +18,10 @@ public class Assign extends IRBaseInst {
   public void accept(IRVisitor visitor) {
     visitor.visit(this);
   }
+
+  @Override
+  public String toString() {
+    return "assign: " + rd.getName() + " = " + rs.getName();
+  }
+
 }

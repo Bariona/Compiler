@@ -7,14 +7,15 @@ import backend.asm.operand.Register;
 public class Load extends ASMBaseInst {
   // load an address from the GOT(Global Offset Table)
   public Register rd, rs, address = null;
-  public Immediate offset;
+  // public Immediate offset;
   final int size;
 
   public Load(Register rd, Register rs, Immediate offset, int size, ASMBlock parenBlock) {
     super(parenBlock);
     this.rd = rd;
     this.rs = rs;
-    this.offset = offset;
+    this.rs.setOffset(offset);
+    // this.offset = offset;
     this.size = size;
   }
 
@@ -34,7 +35,7 @@ public class Load extends ASMBaseInst {
 //    if (address != null) ret += address.toString();
 //    if (true) return ret;
     return translate(size) + " " + rd.toString() + ", "
-            + offset.toString() + "(" + rs.toString() + ")";
+            + rs.offset.toString() + "(" + rs.toString() + ")";
   }
 
   @Override

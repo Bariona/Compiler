@@ -118,15 +118,18 @@ public class ASMBuilder implements IRVisitor {
     for (int i = 0; i < cnt; ++i) {
       new Mv(curFunction.args.get(i), asm.a(i), curBlock);
     }
-    for (int i = cnt, offset = 0; i < func.operands.size(); ++i) { // a8+: memory
-      new Load(curFunction.args.get(i), asm.getReg("sp"), new Immediate(offset), 4, curBlock);
+    int offset = -(func.operands.size() - cnt + 1) * 4;
+    for (int i = cnt; i < func.operands.size(); ++i) { // a8+: memory
       offset += 4;
+      Immediate imm = new Immediate(offset);
+      curFunction.stackOffsetImm.add(imm);
+      curFunction.spOffset += 4;
+      new Load(curFunction.args.get(i), asm.getReg("sp"), imm, 4, curBlock);
     }
 
-    VirtualReg.resetCnt();
+//    VirtualReg.resetCnt();
     func.blockList.forEach(this::dealBlock);
     instElimination(func);
-    curFunction.spOffset = VirtualReg.regCnt << 2;
     curFunction = null;
   }
 
@@ -138,27 +141,24 @@ public class ASMBuilder implements IRVisitor {
     curBlock = null;
   }
 
-  private void assign(Register rs, Value rd) {
-    if (rd instanceof IRBaseInst) {
-      new Mv(rs, getRegister(rd), curBlock);
+  private void assign(Register rd, Value rs) {
+    if (rs instanceof IRBaseInst) {
+      new Mv(rd, getRegister(rs), curBlock);
       return;
     }
-    if (rd instanceof StringConst sc) {
-//      VirtualReg tmp = new VirtualReg("str");
-//      new Lui(tmp, new Address(true, sc.name), curBlock);
-//      new Calc("addi", rs, tmp, new Address(false, sc.name), curBlock);
-      new La(rs, sc.name, curBlock);
+    if (rs instanceof StringConst sc) {
+      new La(rd, sc.name, curBlock);
       return;
     }
     int value = 0;
-    if (rd instanceof IntConst ic) value = ic.value;
-    else if (rd instanceof BoolConst bc) value = bc.isTrue ? 1 : 0;
-    new Li(rs, new Immediate(value), curBlock);
+    if (rs instanceof IntConst ic) value = ic.value;
+    else if (rs instanceof BoolConst bc) value = bc.isTrue ? 1 : 0;
+    new Li(rd, new Immediate(value), curBlock);
   }
 
   @Override
   public void visit(Assign inst) {
-    assign(getRegister(inst.rs), inst.rd);
+    assign(getRegister(inst.rd), inst.rs);
   }
 
   @Override
@@ -199,7 +199,10 @@ public class ASMBuilder implements IRVisitor {
     // TODO: mul 4 -> << 2
     Value x = binary.getOperand(0), y = binary.getOperand(1);
 
-    if (y instanceof IntConst ic) {
+    if (opcode.equals("div") || opcode.equals("mul") || opcode.equals("rem")) {
+      rs1 = getRegister(x);
+      rs2 = getRegister(y);
+    } else if (y instanceof IntConst ic) {
       rs1 = getRegister(x);
       if (ic.value <= 2047 && -ic.value >= -2048) {
         if (opcode.equals("sub")) {
@@ -207,20 +210,20 @@ public class ASMBuilder implements IRVisitor {
           rs2 = new Immediate(-ic.value);
         } else rs2 = new Immediate(ic.value);
         opcode += "i";
-      } else {
-        rs2 = getRegister(y);
-        // new Li((Register) rs2, new Immediate(ic.value), curBlock);
-      }
-//        new Calc(opcode + "i", rd, rs1, rs2, curBlock);
+      } else rs2 = getRegister(y);
     } else if (x instanceof IntConst ic) {
-      if (!opcode.equals("sll") && !opcode.equals("sra") && !opcode.equals("sub")
-              && ic.value <= 2047 && -ic.value >= -2048) {
+      if (!opcode.equals("sll") && !opcode.equals("sra") && !opcode.equals("sub")) {
         rs1 = getRegister(y);
-        rs2 = new Immediate(ic.value);
-        opcode += "i";
+        if (ic.value <= 2047 && -ic.value >= -2048) {
+          rs2 = new Immediate(ic.value);
+          opcode += "i";
+        } else {
+          rs2 = new VirtualReg("tmp");
+          new Li((VirtualReg) rs2, new Immediate(ic.value), curBlock);
+        }
       } else {
-        rs1 = getRegister(y);
-        rs2 = getRegister(x);
+        rs1 = getRegister(x);
+        rs2 = getRegister(y);
         // new Li((Register) rs2, new Immediate(ic.value), curBlock);
       }
     } else {
@@ -235,21 +238,11 @@ public class ASMBuilder implements IRVisitor {
     // %val = load i32, i32* %ptr
     Value address = load.getOperand(0);
     if (address.isGlobal()) {
-//      VirtualReg addrOfGlb = new VirtualReg("addr");
-//      new Lui(addrOfGlb, new Address(true, address.name), curBlock);
-//      new Load(getRegister(load), addrOfGlb, new Address(false, address.name), 4, curBlock);
       VirtualReg addrOfGlb = new VirtualReg("addr");
       new La(addrOfGlb, address.name, curBlock);
       new Load(getRegister(load), addrOfGlb, new Immediate(0), 4, curBlock);
     } else {
-      // System.out.println(address.toString() + " load " + getRegister(address).hashCode());
-      Register addr = getRegister(address);
-      if (addr.color != 8) {
-        new Load(getRegister(load), addr, new Immediate(0), 4, curBlock);
-      } else {
-        Load inst = new Load(getRegister(load), asm.getReg("sp"), new Immediate(0), 4, curBlock);
-        inst.address = addr;
-      }
+      new Load(getRegister(load), getRegister(address), new Immediate(0), 4, curBlock);
     }
   }
 
@@ -258,21 +251,11 @@ public class ASMBuilder implements IRVisitor {
     //  store i32 %add1, i32* %A_x
     Value target = store.getOperand(0), address = store.getOperand(1);
     if (address.isGlobal()) {
-//      VirtualReg addrOfGlb = new VirtualReg("addr");
-//      new Lui(addrOfGlb, new Address(true, address.name), curBlock);
-//      new Store(getRegister(target), addrOfGlb, new Address(false, address.name), 4, curBlock);
       VirtualReg tmp = new VirtualReg("addr");
       new La(tmp, address.name, curBlock);
       new Store(getRegister(target), tmp, new Immediate(0), 4, curBlock);
     } else {
-      // System.out.println("store :" + address.toString() + " store " + getRegister(address).hashCode());
-      Register addr = getRegister(address);
-      if (addr.color != 8) {
-        new Store(getRegister(target), addr, new Immediate(0), 4, curBlock);
-      } else {
-        Store inst = new Store(getRegister(target), asm.getReg("sp"), new Immediate(0), 4, curBlock);
-        inst.address = addr;
-      }
+      new Store(getRegister(target), getRegister(address), new Immediate(0), 4, curBlock);
     }
   }
 
@@ -291,6 +274,7 @@ public class ASMBuilder implements IRVisitor {
     if (member != null) { // must be a class/string
       if (type instanceof StructType structType)
         offset = structType.calcOffset(((IntConst) member).value);
+//      else Debugger.error(gep.toString());
     }
 
     if (idx instanceof IntConst ic) {
@@ -298,7 +282,9 @@ public class ASMBuilder implements IRVisitor {
       new Calc("addi", rd, rs, new Immediate(offset), curBlock);
     } else { // a[f()];
       VirtualReg tmp = new VirtualReg("tmp");
-      new Calc("mul", tmp, getRegister(idx), new Immediate(type.size()), curBlock);
+      int power = (int) (Math.log(type.size()) / Math.log(2));
+      assert type.size() == (1 << power);
+      new Calc("mul", tmp, getRegister(idx), getRegister(new IntConst(type.size())), curBlock);
       if (offset != 0)
 //          VirtualReg memberOffset = new VirtualReg("member");
         new Calc("add", tmp, tmp, new Immediate(offset), curBlock);
@@ -333,12 +319,10 @@ public class ASMBuilder implements IRVisitor {
       case "ne" -> {
         VirtualReg tmp = new VirtualReg("tmp");
         new Calc("xor", tmp, rs1, rs2, curBlock);
-        new Calc("sltu", rd, tmp, asm.getReg("zero"), curBlock);
+        new Calc("snez", rd, tmp, asm.getReg("zero"), curBlock);
       }
       default -> Debugger.error("no such opcode");
     }
-//    new Calc(opcode, getRegister(icmp), rs1,  curBlock);
-    // TODO: optimize
   }
 
   @Override
@@ -348,8 +332,8 @@ public class ASMBuilder implements IRVisitor {
     for (int i = 1; i <= cnt; ++i)
       new Mv(asm.a(i - 1), getRegister(call.getOperand(i)), curBlock);
 
-    if (cnt + 1 < call.operands.size()) {
-      int spOffset = (call.operands.size() - cnt - 1) << 2;
+    if (cnt < call.operands.size() - 1) {
+      int spOffset = (call.operands.size() - 1 - cnt) << 2;
       spOffset = -spOffset;
       for (int i = cnt + 1; i < call.operands.size(); ++i) {
         new Store(getRegister(call.getOperand(i)), asm.getReg("sp"), new Immediate(spOffset), 4, curBlock);

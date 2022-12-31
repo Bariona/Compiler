@@ -19,6 +19,10 @@ Virtual Register: actually is memory.
 
 
 
+*For convenience, we only use `lw` , `sw` instructions, which requires `bool`'s size to be 4 bytes.
+
+
+
 ### Code generation
 
 We only uses several register, say `ra`, `sp`, `fp`, `a0`...

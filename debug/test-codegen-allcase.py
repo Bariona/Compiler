@@ -58,9 +58,9 @@ if __name__ == '__main__':
 
 	    print("\033[34m Loading finish. Start to run Codegen.")
 
-	    os.system("cd ../src && javac Compiler.java &&  cp {code_file} test.mx && java Compiler < test.mx > test.s && cd ../debug".format(code_file=code_file))
+	    os.system("cd ../src && javac Compiler.java &&  cp {code_file} testspace/test.mx && java Compiler && cd ../debug".format(code_file=code_file))
 
-	    os.system("cp ../testspace/test.s test.s && ./test-codegen.sh < {input_file} > {output_file}".format(input_file=input_file,output_file=output_file))
+	    os.system("pwd && cp ../src/testspace/test.s test.s && ./test-codegen.sh < {input_file} > {output_file}".format(input_file=input_file,output_file=output_file))
 
 
 	    wrap = os.popen(

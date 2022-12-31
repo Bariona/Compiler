@@ -31,11 +31,13 @@ public class ASMModule {
   }
 
   public PhysicalReg getReg(String name) {
-    return phyRegMp.get(name);
+    return new PhysicalReg(name);
+    // return phyRegMp.get(name);
   }
 
   public PhysicalReg getReg(int id) {
-    return phyRegIdMp.get(id);
+    return new PhysicalReg(regName[id]);
+//    return phyRegIdMp.get(id);
   }
 
   public PhysicalReg a(int id) {

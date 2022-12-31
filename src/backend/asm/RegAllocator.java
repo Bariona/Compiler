@@ -13,7 +13,8 @@ public class RegAllocator implements InstVisitor { // codegen: actually there ar
   public ASMModule asm;
   private int offset;
   private ASMBlock curBlock;
-  private HashMap<Register, Integer> stackLoc = new HashMap<>();
+  private ASMFunction curFunction;
+  private HashMap<Register, Integer> stackAlloc = new HashMap<>();
 
   public void doit(ASMModule asm) {
     this.asm = asm;
@@ -21,18 +22,10 @@ public class RegAllocator implements InstVisitor { // codegen: actually there ar
   }
 
   public void runOnFunction(ASMFunction func) {
-    offset = 0;
+    curFunction = func;
+    offset = curFunction.spOffset;
     func.asmBlocks.forEach(this::runOnBlock);
-    // offset += 4;
-    for (var block : func.asmBlocks) {
-      block.instrList.forEach(inst -> {
-        if (inst instanceof Load ld && ld.rs.name.equals("sp")) {
-          ld.offset.value += offset;
-        } else if (inst instanceof Store store && store.rd.name.equals("sp")) {
-          store.offset.value += offset;
-        }
-      });
-    }
+    curFunction.stackOffsetImm.forEach(imm -> imm.value += offset);
     // func.getEntryBlock().addInstFront(new Calc("addi", asm.getReg("s0"), asm.getReg("sp"), new Immediate(offset), null));
     func.getEntryBlock().addInstFront(new Calc("addi", asm.getReg("sp"), asm.getReg("sp"), new Immediate(-offset), null));
 
@@ -46,35 +39,48 @@ public class RegAllocator implements InstVisitor { // codegen: actually there ar
 //    System.out.println("---- cur Block: " + block.label + " ----");
     older.forEach(inst -> {
       inst.accept(this);
-      // curBlock.addInst(new NOP());
+//       curBlock.addInst(new NOP());
     });
     curBlock = null;
   }
 
-  private int Location(VirtualReg reg) {
-    Integer loc = stackLoc.get(reg);
+  private Immediate allocOnStack(VirtualReg reg) {
+    Integer loc = stackAlloc.get(reg);
     if (loc == null) {
-      offset += 4;
-      stackLoc.put(reg, offset);
-      loc = offset;
-//      System.out.println("sp: " + reg.name + " " + offset);
+      loc = (offset += 4);
+      stackAlloc.put(reg, loc);
     }
-    return loc;
+    var imm = new Immediate(-loc);
+    curFunction.stackOffsetImm.add(imm);
+    return imm;
   }
 
   private BaseOperand load(BaseOperand op, String regName) {
     if (!(op instanceof VirtualReg reg))
       return op;
-    PhysicalReg phyReg = asm.getReg(regName);
-    new Load(phyReg, asm.getReg("sp"), new Immediate(-Location(reg)), 4, curBlock);
+    PhysicalReg phyReg;
+    if (reg.color != 8) {
+      phyReg = asm.getReg(regName);
+      new Load(phyReg, asm.getReg("sp"), allocOnStack(reg), 4, curBlock);
+    } else {
+      phyReg = asm.getReg("sp");
+      phyReg.setOffset(allocOnStack(reg));
+    }
     return phyReg;
   }
 
   private PhysicalReg store(Register op, String regName) {
     if (!(op instanceof VirtualReg reg))
       return (PhysicalReg) op;
-    PhysicalReg phyReg = asm.getReg(regName);
-    new Store(phyReg, asm.getReg("sp"), new Immediate(-Location(reg)), 4, curBlock);
+
+    PhysicalReg phyReg;
+    if (reg.color != 8) {
+      phyReg = asm.getReg(regName);
+      new Store(phyReg, asm.getReg("sp"), allocOnStack(reg), 4, curBlock);
+    } else {
+      phyReg = asm.getReg("sp");
+      phyReg.setOffset(allocOnStack(reg));
+    }
     return phyReg;
   }
 
@@ -105,20 +111,9 @@ public class RegAllocator implements InstVisitor { // codegen: actually there ar
 
   @Override
   public void visit(Li inst) {
-//    if (inst.rd.color == null)
-//      inst.rd.color = asm.s(0);
     curBlock.addInst(inst);
     inst.rd = store(inst.rd, "s0");
   }
-
-//  @Override
-//  public void visit(Lui inst) {
-////    if (inst.rd.color == null)
-////      inst.rd.color = asm.s(0);
-//    inst.rd = (Register) load(inst.rd, "s0");
-//    curBlock.addInst(inst);
-//    inst.rd = store(inst.rd, "s0");
-//  }
 
   @Override
   public void visit(Mv inst) {
@@ -134,14 +129,7 @@ public class RegAllocator implements InstVisitor { // codegen: actually there ar
 
   @Override
   public void visit(Load inst) { // load reg offset(address)
-//    assert inst.address instanceof VirtualReg;
-    if (inst.address == null) {
-      inst.rs = (Register) load(inst.rs, "s1");
-    } else inst.offset.value = -Location((VirtualReg) inst.address);
-//    inst.offset.value = -Location((VirtualReg) inst.rs);
-//    inst.rs = asm.getReg("sp");
-//    memoryAccess.add(inst);
-//    inst.address = (Register) load(inst.address, "s0");
+    inst.rs = (Register) load(inst.rs, "s1");
     curBlock.addInst(inst);
     inst.rd = store(inst.rd, "s0");
   }
@@ -149,15 +137,7 @@ public class RegAllocator implements InstVisitor { // codegen: actually there ar
   @Override
   public void visit(Store inst) { // store reg offset(address)
     inst.rs = (Register) load(inst.rs, "s0");
-    if (inst.address == null) {
-      inst.rd = (Register) load(inst.rd, "s1");
-    } else inst.offset.value = -Location((VirtualReg) inst.address);
-    // inst.address = (Register) load(inst.address, "s1");
-    // load(inst.address, 1);
-//    assert inst.address instanceof VirtualReg;
-//    inst.offset.value = -Location((VirtualReg) inst.address);
-//    inst.address = asm.getReg("sp");
-//    memoryAccess.add(inst);
+    inst.rd = (Register) load(inst.rd, "s1");
     curBlock.addInst(inst);
   }
 

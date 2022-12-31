@@ -9,7 +9,7 @@ public class BoolType extends IRBaseType { // this type is not necessary
 
   @Override
   public int size() {
-    return 1;
+    return 4;
   }
 
   @Override

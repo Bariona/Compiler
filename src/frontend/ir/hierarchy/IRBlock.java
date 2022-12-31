@@ -13,16 +13,16 @@ public class IRBlock extends Value {
   public LinkedList<IRBaseInst> instrList = new LinkedList<>();
   public HashMap<Value, Value> pCopy = new HashMap<>();
   public ArrayList<IRBlock> prev = new ArrayList<>(), next = new ArrayList<>();
-  IRFunction parenFunc;
-  IRBaseInst tailInst = null;
+
+  private boolean terminated = false;
+  private IRFunction parenFunc;
+  private IRBaseInst tailInst = null;
 
   public IRBlock(String name, IRFunction func) {
     super(name, new LabelType());
     parenFunc = func;
-    if (func != null) {
-      // used for phi elimination
+    if (func != null) // used for phi elimination
       func.addBlock(this);
-    }
   }
 
   public void addEdge(IRBlock block) {
@@ -31,21 +31,19 @@ public class IRBlock extends Value {
   }
 
   public void insert2CFG() {
-    Branch inst = this.getTerminator();
-    if (inst == null) // "ret" instr
-      return ;
-    if (inst.isJump()) {
-      addEdge(inst.dstBlock());
-    } else {
-      addEdge(inst.ifTrueBlock());
-      addEdge(inst.ifFalseBlock());
+    IRBaseInst terminator = this.getTerminator();
+    if (terminator instanceof Branch inst) {
+      if (inst.isJump()) {
+        addEdge(inst.dstBlock());
+      } else {
+        addEdge(inst.ifTrueBlock());
+        addEdge(inst.ifFalseBlock());
+      }
     }
   }
 
-  public Branch getTerminator() {
-    if (tailInst instanceof Ret)
-      return null;
-    return (Branch) tailInst;
+  public IRBaseInst getTerminator() {
+    return tailInst;
   }
 
   public void addInst(IRBaseInst instr) {
@@ -54,9 +52,14 @@ public class IRBlock extends Value {
     } else {
       if (instr instanceof Phi phi) {
         phiInst = phi;
-      } else {
-        instrList.addLast(instr);
-        tailInst = instr;
+      } else if (instr instanceof Branch || instr instanceof Ret){
+        if (!terminated) {
+          terminated = true;
+          tailInst = instr;
+          instrList.add(instr);
+        }
+      } else if (!terminated) {
+        instrList.add(instr);
       }
     }
   }
