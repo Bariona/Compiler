@@ -26,15 +26,14 @@ public class Compiler {
   public static void main(String[] args) throws Exception {
     System.out.println("Current directory: " + System.getProperty("user.dir"));
 
-    boolean ONLINE_JUDGE = true;
+    boolean ONLINE_JUDGE = false;
     String prefix = ONLINE_JUDGE ? "testspace/" : "src/testspace/";
     String filename = prefix + "test.mx";
     String outputFile = prefix + "test.out";
     String irFile = prefix + "test.ll";
     String asmFile = prefix + "test.s";
 
-    InputStream input = System.in;
-//    InputStream input = new FileInputStream(filename);
+    InputStream input = (ONLINE_JUDGE) ? System.in : new FileInputStream(filename);
 
     try {
       MxLexer lexer = new MxLexer(CharStreams.fromStream(input)); // lexer
@@ -69,9 +68,9 @@ public class Compiler {
         new ASMPrinter(new PrintStream(prefix + "tmp.s")).printModule(asmModule);
 
       new RegAllocator().doit(asmModule);
-      new ASMPrinter(new PrintStream("output.s")).printModule(asmModule);
+      new ASMPrinter(new PrintStream(asmFile)).printModule(asmModule);
 
-      new BuiltinPrinter("builtin.s");
+      if (ONLINE_JUDGE) new BuiltinPrinter("builtin.s");
       System.out.println("\033[33m🎉  Done successfully.\033[0m");
     } catch (Error e) {
       e.printStackTrace();

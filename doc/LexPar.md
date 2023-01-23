@@ -4,6 +4,14 @@ From [Modern Compiler Implementation](https://www.cs.princeton.edu/~appel/modern
 - `terminal`: 终结符, 即没有出现在任何一个production左边
 - `nonterminal`: 非终结符
 
+CFG: i.e., context-free grammar means the left handside of the production only has one nonterminal node.
+
+> e.g.  S → aSb
+>
+> ​	S → ab
+
+
+
 ## LL Parsing
 
 ![](static/rule.PNG)

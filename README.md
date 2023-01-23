@@ -35,14 +35,14 @@ L-->T(target machine code)
    diff <file1> <file2> -qZB # regardless of space endl
 ```
 
-java编译:
+compile java file:
 
 ```
 javac <filename>.java 
 javac -encoding UTF-8 <filename>.java # support Chinese comment 
 java <filename>
 ```
-`assert` 模式开启需要 IDEA 在 run configuration 中的 VM option 加上`-ea`
+enable `assert`  mode:  in IDEA's run configuration, add `-ea` in "VM option".
 
 
 
@@ -87,7 +87,18 @@ P--visitor mode-->AB[AST build]
 AB==AST node==>S[Semantic check]
 AB==Scope manager==>S
 ```
+## IR
+
+based on LLVM IR
+
+## Code generation
+
+RISCV32i
+
+
+
 ### Reference
 
 1. [Yx written by Antlr4](https://github.com/ZYHowell/Yx/tree/1c1a74e8e636cf64d2e6f73975cfb2cf50f69cca)
-2. 虎/龙书
+2. Tiger Book/Dragon Book
+3. SSA Book

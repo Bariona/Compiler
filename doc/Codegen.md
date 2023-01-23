@@ -71,6 +71,12 @@ ra: (return address) stores return address
 
 `.p2align`: For example .p2align 3 advances the location counter until it a multiple of 8. If the location counter is already a multiple of 8, no change is needed. 
 
+`.text`:  is a read-only section containing executable code
+
+`.data`:  is a read-write section containing global or static variables
+
+`.bss`:  is a read-write section containing *uninitialized* data
+
 `.type`: used to set the type of a symbol
 
 `.rodata`: Directive: enter read-only data section
