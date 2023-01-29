@@ -29,6 +29,7 @@ import utility.Debugger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class ASMBuilder implements IRVisitor {
   private final ASMModule asm;
@@ -122,20 +123,23 @@ public class ASMBuilder implements IRVisitor {
     for (int i = cnt; i < func.operands.size(); ++i) { // a8+: memory
       offset += 4;
       Immediate imm = new Immediate(offset);
-      curFunction.stackOffsetImm.add(imm);
+      curFunction.stackOffsetImm.add(imm); // load functions rest(>8) arguments
       curFunction.spOffset += 4;
       new Load(curFunction.args.get(i), asm.getReg("sp"), imm, 4, curBlock);
     }
 
-//    VirtualReg.resetCnt();
     func.blockList.forEach(this::dealBlock);
-    instElimination(func);
+    deadCodeEle(curFunction);
     curFunction = null;
   }
 
   public void dealBlock(IRBlock irBlock) {
     curBlock = getBlock(irBlock);
+    curBlock.loopDepth = irBlock.loopDepth;
     curBlock.setLabel("." + curFunction.name + "." + irBlock.name);
+    irBlock.prev.forEach(block -> curBlock.prev.add(getBlock(block)));
+    irBlock.next.forEach(block -> curBlock.next.add(getBlock(block)));
+
     curFunction.asmBlocks.add(curBlock);
     irBlock.instrList.forEach(inst -> inst.accept(this));
     curBlock = null;
@@ -164,7 +168,7 @@ public class ASMBuilder implements IRVisitor {
   @Override
   public void visit(Alloca instr) {
     getRegister(instr);
-    ((Register) instr.asmOperand).color = 8; // alloca in stack
+    // TODO: ((Register) instr.asmOperand).color = 8; // alloca in stack
   }
 
   @Override
@@ -195,8 +199,6 @@ public class ASMBuilder implements IRVisitor {
     String opcode = binary.getOpcode();
     Register rd = getRegister(binary), rs1;
     BaseOperand rs2;
-    // TODO: can be improved sometimes into "slli"
-    // TODO: mul 4 -> << 2
     Value x = binary.getOperand(0), y = binary.getOperand(1);
 
     if (opcode.equals("div") || opcode.equals("mul") || opcode.equals("rem")) {
@@ -224,7 +226,6 @@ public class ASMBuilder implements IRVisitor {
       } else {
         rs1 = getRegister(x);
         rs2 = getRegister(y);
-        // new Li((Register) rs2, new Immediate(ic.value), curBlock);
       }
     } else {
       rs1 = getRegister(x);
@@ -274,7 +275,6 @@ public class ASMBuilder implements IRVisitor {
     if (member != null) { // must be a class/string
       if (type instanceof StructType structType)
         offset = structType.calcOffset(((IntConst) member).value);
-//      else Debugger.error(gep.toString());
     }
 
     if (idx instanceof IntConst ic) {
@@ -341,7 +341,7 @@ public class ASMBuilder implements IRVisitor {
       }
     }
     IRFunction func = (IRFunction) call.getOperand(0);
-    new Call(getFunction(func), curBlock);
+    new Call(getFunction(func), asm, curBlock);
     if (!(func.getType() instanceof VoidType))
       new Mv(getRegister(call), asm.a(0), curBlock);
   }
@@ -357,7 +357,7 @@ public class ASMBuilder implements IRVisitor {
     for (int i = 0; i < callee.size(); ++i)
       new Mv(callee.get(i), curFunction.calleeSaved.get(i), curBlock);
     new Mv(asm.getReg("ra"), curFunction.raSaved, curBlock);
-    new Ret(curBlock);
+    new Ret(asm, curBlock);
   }
 
   @Override
@@ -374,11 +374,29 @@ public class ASMBuilder implements IRVisitor {
   public void visit(GlobalDef globalDef) {
   }
 
-  public void instElimination(IRFunction func) {
+  public void deadCodeEle(ASMFunction func) {
+//    if (true) return ;
     boolean check = true;
     while (check) {
       check = false;
-      // TODO: wait to be filled...
+      HashSet<Register> used = new HashSet<>();
+      used.add(asm.getReg("ra")); // don't ignore return address
+      for (var block : func.asmBlocks)
+        block.instrList.forEach(inst -> used.addAll(inst.getUses()));
+
+      for (var block : func.asmBlocks) {
+        ArrayList<ASMBaseInst> rm = new ArrayList<>();
+        for (var inst : block.instrList) {
+          if ((inst instanceof Calc cal && !used.contains(cal.rd)) ||
+                  (inst instanceof La la && !used.contains(la.rd)) ||
+                  (inst instanceof Li li && !used.contains(li.rd)) ||
+                  (inst instanceof Load ld && !used.contains(ld.rd))) {
+            rm.add(inst);
+            check = true;
+          }
+        }
+        rm.forEach(block::removeInst);
+      }
     }
   }
 

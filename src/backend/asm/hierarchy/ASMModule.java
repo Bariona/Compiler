@@ -12,9 +12,9 @@ public class ASMModule {
   public LinkedList<GlobalReg> globVar = new LinkedList<>();
   public ArrayList<GlobalReg> strConst = new ArrayList<>();
 
-  private HashMap<String, PhysicalReg> phyRegMp = new HashMap<>();
-  private HashMap<Integer, PhysicalReg> phyRegIdMp = new HashMap<>();
-  private String[] regName = new String[]{
+  final private HashMap<String, PhysicalReg> phyRegMp = new HashMap<>();
+  final private HashMap<Integer, PhysicalReg> phyRegIdMp = new HashMap<>();
+  final private String[] regName = new String[]{
           "zero", "ra", "sp", "gp", "tp", "t0",
           "t1", "t2", "s0", "s1", "a0", "a1", "a2",
           "a3", "a4", "a5", "a6", "a7", "s2", "s3",
@@ -31,13 +31,11 @@ public class ASMModule {
   }
 
   public PhysicalReg getReg(String name) {
-    return new PhysicalReg(name);
-    // return phyRegMp.get(name);
+    return phyRegMp.get(name);
   }
 
   public PhysicalReg getReg(int id) {
-    return new PhysicalReg(regName[id]);
-//    return phyRegIdMp.get(id);
+    return phyRegMp.get(regName[id]);
   }
 
   public PhysicalReg a(int id) {
@@ -52,15 +50,39 @@ public class ASMModule {
     return phyRegMp.get("t" + id);
   }
 
+  public ArrayList<PhysicalReg> getCaller() {
+    ArrayList<PhysicalReg> ret = new ArrayList<>();
+    for (int i = 1; i <= 1; i++) ret.add(getReg(i));
+    for (int i = 5; i <= 7; i++) ret.add(getReg(i));
+    for (int i = 10; i <= 17; i++) ret.add(getReg(i));
+    for (int i = 28; i <= 31; i++) ret.add(getReg(i));
+    return ret;
+  }
+
   public ArrayList<PhysicalReg> getCallee() {
     ArrayList<PhysicalReg> ret = new ArrayList<>();
-    if (true) {
-      ret.add(getReg("s0"));
-      // ret.add(getReg("a0"));
-      return ret;
-    }
     for (int i = 8; i <= 9; ++i) ret.add(getReg(i));
     for (int i = 18; i <= 27; ++i) ret.add(getReg(i));
+    return ret;
+  }
+
+  public ArrayList<PhysicalReg> getColors() {
+    ArrayList<PhysicalReg> ret = new ArrayList<>();
+    for (int i = 0; i < 32; ++i) {
+      if (i == 0 || i > 1 && i < 5)
+        continue;
+      PhysicalReg reg = getReg(regName[i]);
+      ret.add(reg);
+    }
+    return ret;
+  }
+
+  public ArrayList<PhysicalReg> getPhyReg() {
+    ArrayList<PhysicalReg> ret = new ArrayList<>();
+    for (int i = 0; i < 32; ++i) {
+      PhysicalReg reg = getReg(regName[i]);
+      ret.add(reg);
+    }
     return ret;
   }
 

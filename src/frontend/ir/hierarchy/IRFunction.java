@@ -28,8 +28,8 @@ public class IRFunction extends User {
   }
 
   private void initialized() {
-    new IRBlock("entry_of_" + name, this);
-    new IRBlock("exit_of_" + name, this);
+    new IRBlock("entry_of_" + name, this, 0);
+    new IRBlock("exit_of_" + name, this, 0);
 
     if (getType() instanceof VoidType) {
       new Ret(getExitBlock());

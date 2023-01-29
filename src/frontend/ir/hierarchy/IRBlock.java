@@ -10,6 +10,7 @@ import java.util.LinkedList;
 
 public class IRBlock extends Value {
   public Phi phiInst;
+  public int loopDepth = 0;
   public LinkedList<IRBaseInst> instrList = new LinkedList<>();
   public HashMap<Value, Value> pCopy = new HashMap<>();
   public ArrayList<IRBlock> prev = new ArrayList<>(), next = new ArrayList<>();
@@ -18,9 +19,10 @@ public class IRBlock extends Value {
   private IRFunction parenFunc;
   private IRBaseInst tailInst = null;
 
-  public IRBlock(String name, IRFunction func) {
+  public IRBlock(String name, IRFunction func, int loopDepth) {
     super(name, new LabelType());
     parenFunc = func;
+    this.loopDepth = loopDepth;
     if (func != null) // used for phi elimination
       func.addBlock(this);
   }

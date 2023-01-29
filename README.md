@@ -95,10 +95,14 @@ based on LLVM IR
 
 RISCV32i
 
+## Register Allocation
 
 
-### Reference
+
+## Reference
 
 1. [Yx written by Antlr4](https://github.com/ZYHowell/Yx/tree/1c1a74e8e636cf64d2e6f73975cfb2cf50f69cca)
-2. Tiger Book/Dragon Book
+2. Tiger Book (Modern Compiler Implementation)
+3. Dragon Book (Compilers: Principles, Techniques, and Tools 2e)
+4. NJU Static Analysis by Prof. Yue Li and Tian Tan
 3. SSA Book

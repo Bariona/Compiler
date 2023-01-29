@@ -3,6 +3,9 @@ package backend.asm.instruction;
 import backend.asm.hierarchy.ASMBlock;
 import backend.asm.operand.Register;
 
+import java.util.Collections;
+import java.util.HashSet;
+
 public class La extends ASMBaseInst {
   public String name;
   public Register rd;
@@ -16,6 +19,16 @@ public class La extends ASMBaseInst {
   @Override
   public String toString() {
     return "la " + rd.toString() + ", " + name;
+  }
+
+  @Override
+  public HashSet<Register> getDefs() {
+    return new HashSet<>(Collections.singletonList(rd));
+  }
+
+  @Override
+  public void replaceDefs(Register u, Register v) {
+    if (rd == u) rd = v;
   }
 
   @Override

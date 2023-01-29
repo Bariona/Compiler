@@ -1,5 +1,5 @@
-- [ ] function arguments (> 8) stack allocation
-- [ ] function arguments's link (.asmoperand)
+- [x] function arguments (> 8) stack allocation
+- [x] function arguments's link (.asmoperand)
 - [ ] 去掉一些没必要的Mv :pensive:
 
 
@@ -29,7 +29,7 @@ We only uses several register, say `ra`, `sp`, `fp`, `a0`...
 
 Other values will only be stored in the memory.
 
-
+![](static/callingconv.png)
 
 ### procedure
 

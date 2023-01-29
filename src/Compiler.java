@@ -59,7 +59,7 @@ public class Compiler {
       // LLVM IR
       IRModule irModule = new IRModule("test.ll");
       new IRBuilder(irModule, root);
-//      new IRPrinter(new PrintStream(irFile)).printModule(irModule);
+      new IRPrinter(new PrintStream(irFile)).printModule(irModule);
 
       // naive Codegen
       ASMModule asmModule = new ASMModule();

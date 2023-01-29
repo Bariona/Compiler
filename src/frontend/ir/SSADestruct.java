@@ -26,7 +26,7 @@ public class SSADestruct {
         if (phi == null) continue;
 
         // System.out.println("critical path: " + srcBlock.name + " -> " + dstBlock.name);
-        IRBlock midBlock = new IRBlock("midBlock", null);
+        IRBlock midBlock = new IRBlock("midBlock", null, 0);
         midBlocks.add(midBlock);
         new Branch(dstBlock, midBlock); // br mid -> dst
         relinkMp.put(midBlock, dstBlock);
@@ -78,4 +78,5 @@ public class SSADestruct {
   public void runOnIR(IRModule ir) {
     ir.irFuncList.forEach(this::runOnFunc);
   }
+
 }

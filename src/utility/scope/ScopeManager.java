@@ -102,19 +102,17 @@ public class ScopeManager {
     return queryClassInfo(getCurClassName());
   }
 
+  public int getLoopCnt() {
+    return loopCnt;
+  }
+
   // ==== LLVM IR ↓ ====
   public Pair<Value, Boolean> queryValue(String name) {
     for (int i = scopeStack.size() - 1; i >= 0; --i) {
       BaseScope cur = scopeStack.get(i);
       VarInfo ret = cur.queryVarInfo(name);
-      if (ret != null && ret.value != null) {
-//        if (ret.value == null) {
-//          System.out.println(cur.toString());
-//          System.out.println("query " + name + "'s value failed!");
-//          assert false;
-//        }
+      if (ret != null && ret.value != null)
         return new Pair<>(ret.value, cur instanceof ClassScope);
-      }
     }
     return null;
   }

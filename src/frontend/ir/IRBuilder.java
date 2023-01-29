@@ -563,8 +563,9 @@ public class IRBuilder implements ASTVisitor {
   }
 
   private IRBlock newBlock(String name) {
-    return new IRBlock(name, curFunction);
+    return new IRBlock(name, curFunction, scopeManager.getLoopCnt());
   }
+
   private BitCast bitcast(Value value, IRBaseType targetType) {
     return new BitCast(value, targetType, curBlock);
   }

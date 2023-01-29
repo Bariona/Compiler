@@ -18,16 +18,16 @@ public class ASMFunction {
 
   public ArrayList<Immediate> stackOffsetImm = new ArrayList<>();
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public ASMBlock getEntryBlock() {
     return asmBlocks.get(0);
   }
 
   public ASMBlock getExitBlock() {
     return asmBlocks.get(1);
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
 }

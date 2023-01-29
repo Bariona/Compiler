@@ -2,7 +2,7 @@ package backend.asm.operand;
 
 public class Register extends BaseOperand {
   public String name;
-  public int color = 0;
+  public PhysicalReg color = null;
   public Immediate offset;
 
   public Register(String name) {

@@ -4,10 +4,13 @@ import backend.asm.hierarchy.ASMBlock;
 import backend.asm.operand.Immediate;
 import backend.asm.operand.Register;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 public class Store extends ASMBaseInst {
   // s{b|h|w|d} <rd>, <symbol>: store byte, half word, word or double word to global
 
-  public Register rs, rd, address = null;
+  public Register rs, rd;
   // public Immediate offset;
   final int size;
 
@@ -27,6 +30,17 @@ public class Store extends ASMBaseInst {
       case 4 -> "sw";
       default -> throw new IllegalStateException("Unexpected value: " + size);
     };
+  }
+
+  @Override
+  public HashSet<Register> getUses() {
+    return new HashSet<>(Arrays.asList(rs, rd));
+  }
+
+  @Override
+  public void replaceUses(Register u, Register v) {
+    if (u == rs) rs = v;
+    if (u == rd) rd = v;
   }
 
   @Override

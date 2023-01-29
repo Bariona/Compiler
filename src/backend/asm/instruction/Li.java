@@ -4,6 +4,9 @@ import backend.asm.hierarchy.ASMBlock;
 import backend.asm.operand.Immediate;
 import backend.asm.operand.Register;
 
+import java.util.Collections;
+import java.util.HashSet;
+
 public class Li extends ASMBaseInst {
   public Register rd;
   public Immediate imm;
@@ -13,6 +16,16 @@ public class Li extends ASMBaseInst {
     super(parenBlock);
     this.rd = rd;
     this.imm = imm;
+  }
+
+  @Override
+  public HashSet<Register> getDefs() {
+    return new HashSet<>(Collections.singletonList(rd));
+  }
+
+  @Override
+  public void replaceDefs(Register u, Register v) {
+    if (u == rd) rd = v;
   }
 
   @Override

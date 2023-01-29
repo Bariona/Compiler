@@ -6,10 +6,9 @@ import java.util.ArrayList;
 
 public class ASMBlock {
   public String label = null;
+  public int loopDepth = 0;
   public ArrayList<ASMBaseInst> instrList = new ArrayList<>();
-
-  public ASMBlock() {
-  }
+  public ArrayList<ASMBlock> prev = new ArrayList<>(), next = new ArrayList<>();
 
   public void setLabel(String label) {
     this.label = label;
@@ -25,6 +24,14 @@ public class ASMBlock {
 
   public void addInstBack(ASMBaseInst inst) {
     instrList.add(instrList.size() - 1, inst);
+  }
+
+  public void removeInst(ASMBaseInst inst) {
+    instrList.remove(inst);
+//    for (int i = 0; i < instrList.size(); ++i) {
+//      if (instrList.get(i) == inst)
+//        instrList.remove(i);
+//    }
   }
 
   @Override
