@@ -75,7 +75,7 @@ public class Compiler {
         new ASMPrinter(new PrintStream(prefix + "tmp.s")).printModule(asmModule);
 
       new RegAllocator().runOnModule(asmModule);
-      new ASMPrinter(new PrintStream(System.out)).printModule(asmModule);
+      new ASMPrinter(new PrintStream("output.s")).printModule(asmModule);
 
       if (ONLINE_JUDGE) new BuiltinPrinter("builtin.s");
       System.out.println("\033[33m🎉  Done successfully.\033[0m");
