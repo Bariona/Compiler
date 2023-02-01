@@ -8,4 +8,9 @@ public abstract class IRBaseType {
 
   abstract public String toString();
 
+  public IRBaseType dePointed() {
+    if (this instanceof PtrType ptr)
+      return ptr.target;
+    throw new RuntimeException("IR type depointed error.");
+  }
 }

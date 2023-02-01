@@ -14,4 +14,5 @@ abstract public class IRBaseConst extends Value {
     assert false;
     return null;
   }
+
 }

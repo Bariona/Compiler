@@ -26,6 +26,11 @@ public class Call extends ASMBaseInst {
   }
 
   @Override
+  public HashSet<Register> getDefs() {
+    return new HashSet<>(asm.getCaller());
+  }
+
+  @Override
   public String toString() {
     return "call " + func.name;
   }

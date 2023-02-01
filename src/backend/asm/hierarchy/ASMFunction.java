@@ -11,11 +11,12 @@ public class ASMFunction {
   public int spOffset = 0;
 
   public VirtualReg raSaved = null;
-
   public ArrayList<Register> args = new ArrayList<>();
   public ArrayList<VirtualReg> calleeSaved = new ArrayList<>();
+
   public ArrayList<ASMBlock> asmBlocks = new ArrayList<>();
 
+  public ArrayList<Register> allocaReg = new ArrayList<>();
   public ArrayList<Immediate> stackOffsetImm = new ArrayList<>();
 
   public void setName(String name) {

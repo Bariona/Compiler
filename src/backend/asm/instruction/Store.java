@@ -11,15 +11,14 @@ public class Store extends ASMBaseInst {
   // s{b|h|w|d} <rd>, <symbol>: store byte, half word, word or double word to global
 
   public Register rs, rd;
-  // public Immediate offset;
+  public Immediate offset;
   final int size;
 
   public Store(Register rs, Register rd, Immediate offset, int size, ASMBlock parenBlock) {
     super(parenBlock);
     this.rs = rs;
     this.rd = rd;
-    this.rd.setOffset(offset);
-    // this.offset = offset;
+    this.offset = offset;
     this.size = size;
   }
 
@@ -50,7 +49,7 @@ public class Store extends ASMBaseInst {
 //    if (address != null) ret += address.toString();
 //    if (true) return ret;
     return translate(size) + " " + rs.toString() + ", "
-            + rd.offset.toString() + "(" + rd.toString() + ")";
+            + offset.toString() + "(" + rd.toString() + ")";
   }
 
   @Override

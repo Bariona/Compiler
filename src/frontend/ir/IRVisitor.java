@@ -1,6 +1,5 @@
 package frontend.ir;
 
-import backend.asm.instruction.La;
 import frontend.ir.hierarchy.IRFunction;
 import frontend.ir.instruction.*;
 

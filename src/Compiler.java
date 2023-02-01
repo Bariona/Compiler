@@ -7,6 +7,7 @@ import frontend.ast.ASTBuilder;
 import frontend.ast.SemanticChecker;
 import frontend.ir.IRBuilder;
 import frontend.ir.IRPrinter;
+import frontend.ir.Mem2Reg;
 import frontend.ir.hierarchy.IRModule;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -18,7 +19,6 @@ import utility.MxErrorListener;
 import utility.error.Error;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 
@@ -26,8 +26,9 @@ public class Compiler {
   public static void main(String[] args) throws Exception {
     System.out.println("Current directory: " + System.getProperty("user.dir"));
 
-    boolean ONLINE_JUDGE = false;
-    String prefix = ONLINE_JUDGE ? "testspace/" : "src/testspace/";
+    boolean ONLINE_JUDGE = true, LOCAL_TEST = false;
+
+    String prefix = LOCAL_TEST ? "testspace/" : "src/testspace/";
     String filename = prefix + "test.mx";
     String outputFile = prefix + "test.out";
     String irFile = prefix + "test.ll";
@@ -57,17 +58,23 @@ public class Compiler {
       checker.visit(root);
 
       // LLVM IR
+
       IRModule irModule = new IRModule("test.ll");
       new IRBuilder(irModule, root);
-      new IRPrinter(new PrintStream(irFile)).printModule(irModule);
+      if (!ONLINE_JUDGE)
+        new IRPrinter(new PrintStream(irFile)).printModule(irModule);
+      new Mem2Reg(irModule);
+      if (!ONLINE_JUDGE)
+        new IRPrinter(new PrintStream(prefix + "fake.ll")).printModule(irModule);
 
       // naive Codegen
       ASMModule asmModule = new ASMModule();
       new ASMBuilder(asmModule, irModule);
+
       if (!ONLINE_JUDGE)
         new ASMPrinter(new PrintStream(prefix + "tmp.s")).printModule(asmModule);
 
-      new RegAllocator().doit(asmModule);
+      new RegAllocator().runOnModule(asmModule);
       new ASMPrinter(new PrintStream(asmFile)).printModule(asmModule);
 
       if (ONLINE_JUDGE) new BuiltinPrinter("builtin.s");

@@ -21,10 +21,7 @@ import frontend.ir.irtype.IRBaseType;
 import frontend.ir.irtype.PtrType;
 import frontend.ir.irtype.StructType;
 import frontend.ir.irtype.VoidType;
-import frontend.ir.operands.BoolConst;
-import frontend.ir.operands.IRBaseConst;
-import frontend.ir.operands.IntConst;
-import frontend.ir.operands.StringConst;
+import frontend.ir.operands.*;
 import utility.Debugger;
 
 import java.util.ArrayList;
@@ -72,7 +69,7 @@ public class ASMBuilder implements IRVisitor {
   }
 
   public Register getRegister(Value operand) {
-    if (operand instanceof IRBaseConst) {
+    if (operand instanceof IRBaseConst && !(operand instanceof IReg)) {
       VirtualReg rd = new VirtualReg("tmp");
       if (operand instanceof StringConst stringConst) {
         // lui  a0, %hi(.str)
@@ -146,7 +143,7 @@ public class ASMBuilder implements IRVisitor {
   }
 
   private void assign(Register rd, Value rs) {
-    if (rs instanceof IRBaseInst) {
+    if (rs instanceof IRBaseInst || rs instanceof IReg) {
       new Mv(rd, getRegister(rs), curBlock);
       return;
     }
@@ -167,7 +164,8 @@ public class ASMBuilder implements IRVisitor {
 
   @Override
   public void visit(Alloca instr) {
-    getRegister(instr);
+    assert false;
+    curFunction.allocaReg.add(getRegister(instr));
     // TODO: ((Register) instr.asmOperand).color = 8; // alloca in stack
   }
 
@@ -256,7 +254,12 @@ public class ASMBuilder implements IRVisitor {
       new La(tmp, address.name, curBlock);
       new Store(getRegister(target), tmp, new Immediate(0), 4, curBlock);
     } else {
-      new Store(getRegister(target), getRegister(address), new Immediate(0), 4, curBlock);
+      if (address instanceof IReg) {
+        new Mv(getRegister(address), getRegister(target), curBlock);
+      } else
+      {
+        new Store(getRegister(target), getRegister(address), new Immediate(0), 4, curBlock);
+      }
     }
   }
 

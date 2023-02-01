@@ -15,6 +15,7 @@ public class RegAllocator { // codegen: actually there are only stack allocation
   // private ASMBlock curBlock;
   private ASMFunction curFunction;
   private HashMap<Register, Integer> stackAlloc = new HashMap<>();
+  private ArrayList<Immediate> stackOffsets;
 
   private int K;
   HashSet<Register> initial, preColored, coloredNodes, spillWorkList, simplifyWorkList, freezeWorkList, spilledNodes, tinyTemp = new HashSet<>();
@@ -58,9 +59,10 @@ public class RegAllocator { // codegen: actually there are only stack allocation
     while (!workList.isEmpty()) {
       ASMBlock cur = workList.poll();
       vis.remove(cur);
-      HashSet<Register> curBIn = Bout.get(cur);
+      var curBIn = new HashSet<>(Bout.get(cur));
       curBIn.removeAll(Bkill.get(cur));
       curBIn.addAll(Bgen.get(cur));
+      if (Bin.get(cur).equals(curBIn)) continue;
       Bin.replace(cur, curBIn);
 
       for (var preBlock : cur.prev) {
@@ -118,7 +120,8 @@ public class RegAllocator { // codegen: actually there are only stack allocation
 
   public void init() {
     K = asm.getColors().size();
-    System.out.printf("color = %d\n", K);
+    stackOffsets = new ArrayList<>();
+//    System.out.printf("color = %d\n", K);
     alias = new HashMap<>();
     degree = new HashMap<>();
     weight = new HashMap<>();
@@ -140,7 +143,6 @@ public class RegAllocator { // codegen: actually there are only stack allocation
     frozenMoves = new HashSet<>();
     selectStack = new Stack<>();
     spilledNodes = new HashSet<>();
-    stackAlloc = new HashMap<>();
 
     curFunction.asmBlocks.forEach(block -> block.instrList.forEach(inst -> {
       initial.addAll(inst.getDefs());
@@ -155,8 +157,11 @@ public class RegAllocator { // codegen: actually there are only stack allocation
       reg.color = null;
     }
     initial.removeAll(preColored);
-    for (var colReg : preColored)
+    for (var colReg : preColored) {
+      colReg.color = (PhysicalReg) colReg; // avoid being assigned to null in the above
       degree.put(colReg, Integer.MAX_VALUE);
+    }
+
     for (var block : curFunction.asmBlocks)
       for (var inst : block.instrList) {
         inst.getDefs().forEach(x -> {
@@ -174,6 +179,9 @@ public class RegAllocator { // codegen: actually there are only stack allocation
     // build interference graph: based on live variable analysis
     for (var block : curFunction.asmBlocks) {
       var lives = Bout.get(block);
+//      System.out.println(" === cur Block: " + block.label + " === ");
+//      lives.forEach(t -> System.out.print(t.toString() + " "));
+//      System.out.println();
       for (int i = block.instrList.size() - 1; i >= 0; --i) { // enumerate in reverse order
         ASMBaseInst inst = block.instrList.get(i);
         if (inst instanceof Mv mv) {
@@ -239,6 +247,7 @@ public class RegAllocator { // codegen: actually there are only stack allocation
   public void simplify() {
     Register reg = simplifyWorkList.iterator().next();
     simplifyWorkList.remove(reg);
+//    System.out.println("cur simplify: " + reg.toString());
     selectStack.push(reg);
     adjacent(reg).forEach(this::decrementDegree);
   }
@@ -251,13 +260,13 @@ public class RegAllocator { // codegen: actually there are only stack allocation
     }
   }
 
-  public boolean ok(Register t, Register r) {
+  public boolean ok(Register node, Register r) {
     // George
-    return degree.get(t) < K || preColored.contains(t) || adjSet.contains(new edge(t, r));
+    return degree.get(node) < K || preColored.contains(node) || adjSet.contains(new edge(node, r));
   }
 
-  public boolean ok(ArrayList<Register> t, Register r) {
-    for (var x : t) if (!ok(x, r)) return false;
+  public boolean ok(ArrayList<Register> nodes, Register r) {
+    for (var x : nodes) if (!ok(x, r)) return false;
     return true;
   }
 
@@ -309,6 +318,7 @@ public class RegAllocator { // codegen: actually there are only stack allocation
     coalescedNodes.add(y);
     alias.put(y, x);
     moveList.get(x).addAll(moveList.get(y)); // merge x & y
+//    System.out.println("combine: " + y.toString() + " -> " + x.toString());
     enableMoves(new HashSet<>(Collections.singletonList(y)));
     adjacent(y).forEach(vertex -> {
       addEdge(vertex, x);
@@ -334,10 +344,11 @@ public class RegAllocator { // codegen: actually there are only stack allocation
   }
 
   public void freeze() {
-    Register x = freezeWorkList.iterator().next();
-    freezeWorkList.remove(x);
-    simplifyWorkList.add(x);
-    freezeMoves(x);
+    Register reg = freezeWorkList.iterator().next();
+//    System.out.println("cur freeze: " +  reg.toString());
+    freezeWorkList.remove(reg);
+    simplifyWorkList.add(reg);
+    freezeMoves(reg);
   }
 
   public void selectSpill() {
@@ -366,19 +377,27 @@ public class RegAllocator { // codegen: actually there are only stack allocation
         if (colored.contains(getAlias(nex)))
           okColors.remove(getAlias(nex).color);
       });
-      if (okColors.isEmpty()) spilledNodes.add(cur);
-      else {
+      if (okColors.isEmpty()) {
+        spilledNodes.add(cur);
+      } else {
         coloredNodes.add(cur);
         cur.color = okColors.get(0);
       }
-      for (var x : coalescedNodes)
-        x.color = getAlias(x).color;
+    }
+    for (var x : coalescedNodes) {
+      // System.out.print(x.toString());
+      x.color = getAlias(x).color;
+      // System.out.println(" has been coalesced to " + getAlias(x).toString());
     }
   }
 
   public void rewriteProgram() {
     for (var reg : spilledNodes) {
-      allocaOnStack((VirtualReg) reg);
+//      System.out.println(reg.toString());
+      // allocaOnStack((VirtualReg) reg);
+      int loc = offset;
+      offset += 4;
+      stackAlloc.put(reg, loc);
     }
     for (var block : curFunction.asmBlocks) {
       for (int i = 0; i < block.instrList.size(); ++i) {
@@ -414,7 +433,6 @@ public class RegAllocator { // codegen: actually there are only stack allocation
               ++i;
             }
           }
-
       }
     }
   }
@@ -422,12 +440,12 @@ public class RegAllocator { // codegen: actually there are only stack allocation
   public void makeWorkList() {
     for (Register reg : initial) {
       if (degree.get(reg) >= K) spillWorkList.add(reg);
-      else if (moveRelated(reg)) freezeWorkList.add(reg); // move related
+      else if (moveRelated(reg)) freezeWorkList.add(reg); // move relateds
       else simplifyWorkList.add(reg); // non-move related
     }
   }
 
-  public void doit(ASMModule asm) {
+  public void runOnModule(ASMModule asm) {
     this.asm = asm;
     asm.func.forEach(this::runOnFunction);
   }
@@ -456,24 +474,30 @@ public class RegAllocator { // codegen: actually there are only stack allocation
       rewriteProgram();
     }
 
-    initial.forEach(e -> System.out.println(e.toString() + " "));
-//    func.asmBlocks.forEach(this::runOnBlock);
-    curFunction.stackOffsetImm.forEach(imm -> imm.value += offset);
+    curFunction.stackOffsetImm.addAll(stackOffsets);
+
+//    curFunction.stackOffsetImm.forEach(imm -> {
+//      System.out.println(imm.value);
+//      imm.value += offset;
+//    });
 
     if (offset != 0) {
       func.getEntryBlock().addInstFront(new Calc("addi", asm.getReg("sp"), asm.getReg("sp"), new Immediate(-offset), null));
       func.getExitBlock().addInstBack(new Calc("addi", asm.getReg("sp"), asm.getReg("sp"), new Immediate(offset), null));
     }
+//    for (ASMBlock asmBlock : curFunction.asmBlocks) {
+//      if (!asmBlock.label.contains("foo.entry")) continue;
+//      for (var inst : asmBlock.instrList)
+//        System.out.println(inst.toString());
+//    }
   }
 
   public void removeDeadMv() {
     for (var block : curFunction.asmBlocks) {
       ArrayList<ASMBaseInst> rmInst = new ArrayList<>();
       for (var inst : block.instrList)
-        if (inst instanceof Mv mv && mv.rd.color == mv.rs.color) {
-          System.out.println(mv.toString() + " " + mv.rs.color.toString());
+        if (inst instanceof Mv mv && mv.rd.color == mv.rs.color)
           rmInst.add(inst);
-        }
       rmInst.forEach(block::removeInst);
     }
   }
@@ -490,13 +514,9 @@ public class RegAllocator { // codegen: actually there are only stack allocation
 
   private Immediate allocaOnStack(VirtualReg reg) {
     Integer loc = stackAlloc.get(reg);
-    if (loc == null) {
-      loc = (offset += 4);
-      stackAlloc.put(reg, loc);
-    }
-    var imm = new Immediate(-loc);
-    curFunction.stackOffsetImm.add(imm);
-    return imm;
+    if (loc == null) assert false;
+//    System.out.println("alloca : " + reg.toString() + " " + loc);
+    return new Immediate(loc);
   }
 
 //  private BaseOperand load(BaseOperand op, String regName) {
