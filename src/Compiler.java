@@ -7,7 +7,7 @@ import frontend.ast.ASTBuilder;
 import frontend.ast.SemanticChecker;
 import frontend.ir.IRBuilder;
 import frontend.ir.IRPrinter;
-import frontend.ir.Mem2Reg;
+import frontend.ir.opt.IROptimizer;
 import frontend.ir.hierarchy.IRModule;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -26,7 +26,8 @@ public class Compiler {
   public static void main(String[] args) throws Exception {
     System.out.println("Current directory: " + System.getProperty("user.dir"));
 
-    boolean ONLINE_JUDGE = true, LOCAL_TEST = false;
+    long start = System.currentTimeMillis();
+    boolean ONLINE_JUDGE = false, LOCAL_TEST = false;
 
     String prefix = LOCAL_TEST ? "testspace/" : "src/testspace/";
     String filename = prefix + "test.mx";
@@ -58,27 +59,26 @@ public class Compiler {
       checker.visit(root);
 
       // LLVM IR
-
       IRModule irModule = new IRModule("test.ll");
       new IRBuilder(irModule, root);
-      if (!ONLINE_JUDGE)
-        new IRPrinter(new PrintStream(irFile)).printModule(irModule);
-      new Mem2Reg(irModule);
-      if (!ONLINE_JUDGE)
-        new IRPrinter(new PrintStream(prefix + "fake.ll")).printModule(irModule);
+      if (!ONLINE_JUDGE) new IRPrinter(new PrintStream(irFile)).printModule(irModule);
+      new IROptimizer().runOnModule(irModule);
+      if (!ONLINE_JUDGE) new IRPrinter(new PrintStream(prefix + "fake.ll")).printModule(irModule);
 
-      // naive Codegen
+      // Codegen
       ASMModule asmModule = new ASMModule();
       new ASMBuilder(asmModule, irModule);
 
-      if (!ONLINE_JUDGE)
-        new ASMPrinter(new PrintStream(prefix + "tmp.s")).printModule(asmModule);
+      if (!ONLINE_JUDGE) new ASMPrinter(new PrintStream(prefix + "tmp.s")).printModule(asmModule);
 
+      // reg allocation
       new RegAllocator().runOnModule(asmModule);
-      new ASMPrinter(new PrintStream("output.s")).printModule(asmModule);
+      new ASMPrinter(new PrintStream(asmFile)).printModule(asmModule);
 
       if (ONLINE_JUDGE) new BuiltinPrinter("builtin.s");
-      System.out.println("\033[33m🎉  Done successfully.\033[0m");
+      long end = System.currentTimeMillis();
+      System.out.println("\033[33m   Compile time: " + 1. * (end - start) / 1000 + "(s) \033[0m");
+      System.out.println("\033[33m🎉 Done successfully.\033[0m");
     } catch (Error e) {
       e.printStackTrace();
       System.out.println("\033[31m😢 Process terminated with error.\033[0m");

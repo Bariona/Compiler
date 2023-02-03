@@ -46,6 +46,17 @@ public class Value {
     userList.add(user);
   }
 
+  public void replaceUserValue(Value value) {
+    assert this != value;
+    for (var user : userList) {
+      for (int i = 0; i < user.operands.size(); ++i) {
+        var op = user.operands.get(i);
+        if (op == this) user.operands.set(i, value);
+      }
+      value.userList.add(user);
+    }
+  }
+
   public IRBaseType getType() {
     return type;
   }

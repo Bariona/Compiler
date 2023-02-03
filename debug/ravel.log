@@ -1,16 +1,16 @@
 
 exit code: 0
 memory leak: 1
-instructions count: 789 line(s)
-global memory: 3216 Byte(s)
-max malloced memory: 152 Byte(s) 0 KByte(s)
-time: 33590
+instructions count: 373 line(s)
+global memory: 1536 Byte(s)
+max malloced memory: 173 Byte(s) 0 KByte(s)
+time: 13963
 # instructions:
-# simple  = 1216 (including unconditional jump)
-# mul     = 74
+# simple  = 480 (including unconditional jump)
+# mul     = 18
 # cache   = 0
-# br      = 97
+# br      = 20
 # div     = 0
-# mem     = 455 (a.k.a cache miss)
-# libcIO  = 18
-# libcMem = 8
+# mem     = 162 (a.k.a cache miss)
+# libcIO  = 23
+# libcMem = 11

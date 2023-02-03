@@ -13,6 +13,14 @@ public class Load extends IRBaseInst {
     addOperands(ptr);
   }
 
+  public Value loadPtr() {
+    return getOperand(0);
+  }
+
+  public void resetPtr(Value value) {
+    operands.set(0, value);
+  }
+
   @Override
   public String toString() {
     return getName() + " = load " + this.getType().toString() + ", " + getOperand(0).getTypeAndName();

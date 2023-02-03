@@ -17,18 +17,19 @@ public class ASMFunction {
   public ArrayList<ASMBlock> asmBlocks = new ArrayList<>();
 
   public ArrayList<Register> allocaReg = new ArrayList<>();
-  public ArrayList<Immediate> stackOffsetImm = new ArrayList<>();
 
   public void setName(String name) {
     this.name = name;
   }
 
+  public ASMBlock entryBlock = null, exitBlock = null;
+
   public ASMBlock getEntryBlock() {
-    return asmBlocks.get(0);
+    return entryBlock;
   }
 
   public ASMBlock getExitBlock() {
-    return asmBlocks.get(1);
+    return exitBlock;
   }
 
 }

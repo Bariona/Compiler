@@ -1,5 +1,5 @@
 - [ ] Dominator Tree
-- [ ] check loopCnt's correctness
+- [x] check loopCnt's correctness
 
   ​
 

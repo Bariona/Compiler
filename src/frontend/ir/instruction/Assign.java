@@ -21,7 +21,7 @@ public class Assign extends IRBaseInst {
 
   @Override
   public String toString() {
-    return "assign: " + rd.getName() + " = " + rs.getName();
+    return "assign " + rd.getName() + " = " + rs.getName();
   }
 
 }

@@ -13,6 +13,10 @@ public class Call extends IRBaseInst {
     for (Value arg : Args) addOperands(arg);
   }
 
+  public IRFunction callFunc() {
+    return (IRFunction) getOperand(0);
+  }
+
   // e.g. call void @_Z1f1Ai(%class.A* noundef %4, i32 noundef 1)  | void f(x, 1) x is a class
   @Override
   public String toString() {

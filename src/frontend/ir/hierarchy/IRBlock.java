@@ -15,8 +15,8 @@ public class IRBlock extends Value {
   public HashMap<Value, Value> pCopy = new HashMap<>();
   public ArrayList<IRBlock> prev = new ArrayList<>(), next = new ArrayList<>();
 
+  public IRFunction parenFunc;
   private boolean terminated = false;
-  private IRFunction parenFunc;
   private IRBaseInst tailInst = null;
 
   public IRBlock(String name, IRFunction func, int loopDepth) {
@@ -66,13 +66,14 @@ public class IRBlock extends Value {
     }
   }
 
+  public void addInstFront(IRBaseInst instr) {
+    instr.parenBlock = this;
+    instrList.add(0, instr);
+  }
+
   public void addInstBack(IRBaseInst instr) {
-//    System.out.println("-- " + this.name + " ---- ");
-//    instrList.forEach(i -> System.out.println(i.toString()));
+    instr.parenBlock = this;
     instrList.add(instrList.size() - 1, instr);
-//    System.out.println("----");
-//    instrList.forEach(i -> System.out.println(i.toString()));
-//    System.out.println("--end--");
   }
 
   public void relinkBlock(IRBlock prev, IRBlock nex) {

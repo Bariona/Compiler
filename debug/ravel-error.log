@@ -1,27 +1,11 @@
 Ignoring directive: .type	globInit,@function
 Ignoring directive: .size	globInit, .-globInit
-Ignoring directive: .type	qsort,@function
-Ignoring directive: .size	qsort, .-qsort
-Ignoring directive: .type	init,@function
-Ignoring directive: .size	init, .-init
-Ignoring directive: .type	find,@function
-Ignoring directive: .size	find, .-find
-Ignoring directive: .type	union,@function
-Ignoring directive: .size	union, .-union
 Ignoring directive: .type	main,@function
 Ignoring directive: .size	main, .-main
-Ignoring directive: .type	glob_n,@object
-Ignoring directive: .size	glob_n, 4
-Ignoring directive: .type	glob_m,@object
-Ignoring directive: .size	glob_m, 4
-Ignoring directive: .type	glob_ans,@object
-Ignoring directive: .size	glob_ans, 4
-Ignoring directive: .type	glob_fa,@object
-Ignoring directive: .size	glob_fa, 4
-Ignoring directive: .type	glob_rk,@object
-Ignoring directive: .size	glob_rk, 4
-Ignoring directive: .type	glob_e,@object
-Ignoring directive: .size	glob_e, 4
+Ignoring directive: .type	glob_a,@object
+Ignoring directive: .size	glob_a, 4
+Ignoring directive: .type	.str,@object
+Ignoring directive: .size	.str, 0
 Ignoring directive: .file	"builtin.c"
 Ignoring directive: .type	_toy_malloc,@function
 Ignoring directive: .cfi_startproc
@@ -144,6 +128,6 @@ Ignoring directive: .size	.L.str.3, 4
 Ignoring directive: .ident	"clang version 10.0.0-4ubuntu1 "
 Ignoring directive: .section	".note.GNU-stack","",@progbits
 
-Build finished in 9 ms
+Build finished in 7 ms
 
-Interpretation finished in 608 ms
+Interpretation finished in 646 ms

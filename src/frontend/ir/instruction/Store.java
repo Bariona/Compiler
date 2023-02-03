@@ -17,20 +17,23 @@ public class Store extends IRBaseInst {
     if (ptr.getType() instanceof PtrType ptrType) {
       if (value instanceof NullConst) {
         value = new NullConst(ptrType.target);
+      } else if (!value.getType().match(ptrType.target)) {
+         Debugger.error("target type: " + ptrType.toString() + " ← store value type: " + value.getType().toString());
       }
-
-      else if (!value.getType().match(ptrType.target)) {
-        // ignore error in order to pass optimize.
-        // Debugger.error("target type: " + ptrType.target.toString() + " ← store value type: " + value.getType().toString());
-      }
+    } else {
+      Debugger.error(ptr.getTypeAndName());
     }
-//    else {
-//      ignore error in order to pass optimize.
-//      Debugger.error(ptr.getTypeAndName());
-//    }
 
     addOperands(value);
     addOperands(ptr);
+  }
+
+  public Value storePtr() {
+    return getOperand(1);
+  }
+
+  public void resetPtr(Value value) {
+    operands.set(1, value);
   }
 
   @Override

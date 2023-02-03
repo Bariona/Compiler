@@ -120,12 +120,14 @@ public class ASMBuilder implements IRVisitor {
     for (int i = cnt; i < func.operands.size(); ++i) { // a8+: memory
       offset += 4;
       Immediate imm = new Immediate(offset);
-      curFunction.stackOffsetImm.add(imm); // load functions rest(>8) arguments
-      curFunction.spOffset += 4;
+      curFunction.spOffset += 4;  // load functions rest(>8) arguments
       new Load(curFunction.args.get(i), asm.getReg("sp"), imm, 4, curBlock);
     }
 
     func.blockList.forEach(this::dealBlock);
+    curFunction.entryBlock = curFunction.asmBlocks.get(0);
+    curFunction.exitBlock = curFunction.asmBlocks.get(1);
+
     deadCodeEle(curFunction);
     curFunction = null;
   }
@@ -165,8 +167,6 @@ public class ASMBuilder implements IRVisitor {
   @Override
   public void visit(Alloca instr) {
     assert false;
-    curFunction.allocaReg.add(getRegister(instr));
-    // TODO: ((Register) instr.asmOperand).color = 8; // alloca in stack
   }
 
   @Override
@@ -256,8 +256,7 @@ public class ASMBuilder implements IRVisitor {
     } else {
       if (address instanceof IReg) {
         new Mv(getRegister(address), getRegister(target), curBlock);
-      } else
-      {
+      } else {
         new Store(getRegister(target), getRegister(address), new Immediate(0), 4, curBlock);
       }
     }
@@ -378,7 +377,6 @@ public class ASMBuilder implements IRVisitor {
   }
 
   public void deadCodeEle(ASMFunction func) {
-//    if (true) return ;
     boolean check = true;
     while (check) {
       check = false;
@@ -390,6 +388,11 @@ public class ASMBuilder implements IRVisitor {
       for (var block : func.asmBlocks) {
         ArrayList<ASMBaseInst> rm = new ArrayList<>();
         for (var inst : block.instrList) {
+          if (inst instanceof Mv mv && mv.rd instanceof VirtualReg && !used.contains(mv.rd)) {
+//            System.out.println(mv.toString());
+            rm.add(inst);
+            check = true;
+          }
           if ((inst instanceof Calc cal && !used.contains(cal.rd)) ||
                   (inst instanceof La la && !used.contains(la.rd)) ||
                   (inst instanceof Li li && !used.contains(li.rd)) ||

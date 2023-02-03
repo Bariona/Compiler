@@ -5,17 +5,16 @@ import backend.asm.hierarchy.ASMFunction;
 import backend.asm.hierarchy.ASMModule;
 import backend.asm.instruction.*;
 import backend.asm.operand.*;
+import utility.Debugger;
 
 import java.util.*;
 
-public class RegAllocator { // codegen: actually there are only stack allocation
+public class RegAllocator { // graph coloring
   public ASMModule asm;
 
   private int offset;
-  // private ASMBlock curBlock;
   private ASMFunction curFunction;
   private HashMap<Register, Integer> stackAlloc = new HashMap<>();
-  private ArrayList<Immediate> stackOffsets;
 
   private int K;
   HashSet<Register> initial, preColored, coloredNodes, spillWorkList, simplifyWorkList, freezeWorkList, spilledNodes, tinyTemp = new HashSet<>();
@@ -66,8 +65,7 @@ public class RegAllocator { // codegen: actually there are only stack allocation
       Bin.replace(cur, curBIn);
 
       for (var preBlock : cur.prev) {
-        var preBout = Bout.get(preBlock);
-        preBout.addAll(curBIn);
+        Bout.get(preBlock).addAll(curBIn);
         if (!vis.contains(preBlock)) {
           workList.add(preBlock);
           vis.add(preBlock);
@@ -120,8 +118,6 @@ public class RegAllocator { // codegen: actually there are only stack allocation
 
   public void init() {
     K = asm.getColors().size();
-    stackOffsets = new ArrayList<>();
-//    System.out.printf("color = %d\n", K);
     alias = new HashMap<>();
     degree = new HashMap<>();
     weight = new HashMap<>();
@@ -179,9 +175,6 @@ public class RegAllocator { // codegen: actually there are only stack allocation
     // build interference graph: based on live variable analysis
     for (var block : curFunction.asmBlocks) {
       var lives = Bout.get(block);
-//      System.out.println(" === cur Block: " + block.label + " === ");
-//      lives.forEach(t -> System.out.print(t.toString() + " "));
-//      System.out.println();
       for (int i = block.instrList.size() - 1; i >= 0; --i) { // enumerate in reverse order
         ASMBaseInst inst = block.instrList.get(i);
         if (inst instanceof Mv mv) {
@@ -247,7 +240,6 @@ public class RegAllocator { // codegen: actually there are only stack allocation
   public void simplify() {
     Register reg = simplifyWorkList.iterator().next();
     simplifyWorkList.remove(reg);
-//    System.out.println("cur simplify: " + reg.toString());
     selectStack.push(reg);
     adjacent(reg).forEach(this::decrementDegree);
   }
@@ -288,7 +280,7 @@ public class RegAllocator { // codegen: actually there are only stack allocation
   public void coalesce() {
     Mv mv = workListMoves.iterator().next();
     workListMoves.remove(mv);
-    Register x = getAlias(mv.rs), y = getAlias(mv.rd);
+    Register x = getAlias(mv.rd), y = getAlias(mv.rs);
     if (preColored.contains(y)) {
       Register t = x;
       x = y;
@@ -318,7 +310,6 @@ public class RegAllocator { // codegen: actually there are only stack allocation
     coalescedNodes.add(y);
     alias.put(y, x);
     moveList.get(x).addAll(moveList.get(y)); // merge x & y
-//    System.out.println("combine: " + y.toString() + " -> " + x.toString());
     enableMoves(new HashSet<>(Collections.singletonList(y)));
     adjacent(y).forEach(vertex -> {
       addEdge(vertex, x);
@@ -336,7 +327,7 @@ public class RegAllocator { // codegen: actually there are only stack allocation
       Register y = (getAlias(reg) == getAlias(src)) ? getAlias(dst) : getAlias(src);
       activeMoves.remove(m);
       frozenMoves.add(m);
-      if (!nodeMoves(y).isEmpty() && degree.get(y) < K) {
+      if (nodeMoves(y).isEmpty() && degree.get(y) < K) {
         freezeWorkList.remove(y);
         simplifyWorkList.add(y);
       }
@@ -345,7 +336,6 @@ public class RegAllocator { // codegen: actually there are only stack allocation
 
   public void freeze() {
     Register reg = freezeWorkList.iterator().next();
-//    System.out.println("cur freeze: " +  reg.toString());
     freezeWorkList.remove(reg);
     simplifyWorkList.add(reg);
     freezeMoves(reg);
@@ -384,20 +374,16 @@ public class RegAllocator { // codegen: actually there are only stack allocation
         cur.color = okColors.get(0);
       }
     }
-    for (var x : coalescedNodes) {
-      // System.out.print(x.toString());
+    for (var x : coalescedNodes)
       x.color = getAlias(x).color;
-      // System.out.println(" has been coalesced to " + getAlias(x).toString());
-    }
   }
 
   public void rewriteProgram() {
     for (var reg : spilledNodes) {
-//      System.out.println(reg.toString());
-      // allocaOnStack((VirtualReg) reg);
       int loc = offset;
       offset += 4;
       stackAlloc.put(reg, loc);
+//      System.out.println(reg.toString());
     }
     for (var block : curFunction.asmBlocks) {
       for (int i = 0; i < block.instrList.size(); ++i) {
@@ -445,11 +431,6 @@ public class RegAllocator { // codegen: actually there are only stack allocation
     }
   }
 
-  public void runOnModule(ASMModule asm) {
-    this.asm = asm;
-    asm.func.forEach(this::runOnFunction);
-  }
-
   public void runOnFunction(ASMFunction func) {
     curFunction = func;
     offset = curFunction.spOffset;
@@ -469,150 +450,82 @@ public class RegAllocator { // codegen: actually there are only stack allocation
       assignColors();
       if (spilledNodes.isEmpty()) {
         removeDeadMv();
+        mergeBlock();
         break;
       }
       rewriteProgram();
     }
 
-    curFunction.stackOffsetImm.addAll(stackOffsets);
-
-//    curFunction.stackOffsetImm.forEach(imm -> {
-//      System.out.println(imm.value);
-//      imm.value += offset;
-//    });
-
     if (offset != 0) {
       func.getEntryBlock().addInstFront(new Calc("addi", asm.getReg("sp"), asm.getReg("sp"), new Immediate(-offset), null));
       func.getExitBlock().addInstBack(new Calc("addi", asm.getReg("sp"), asm.getReg("sp"), new Immediate(offset), null));
     }
-//    for (ASMBlock asmBlock : curFunction.asmBlocks) {
-//      if (!asmBlock.label.contains("foo.entry")) continue;
-//      for (var inst : asmBlock.instrList)
-//        System.out.println(inst.toString());
-//    }
   }
 
   public void removeDeadMv() {
     for (var block : curFunction.asmBlocks) {
       ArrayList<ASMBaseInst> rmInst = new ArrayList<>();
-      for (var inst : block.instrList)
-        if (inst instanceof Mv mv && mv.rd.color == mv.rs.color)
+      for (int i = 0; i < block.instrList.size(); ++i) {
+        var inst = block.instrList.get(i);
+        if (!(inst instanceof Mv mv)) continue;
+        if (mv.rd.color == mv.rs.color) {
           rmInst.add(inst);
+        } else if (i > 0 && block.instrList.get(i - 1) instanceof Mv lastMv) {
+          if ((lastMv.rd.color == mv.rd.color && lastMv.rs.color == mv.rs.color)
+                  || lastMv.rd.color == mv.rs.color && lastMv.rs.color == mv.rd.color)
+            rmInst.add(inst);
+        }
+      }
       rmInst.forEach(block::removeInst);
     }
   }
 
-//  public void runOnBlock(ASMBlock block) {
-//    ArrayList<ASMBaseInst> older = block.instrList;
-//    block.instrList = new ArrayList<>();
-//    curBlock = block;
-//    older.forEach(inst -> {
-//      inst.accept(this);
-//    });
-//    curBlock = null;
-//  }
+  public void mergeBlock() {
+    for (var block : curFunction.asmBlocks) {
+      ArrayList<ASMBaseInst> instrList = new ArrayList<>();
+      for (var inst : block.instrList) {
+        instrList.add(inst);
+        if (inst instanceof J) break;
+      }
+      block.instrList = instrList;
+    }
+    while (true) {
+      boolean flag = false;
+      ArrayList<ASMBlock> rmBlock = new ArrayList<>();
+      for (var block : curFunction.asmBlocks) {
+        if (block.prev.size() != 1) continue;
+        var pre = block.prev.get(0);
+        // pre -> block
+        //    |-> nex
+        if (pre.getTerminator() instanceof J j && j.dest == block) {
+          pre.removeInst(j);
+          pre.next = block.next;
+          pre.instrList.addAll(block.instrList);
+          for (var nex : pre.next) {
+            for (int i = 0; i < nex.prev.size(); ++i)
+              if (nex.prev.get(i) == block)
+                nex.prev.set(i, pre);
+          }
+          if (block == curFunction.getExitBlock())
+            curFunction.exitBlock = pre;
+          rmBlock.add(block);
+        }
+      }
+      for (var block : rmBlock)
+        curFunction.asmBlocks.remove(block);
+      if (!flag) break;
+    }
+  }
 
   private Immediate allocaOnStack(VirtualReg reg) {
     Integer loc = stackAlloc.get(reg);
-    if (loc == null) assert false;
-//    System.out.println("alloca : " + reg.toString() + " " + loc);
+    assert loc != null;
     return new Immediate(loc);
   }
 
-//  private BaseOperand load(BaseOperand op, String regName) {
-//    if (!(op instanceof VirtualReg reg))
-//      return op;
-//    PhysicalReg phyReg;
-//    if (reg.color != 8) {
-//      phyReg = asm.getReg(regName);
-//      new Load(phyReg, asm.getReg("sp"), allocOnStack(reg), 4, curBlock);
-//    } else {
-//      phyReg = asm.getReg("sp");
-//      phyReg.setOffset(allocOnStack(reg));
-//    }
-//    return phyReg;
-//  }
-//
-//  private PhysicalReg store(Register op, String regName) {
-//    if (!(op instanceof VirtualReg reg))
-//      return (PhysicalReg) op;
-//
-//    PhysicalReg phyReg;
-//    if (reg.color != 8) {
-//      phyReg = asm.getReg(regName);
-//      new Store(phyReg, asm.getReg("sp"), allocOnStack(reg), 4, curBlock);
-//    } else {
-//      phyReg = asm.getReg("sp");
-//      phyReg.setOffset(allocOnStack(reg));
-//    }
-//    return phyReg;
-//  }
-//
-//  @Override
-//  public void visit(Branch inst) {
-//    inst.rs1 = (Register) load(inst.rs1, "s0");
-//    inst.rs2 = (Register) load(inst.rs2, "s1");
-//    curBlock.addInst(inst);
-//  }
-//
-//  @Override
-//  public void visit(Calc inst) {
-//    inst.rs1 = load(inst.rs1, "s0");
-//    inst.rs2 = load(inst.rs2, "s1");
-//    curBlock.addInst(inst);
-//    inst.rd = store(inst.rd, "s0");
-//  }
-//
-//  @Override
-//  public void visit(Call inst) {
-//    curBlock.addInst(inst);
-//  }
-//
-//  @Override
-//  public void visit(J inst) {
-//    curBlock.addInst(inst);
-//  }
-//
-//  @Override
-//  public void visit(Li inst) {
-//    curBlock.addInst(inst);
-//    inst.rd = store(inst.rd, "s0");
-//  }
-//
-//  @Override
-//  public void visit(Mv inst) {
-//    inst.rs = (Register) load(inst.rs, "s0");
-//    curBlock.addInst(inst);
-//    inst.rd = store(inst.rd, "s1");
-//  }
-//
-//  @Override
-//  public void visit(Ret inst) {
-//    curBlock.addInst(inst);
-//  }
-//
-//  @Override
-//  public void visit(Load inst) { // load reg offset(address)
-//    inst.rs = (Register) load(inst.rs, "s1");
-//    curBlock.addInst(inst);
-//    inst.rd = store(inst.rd, "s0");
-//  }
-//
-//  @Override
-//  public void visit(Store inst) { // store reg offset(address)
-//    inst.rs = (Register) load(inst.rs, "s0");
-//    inst.rd = (Register) load(inst.rd, "s1");
-//    curBlock.addInst(inst);
-//  }
-//
-//  @Override
-//  public void visit(La inst) {
-//    curBlock.addInst(inst);
-//    inst.rd = store(inst.rd, "s0");
-//  }
-//
-//  @Override
-//  public void visit(NOP nop) {
-//  }
+  public void runOnModule(ASMModule asm) {
+    this.asm = asm;
+    asm.func.forEach(this::runOnFunction);
+  }
 
 }

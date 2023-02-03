@@ -16,6 +16,7 @@ public class VirtualReg extends Register {
   public String toString() {
     if (color != null) return color.toString();
     // === Only for debug ===
-    return name + this.hashCode() % 1000;
+    return name;
+            //+ this.hashCode() % 1000;
   }
 }

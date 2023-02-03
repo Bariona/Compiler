@@ -43,14 +43,6 @@ public class IRBuilder implements ASTVisitor {
     root.accept(this);
 
     new Branch(globInitFunc.getExitBlock(), initCurBlock);
-    buildCFG();
-  }
-
-  private void buildCFG() {
-    for (var func : module.irFuncList) {
-      for (var block : func.blockList)
-        block.insert2CFG();
-    }
   }
 
   @Override
@@ -116,6 +108,13 @@ public class IRBuilder implements ASTVisitor {
     if (node.expr != null) {
       node.expr.accept(this);
       store(node.expr.value, node.value.recordPtr);
+      if (isGlobal) {
+        if (node.expr.value instanceof IntConst ic) {
+          ((GlobalDef) node.value).initValue = ic;
+        } else if (node.expr.value instanceof BoolConst bc) {
+          ((GlobalDef) node.value).initValue = bc;
+        } else ((GlobalDef) node.value).initValue = null;
+      }
     } else if (BaseType.isClassType(node.info.type) || BaseType.isArray(node.info.type)) {
       store(new NullConst(), node.value.recordPtr);
     }
@@ -127,13 +126,10 @@ public class IRBuilder implements ASTVisitor {
   @Override
   public void visit(ClassDefNode node) {
     scopeManager.pushScope(node.scope);
-
     // in Mx*, we don't have to traverse class's variables
-//    node.varDefs.forEach(var -> var.accept(this));
     for (var var : node.varDefs) {
       var.value = new GlobalDef(node.info.name + "." + var.info.name, transType(var.info.type));
       var.info.value = var.value;
-//      store(new NullConst(), var.value);
     }
 
     node.funcDefs.forEach(func -> func.accept(this));
@@ -217,14 +213,11 @@ public class IRBuilder implements ASTVisitor {
         } else {
           address = pair.a;
         }
-
-//        System.out.println(node.pos.toString());
         node.value = load(address);
       } else {
         // function type
         // don't need to create basicBlock here.
         node.value = info.value;
-        // System.out.println(node.pos.toString());
       }
 
     } else {
@@ -238,8 +231,7 @@ public class IRBuilder implements ASTVisitor {
   public void visit(NewExprNode node) {
     VarType type = (VarType) node.exprType;
     if (type.dimension == 0) {
-      assert BaseType.isClassType(type);
-      // Debugger.printPause(type.ClassName);
+      assert BaseType.isClassType(type); // must be class type
       StructType classType = module.getStruct(type.ClassName);
       Call mallocPtr = new Call(module.MallocFunction(), curBlock, new IntConst(classType.size()));
       node.value = bitcast(mallocPtr, new PtrType(module.getStruct(type.ClassName)));
@@ -498,6 +490,7 @@ public class IRBuilder implements ASTVisitor {
   public void visit(ForStmtNode node) {
     IRBlock forCond = newBlock("for.cond");
     IRBlock forBody = newBlock("for.body");
+    ++forBody.loopDepth; // count itself
     IRBlock forStep = newBlock("for.inc");
     IRBlock forExit = newBlock("for.end");
 

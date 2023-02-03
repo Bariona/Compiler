@@ -28,10 +28,10 @@ public class ASMBlock {
 
   public void removeInst(ASMBaseInst inst) {
     instrList.remove(inst);
-//    for (int i = 0; i < instrList.size(); ++i) {
-//      if (instrList.get(i) == inst)
-//        instrList.remove(i);
-//    }
+  }
+
+  public ASMBaseInst getTerminator() {
+    return instrList.get(instrList.size() - 1);
   }
 
   @Override

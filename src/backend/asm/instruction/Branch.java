@@ -27,6 +27,12 @@ public class Branch extends ASMBaseInst {
   }
 
   @Override
+  public void replaceUses(Register u, Register v) {
+    if (rs1 == u) rs1 = v;
+    if (rs2 == u) rs2 = v;
+  }
+
+  @Override
   public String toString() {
     return op + " " + rs1.toString() + ", " + rs2.toString() + ", " + dest.toString();
   }

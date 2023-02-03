@@ -8,6 +8,7 @@ import frontend.ir.instruction.Load;
 import frontend.ir.instruction.Ret;
 import frontend.ir.irtype.FuncType;
 import frontend.ir.irtype.VoidType;
+import frontend.ir.opt.CallGraph;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,13 @@ public class IRFunction extends User {
   public FuncType funcType; // retType and paraType e.g. %struct = type {i32, i1}
   public Value retValPtr;
   public ArrayList<IRBlock> blockList = new ArrayList<>();
+
+  // optimize part ↓
+  public CallGraph.Node node = new CallGraph.Node(this);
+
+  public boolean isGlobInit() {
+    return this.name.equals("globInit");
+  }
 
   public IRFunction(String name, FuncType funcType, Value... paraList) {
     super(name, funcType.retType);

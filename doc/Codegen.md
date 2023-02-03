@@ -1,6 +1,6 @@
 - [x] function arguments (> 8) stack allocation
 - [x] function arguments's link (.asmoperand)
-- [ ] 去掉一些没必要的Mv :pensive:
+- [x] 去掉一些没必要的Mv :pensive:
 
 
 - ASM Module

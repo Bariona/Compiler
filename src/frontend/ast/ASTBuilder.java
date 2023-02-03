@@ -321,11 +321,18 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
   @Override
   public ASTNode visitAssignExpr(MxParser.AssignExprContext ctx) {
-    return new AssignExprNode(
-            (ExprNode) visit(ctx.expression(0)),
-            (ExprNode) visit(ctx.expression(1)),
-            new Position(ctx)
-    );
+    var ls = ctx.expression(0);
+    var rs = ctx.expression(1);
+    int sz = ls.children.size();
+    if (sz == rs.children.size()) {
+      // an ugly implementation eliminating a[i] = a[i]
+      // but the implementation may cause error in ++a[x = x]; (fortunately, Mx* doesn't support this feature.
+      boolean check = true;
+      for (int i = 0; i < sz && check; ++i)
+        check = ls.children.get(i).getText().equals(rs.children.get(i).getText());
+      if(check) return null;
+    }
+    return new AssignExprNode((ExprNode) visit(ls), (ExprNode) visit(rs), new Position(ctx));
   }
 
   @Override
