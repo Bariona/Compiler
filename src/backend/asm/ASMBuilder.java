@@ -11,7 +11,6 @@ import backend.asm.instruction.Store;
 import backend.asm.instruction.*;
 import backend.asm.operand.*;
 import frontend.ir.IRVisitor;
-import frontend.ir.SSADestruct;
 import frontend.ir.Value;
 import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.hierarchy.IRFunction;
@@ -39,8 +38,7 @@ public class ASMBuilder implements IRVisitor {
 
   public ASMBuilder(ASMModule asm, IRModule ir) {
     this.asm = asm;
-    SSADestruct ssaDestruct = new SSADestruct();
-    ssaDestruct.runOnIR(ir);
+    new SSADestruct().runOnIR(ir);
     for (var v : ir.globVarList) {
       if (v instanceof StringConst str) {
         asm.strConst.add(new GlobalReg(str.name, str.content));
@@ -125,8 +123,10 @@ public class ASMBuilder implements IRVisitor {
     }
 
     func.blockList.forEach(this::dealBlock);
-    curFunction.entryBlock = curFunction.asmBlocks.get(0);
-    curFunction.exitBlock = curFunction.asmBlocks.get(1);
+    curFunction.entryBlock = getBlock(func.getEntryBlock());
+    curFunction.exitBlock = getBlock(func.getExitBlock());
+//    curFunction.entryBlock = curFunction.asmBlocks.get(0);
+//    curFunction.exitBlock = curFunction.asmBlocks.get(1);
 
     deadCodeEle(curFunction);
     curFunction = null;
@@ -161,6 +161,10 @@ public class ASMBuilder implements IRVisitor {
 
   @Override
   public void visit(Assign inst) {
+    if (inst.rd instanceof IReg || inst.rs instanceof IReg) {
+      new Mv(getRegister(inst.rd), getRegister(inst.rs), curBlock);
+      return;
+    }
     assign(getRegister(inst.rd), inst.rs);
   }
 
@@ -235,7 +239,7 @@ public class ASMBuilder implements IRVisitor {
   @Override
   public void visit(frontend.ir.instruction.Load load) {
     // %val = load i32, i32* %ptr
-    Value address = load.getOperand(0);
+    Value address = load.loadPtr();
     if (address.isGlobal()) {
       VirtualReg addrOfGlb = new VirtualReg("addr");
       new La(addrOfGlb, address.name, curBlock);
@@ -248,17 +252,14 @@ public class ASMBuilder implements IRVisitor {
   @Override
   public void visit(frontend.ir.instruction.Store store) {
     //  store i32 %add1, i32* %A_x
-    Value target = store.getOperand(0), address = store.getOperand(1);
+    Value target = store.storeValue(), address = store.storePtr();
     if (address.isGlobal()) {
       VirtualReg tmp = new VirtualReg("addr");
       new La(tmp, address.name, curBlock);
       new Store(getRegister(target), tmp, new Immediate(0), 4, curBlock);
     } else {
-      if (address instanceof IReg) {
-        new Mv(getRegister(address), getRegister(target), curBlock);
-      } else {
-        new Store(getRegister(target), getRegister(address), new Immediate(0), 4, curBlock);
-      }
+      assert !(address instanceof IReg);
+      new Store(getRegister(target), getRegister(address), new Immediate(0), 4, curBlock);
     }
   }
 
@@ -381,7 +382,9 @@ public class ASMBuilder implements IRVisitor {
     while (check) {
       check = false;
       HashSet<Register> used = new HashSet<>();
+      // TODO: better implementation
       used.add(asm.getReg("ra")); // don't ignore return address
+      used.add(asm.getReg("a0"));
       for (var block : func.asmBlocks)
         block.instrList.forEach(inst -> used.addAll(inst.getUses()));
 
@@ -389,7 +392,6 @@ public class ASMBuilder implements IRVisitor {
         ArrayList<ASMBaseInst> rm = new ArrayList<>();
         for (var inst : block.instrList) {
           if (inst instanceof Mv mv && mv.rd instanceof VirtualReg && !used.contains(mv.rd)) {
-//            System.out.println(mv.toString());
             rm.add(inst);
             check = true;
           }

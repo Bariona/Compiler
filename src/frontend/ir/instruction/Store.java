@@ -28,12 +28,16 @@ public class Store extends IRBaseInst {
     addOperands(ptr);
   }
 
+  public Value storeValue() {
+    return getOperand(0);
+  }
+
   public Value storePtr() {
     return getOperand(1);
   }
 
   public void resetPtr(Value value) {
-    operands.set(1, value);
+    resetOperands(1, value);
   }
 
   @Override

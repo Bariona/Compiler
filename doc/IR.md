@@ -2,9 +2,7 @@
 
 ​	The `front end` of the compiler does lexical analysis, parsing, semantic analysis, and translation to intermediate representation. The `back end` does optimization of the intermediate representation and translation to machine language.
 
->  This doc is waiting to be completed.
-
-- [ ] User-Use-Value Relationship (Toronto U's slides)
+- [x] User-Use-Value Relationship (Toronto U's slides)
 
   LLVM Class Hierarchy
 
@@ -12,9 +10,8 @@
 
 Based on *LLVM IR*, most LLVM operations, including all arithmetic and logical operations are in 3-address form.
 
-- Three Address Code
-
-  regarded as four tuple: opcode oprand1 operand2 result
+- Three Address Code: regarded as four tuple: opcode oprand1 operand2 result
+- ***Notice***: LLVM IR only guarantees Virtual Registers' uses are of SSA form, but those `Alloca`,  `Load/Store` instructions will cause the variables that are allocated on stack to be "defined" multiple times.
 
 ### Basic Concepts
 

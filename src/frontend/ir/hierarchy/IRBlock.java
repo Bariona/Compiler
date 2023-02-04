@@ -9,9 +9,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class IRBlock extends Value {
-  public Phi phiInst;
-  public int loopDepth = 0;
+  public int loopDepth;
+
+  public ArrayList<Phi> phiInst = new ArrayList<>();
   public LinkedList<IRBaseInst> instrList = new LinkedList<>();
+
   public HashMap<Value, Value> pCopy = new HashMap<>();
   public ArrayList<IRBlock> prev = new ArrayList<>(), next = new ArrayList<>();
 
@@ -48,12 +50,30 @@ public class IRBlock extends Value {
     return tailInst;
   }
 
+  public void removeTerminator() {
+    if (!terminated) return;
+    IRBaseInst inst = instrList.get(instrList.size() - 1);
+    if (inst instanceof Branch br) {
+      if (br.isJump()) {
+        next.remove(br.dstBlock());
+        br.dstBlock().prev.remove(this);
+      } else {
+        next.remove(br.ifTrueBlock());
+        next.remove(br.ifFalseBlock());
+        br.ifTrueBlock().prev.remove(this);
+        br.ifFalseBlock().prev.remove(this);
+      }
+    }
+    instrList.remove(inst);
+    terminated = false;
+  }
+
   public void addInst(IRBaseInst instr) {
     if (instr instanceof Alloca) { // add alloca at the front of "entry block"
       instrList.addFirst(instr);
     } else {
       if (instr instanceof Phi phi) {
-        phiInst = phi;
+        phiInst.add(phi);
       } else if (instr instanceof Branch || instr instanceof Ret){
         if (!terminated) {
           terminated = true;
@@ -64,6 +84,11 @@ public class IRBlock extends Value {
         instrList.add(instr);
       }
     }
+  }
+
+  public void addPhi(Phi phi) {
+    phi.parenBlock = this;
+    phiInst.add(phi);
   }
 
   public void addInstFront(IRBaseInst instr) {
@@ -77,6 +102,7 @@ public class IRBlock extends Value {
   }
 
   public void relinkBlock(IRBlock prev, IRBlock nex) {
+    // change src's terminate instruction
     this.next.remove(prev);
     this.next.add(nex);
     for (var inst : instrList) {

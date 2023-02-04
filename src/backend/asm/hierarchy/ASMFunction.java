@@ -16,8 +16,6 @@ public class ASMFunction {
 
   public ArrayList<ASMBlock> asmBlocks = new ArrayList<>();
 
-  public ArrayList<Register> allocaReg = new ArrayList<>();
-
   public void setName(String name) {
     this.name = name;
   }

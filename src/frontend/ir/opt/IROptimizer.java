@@ -11,7 +11,12 @@ public class IROptimizer {
 
     new CallGraph().runOnModule(module);
     new Glob2Loc().runOnModule(module);
+    new Cleaner().runOnModule(module);
     new Mem2Reg().runOnModule(module);
+
+    new Cleaner().runOnModule(module);
+//    new LICM().runOnModule(module);
+//    new Cleaner().runOnModule(module);
   }
 
 }

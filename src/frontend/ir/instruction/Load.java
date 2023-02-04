@@ -18,7 +18,7 @@ public class Load extends IRBaseInst {
   }
 
   public void resetPtr(Value value) {
-    operands.set(0, value);
+    resetOperands(0, value);
   }
 
   @Override

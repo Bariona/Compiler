@@ -15,6 +15,13 @@ public class Phi extends IRBaseInst {
     for (Value val : valList) super.addOperands(val);
   }
 
+  public void changeBlock(IRBlock pre, IRBlock nex) {
+    for (int i = 1; i < operands.size(); i += 2) {
+      IRBlock block = (IRBlock) operands.get(i);
+      if (block == pre) operands.set(i, nex);
+    }
+  }
+
   @Override
   public String toString() {
     StringBuilder ret = new StringBuilder(getName() + " = phi ");

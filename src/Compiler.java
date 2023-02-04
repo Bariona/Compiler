@@ -71,7 +71,7 @@ public class Compiler {
 
       if (!ONLINE_JUDGE) new ASMPrinter(new PrintStream(prefix + "tmp.s")).printModule(asmModule);
 
-      // reg allocation
+      // Register Allocation
       new RegAllocator().runOnModule(asmModule);
       new ASMPrinter(new PrintStream(asmFile)).printModule(asmModule);
 

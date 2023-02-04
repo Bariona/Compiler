@@ -601,13 +601,13 @@ public class IRBuilder implements ASTVisitor {
   private void updateParaList(boolean isMethod, IRFunction function, FuncDefNode node) {
     if (isMethod) {
       String className = scopeManager.getCurClassName();
-      Value This = new Value("this", new PtrType(module.getStruct(className)));
+      Value This = new IReg("this", new PtrType(module.getStruct(className)));
       // function.isMethod = true;
       function.addParameters(This);
     }
 
     for (var info : node.info.paraListInfo) {
-      Value para = new Value(info.name, transType(info.type));
+      Value para = new IReg(info.name, transType(info.type));
 
       Value allocaPtr = allocate(info.name, transType(info.type));
       info.value = allocaPtr;
@@ -693,6 +693,8 @@ public class IRBuilder implements ASTVisitor {
 
         // add class.method
         for (var funcInfo : clsNode.info.funcInfos) {
+          if (funcInfo.name.equals(name))
+            funcInfo.funcType.retType = new VarType(BaseType.BuiltinType.VOID);
           FuncType funcType = new FuncType(transType(funcInfo.funcType.retType));
           IRFunction function = new IRFunction(name + "." + funcInfo.name, funcType);
           function.isMethod = true;

@@ -65,8 +65,10 @@ public class IRPrinter {
   public void printBlock(IRBlock block, boolean ifPrintLabel) {
     if (ifPrintLabel)
       os.println(block.name + ":");
-    if (block.phiInst != null)
-      os.println(INDENT + block.phiInst.toString());
+    if (block.phiInst != null) {
+      for (var phi : block.phiInst)
+        os.println(INDENT + phi.toString());
+    }
     for (var instr : block.instrList) {
       os.println(INDENT + instr.toString());
     }
@@ -80,11 +82,15 @@ public class IRPrinter {
 
     printBlock(function.getEntryBlock(), PRINTLABEL);
     os.println();
-    for (int i = 2; i < function.blockList.size(); ++i) {
-      printBlock(function.blockList.get(i), PRINTLABEL);
+    for (int i = 0; i < function.blockList.size(); ++i) {
+      var block = function.blockList.get(i);
+      if (block == function.entryBlock || block == function.exitBlock)
+        continue;
+      printBlock(block, PRINTLABEL);
       os.println();
     }
-    printBlock(function.getExitBlock(), PRINTLABEL);
+    if (function.exitBlock != function.entryBlock)
+      printBlock(function.getExitBlock(), PRINTLABEL);
 
     os.println("}");
   }

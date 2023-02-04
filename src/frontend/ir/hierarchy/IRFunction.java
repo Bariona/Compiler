@@ -18,6 +18,8 @@ public class IRFunction extends User {
   public boolean isBuiltin = false;
   public FuncType funcType; // retType and paraType e.g. %struct = type {i32, i1}
   public Value retValPtr;
+
+  public IRBlock entryBlock = null, exitBlock = null;
   public ArrayList<IRBlock> blockList = new ArrayList<>();
 
   // optimize part ↓
@@ -36,8 +38,8 @@ public class IRFunction extends User {
   }
 
   private void initialized() {
-    new IRBlock("entry_of_" + name, this, 0);
-    new IRBlock("exit_of_" + name, this, 0);
+    entryBlock = new IRBlock("entry_of_" + name, this, 0);
+    exitBlock = new IRBlock("exit_of_" + name, this, 0);
 
     if (getType() instanceof VoidType) {
       new Ret(getExitBlock());
@@ -49,11 +51,11 @@ public class IRFunction extends User {
   }
 
   public IRBlock getEntryBlock() {
-    return blockList.get(0);
+    return entryBlock;
   }
 
   public IRBlock getExitBlock() {
-    return blockList.get(1);
+    return exitBlock;
   }
 
   public void addBlock(IRBlock block) {
