@@ -6,6 +6,8 @@ import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.hierarchy.IRFunction;
 import frontend.ir.irtype.VoidType;
 
+import java.util.ArrayList;
+
 public class Call extends IRBaseInst {
   public Call(IRFunction func, IRBlock parenBlock, Value... Args) {
     super(func.name + ".call", func.getType(), parenBlock);
@@ -15,6 +17,14 @@ public class Call extends IRBaseInst {
 
   public IRFunction callFunc() {
     return (IRFunction) getOperand(0);
+  }
+
+  @Override
+  public ArrayList<Value> getUses() {
+    ArrayList<Value> ret = new ArrayList<>();
+    for (int i = 1; i < operands.size(); ++i)
+      ret.add(getOperand(i));
+    return ret;
   }
 
   // e.g. call void @_Z1f1Ai(%class.A* noundef %4, i32 noundef 1)  | void f(x, 1) x is a class

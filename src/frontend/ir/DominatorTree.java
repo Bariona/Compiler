@@ -3,6 +3,7 @@ package frontend.ir;
 import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.hierarchy.IRFunction;
 
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +15,9 @@ public class DominatorTree {
 
   HashSet<IRBlock> visited = new HashSet<>();
   LinkedList<IRBlock> blocks = new LinkedList<>();
+
+  public ArrayList<IRBlock> rNodes = new ArrayList<>();
+  public HashMap<IRBlock, HashSet<IRBlock>> domSubTree = new HashMap<>();
 
   public HashMap<IRBlock, Integer> dfn = new HashMap<>();
   public HashMap<IRBlock, IRBlock> iDom = new HashMap<>();
@@ -80,11 +84,23 @@ public class DominatorTree {
     }
   }
 
+  private void dfsOnTree(IRBlock u) {
+    HashSet<IRBlock> subTree = new HashSet<>();
+    for (var v : domChild.get(u)) {
+      subTree.add(v);
+      dfsOnTree(v);
+      subTree.addAll(domSubTree.get(v));
+    }
+    rNodes.add(u);
+    domSubTree.put(u, subTree);
+  }
+
   public void runOnFunction(IRFunction func) {
     curFunction = func;
     dfs(func.getEntryBlock());
     build();
     getDomFrontier();
+    dfsOnTree(curFunction.entryBlock);
   }
 
   public void printIDom() {

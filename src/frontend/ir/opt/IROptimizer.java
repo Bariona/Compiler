@@ -15,8 +15,8 @@ public class IROptimizer {
     new Mem2Reg().runOnModule(module);
 
     new Cleaner().runOnModule(module);
-//    new LICM().runOnModule(module);
-//    new Cleaner().runOnModule(module);
+    new LICM().runOnModule(module);
+    new Cleaner().runOnModule(module);
   }
 
 }

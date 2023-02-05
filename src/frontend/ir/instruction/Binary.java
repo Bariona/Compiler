@@ -4,6 +4,9 @@ import frontend.ir.IRVisitor;
 import frontend.ir.Value;
 import frontend.ir.hierarchy.IRBlock;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Binary extends IRBaseInst {
   String opcode;
 
@@ -41,6 +44,11 @@ public class Binary extends IRBaseInst {
       case "sdiv" -> "div";
       default -> opcode;
     };
+  }
+
+  @Override
+  public ArrayList<Value> getUses() {
+    return new ArrayList<>(Arrays.asList(getOperand(0), getOperand(1)));
   }
 
   @Override

@@ -68,7 +68,6 @@ public class Compiler {
       // Codegen
       ASMModule asmModule = new ASMModule();
       new ASMBuilder(asmModule, irModule);
-
       if (!ONLINE_JUDGE) new ASMPrinter(new PrintStream(prefix + "tmp.s")).printModule(asmModule);
 
       // Register Allocation

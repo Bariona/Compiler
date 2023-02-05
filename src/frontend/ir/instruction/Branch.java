@@ -6,6 +6,9 @@ import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.irtype.BoolType;
 import frontend.ir.irtype.VoidType;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Branch extends IRBaseInst {
   // br i1 <cond>, label <iftrue>, label <iffalse>
 
@@ -31,6 +34,12 @@ public class Branch extends IRBaseInst {
   public IRBlock dstBlock() { return (IRBlock) getOperand(0); }
   public IRBlock ifTrueBlock() { return (IRBlock) getOperand(1); }
   public IRBlock ifFalseBlock() { return (IRBlock) getOperand(2); }
+
+  @Override
+  public ArrayList<Value> getUses() {
+    if (isJump()) return new ArrayList<>();
+    return new ArrayList<>(Collections.singletonList(getOperand(0)));
+  }
 
   @Override
   public String toString() {

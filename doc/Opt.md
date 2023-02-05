@@ -84,3 +84,15 @@ we can hoist d into the loop’s pre-header if
 
 pitfall cases can be referred in the *Tiger Book*.
 
+
+
+##### Dilemma
+
+```cpp
+int x;
+for (x = 0; x < 10; x = x + 1) {
+  a = b + c;
+}
+```
+
+- line 3 can be pulled out of the loop, however, the loop can just be eliminated immediately incase x will be used latter. Thus, my current optimization result is not that obvious.

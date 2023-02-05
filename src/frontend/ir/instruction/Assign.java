@@ -4,6 +4,9 @@ import frontend.ir.IRVisitor;
 import frontend.ir.Value;
 import frontend.ir.hierarchy.IRBlock;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Assign extends IRBaseInst {
   // used for asm
   public Value rs, rd;
@@ -12,6 +15,11 @@ public class Assign extends IRBaseInst {
     super("assign", null, null);
     this.rs = rs;
     this.rd = rd;
+  }
+
+  @Override
+  public ArrayList<Value> getUses() {
+    return new ArrayList<>(Collections.singletonList(rs));
   }
 
   @Override

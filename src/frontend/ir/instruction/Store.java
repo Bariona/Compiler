@@ -8,6 +8,8 @@ import frontend.ir.irtype.VoidType;
 import frontend.ir.operands.NullConst;
 import utility.Debugger;
 
+import java.util.ArrayList;
+
 public class Store extends IRBaseInst {
   // e.g.  store i32 %add1, i32* %A_x
 
@@ -38,6 +40,11 @@ public class Store extends IRBaseInst {
 
   public void resetPtr(Value value) {
     resetOperands(1, value);
+  }
+
+  @Override
+  public ArrayList<Value> getUses() {
+    return operands;
   }
 
   @Override

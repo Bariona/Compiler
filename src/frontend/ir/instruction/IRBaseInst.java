@@ -1,8 +1,11 @@
 package frontend.ir.instruction;
 
 import frontend.ir.User;
+import frontend.ir.Value;
 import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.irtype.IRBaseType;
+
+import java.util.ArrayList;
 
 abstract public class IRBaseInst extends User {
   public IRBlock parenBlock;
@@ -14,4 +17,9 @@ abstract public class IRBaseInst extends User {
     if (parenBlock != null)
       parenBlock.addInst(this);
   }
+
+  public ArrayList<Value> getUses() {
+    return new ArrayList<>();
+  }
+
 }

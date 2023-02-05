@@ -5,6 +5,9 @@ import frontend.ir.Value;
 import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.irtype.PtrType;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Load extends IRBaseInst {
 
   // %val = load i32, i32* %ptr
@@ -19,6 +22,11 @@ public class Load extends IRBaseInst {
 
   public void resetPtr(Value value) {
     resetOperands(0, value);
+  }
+
+  @Override
+  public ArrayList<Value> getUses() {
+    return new ArrayList<>(Collections.singletonList(getOperand(0)));
   }
 
   @Override

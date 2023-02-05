@@ -7,6 +7,8 @@ import frontend.ir.irtype.IRBaseType;
 import frontend.ir.irtype.PtrType;
 import frontend.ir.operands.IntConst;
 
+import java.util.ArrayList;
+
 public class GetElePtr extends IRBaseInst {
 
 
@@ -24,6 +26,11 @@ public class GetElePtr extends IRBaseInst {
     addOperands(structPtr);
     addOperands(new IntConst(0));
     addOperands(idx);
+  }
+
+  @Override
+  public ArrayList<Value> getUses() {
+    return operands;
   }
 
   @Override

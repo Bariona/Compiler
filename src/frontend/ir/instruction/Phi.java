@@ -5,6 +5,9 @@ import frontend.ir.Value;
 import frontend.ir.hierarchy.IRBlock;
 import frontend.ir.irtype.IRBaseType;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Phi extends IRBaseInst {
   public Phi(IRBaseType type, IRBlock parenBlock) {
     super("phi", type, parenBlock);
@@ -20,6 +23,14 @@ public class Phi extends IRBaseInst {
       IRBlock block = (IRBlock) operands.get(i);
       if (block == pre) operands.set(i, nex);
     }
+  }
+
+  @Override
+  public ArrayList<Value> getUses() {
+    ArrayList<Value> ret = new ArrayList<>();
+    for (int i = 0; i < operands.size(); i += 2)
+      ret.add(getOperand(i));
+    return ret;
   }
 
   @Override
