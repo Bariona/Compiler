@@ -1,9 +1,9 @@
 # Mx-Compiler
 ---
 
-- [x] Current Progress: Codegen done...
+- [x] Current Progress: Optimization done...
 
-:computer: [课程地址](https://github.com/ACMClassCourses/Compiler-Design-Implementation)
+:computer: [Course Link](https://github.com/ACMClassCourses/Compiler-Design-Implementation)
 
 <div align=center> <img src="doc/static/200w.gif", width="250"> </div> 
 
